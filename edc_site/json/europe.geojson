@@ -1,0 +1,140 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"country": "Austria", "iso_a2": "AT"},
+      "geometry": {"type": "Point", "coordinates": [16.3738, 48.2082]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Belgium", "iso_a2": "BE"},
+      "geometry": {"type": "Point", "coordinates": [4.3517, 50.8503]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Bulgaria", "iso_a2": "BG"},
+      "geometry": {"type": "Point", "coordinates": [23.3219, 42.6977]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Croatia", "iso_a2": "HR"},
+      "geometry": {"type": "Point", "coordinates": [15.9819, 45.8150]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Cyprus", "iso_a2": "CY"},
+      "geometry": {"type": "Point", "coordinates": [33.3823, 35.1856]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Czech Republic", "iso_a2": "CZ"},
+      "geometry": {"type": "Point", "coordinates": [14.4378, 50.0755]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Denmark", "iso_a2": "DK"},
+      "geometry": {"type": "Point", "coordinates": [12.5683, 55.6761]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Estonia", "iso_a2": "EE"},
+      "geometry": {"type": "Point", "coordinates": [24.7536, 59.4370]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Finland", "iso_a2": "FI"},
+      "geometry": {"type": "Point", "coordinates": [24.9384, 60.1699]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "France", "iso_a2": "FR"},
+      "geometry": {"type": "Point", "coordinates": [2.3522, 48.8566]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Germany", "iso_a2": "DE"},
+      "geometry": {"type": "Point", "coordinates": [13.4050, 52.5200]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Greece", "iso_a2": "GR"},
+      "geometry": {"type": "Point", "coordinates": [23.7275, 37.9838]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Hungary", "iso_a2": "HU"},
+      "geometry": {"type": "Point", "coordinates": [19.0402, 47.4979]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Ireland", "iso_a2": "IE"},
+      "geometry": {"type": "Point", "coordinates": [-6.2603, 53.3498]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Italy", "iso_a2": "IT"},
+      "geometry": {"type": "Point", "coordinates": [12.4964, 41.9028]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Latvia", "iso_a2": "LV"},
+      "geometry": {"type": "Point", "coordinates": [24.1052, 56.9496]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Lithuania", "iso_a2": "LT"},
+      "geometry": {"type": "Point", "coordinates": [25.2797, 54.6872]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Luxembourg", "iso_a2": "LU"},
+      "geometry": {"type": "Point", "coordinates": [6.1319, 49.6116]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Malta", "iso_a2": "MT"},
+      "geometry": {"type": "Point", "coordinates": [14.5146, 35.8989]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Netherlands", "iso_a2": "NL"},
+      "geometry": {"type": "Point", "coordinates": [4.9041, 52.3676]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Poland", "iso_a2": "PL"},
+      "geometry": {"type": "Point", "coordinates": [21.0122, 52.2297]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Portugal", "iso_a2": "PT"},
+      "geometry": {"type": "Point", "coordinates": [-9.1393, 38.7223]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Romania", "iso_a2": "RO"},
+      "geometry": {"type": "Point", "coordinates": [26.1025, 44.4268]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Slovakia", "iso_a2": "SK"},
+      "geometry": {"type": "Point", "coordinates": [17.1077, 48.1486]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Slovenia", "iso_a2": "SI"},
+      "geometry": {"type": "Point", "coordinates": [14.5058, 46.0569]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Spain", "iso_a2": "ES"},
+      "geometry": {"type": "Point", "coordinates": [-3.7038, 40.4168]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Sweden", "iso_a2": "SE"},
+      "geometry": {"type": "Point", "coordinates": [18.0686, 59.3293]}
+    }
+  ]
+}

@@ -294,3 +294,7 @@ footer a {
   color: #ffffff;
   font-size: 0.9rem;
 }
+
+#map {
+  height: 600px;
+}

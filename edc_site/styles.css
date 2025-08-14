@@ -223,6 +223,18 @@ body {
   display: block;
 }
 
+.news-item .slideshow {
+  position: relative;
+}
+
+.news-item .slideshow img {
+  display: none;
+}
+
+.news-item .slideshow img.active {
+  display: block;
+}
+
 .news-item h3 {
   padding: 15px 20px 5px;
   font-size: 1.2rem;

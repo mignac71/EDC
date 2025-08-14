@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aktualizacja banera</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    form { margin-bottom: 1rem; }
+    #uploader { display:none; }
+  </style>
+</head>
+<body>
+  <div id="login">
+    <h1>Panel administracyjny</h1>
+    <form id="loginForm">
+      <label for="password">Hasło:</label>
+      <input type="password" id="password" required />
+      <button type="submit">Zaloguj</button>
+    </form>
+    <p><a href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a">Zapomniałem hasła</a></p>
+  </div>
+
+  <div id="uploader">
+    <h2>Dodaj zdjęcie do bannera</h2>
+    <form id="uploadForm" enctype="multipart/form-data" method="post">
+      <input type="file" name="banner" accept="image/*" required />
+      <input type="hidden" name="password" id="passwordHash" />
+      <button type="submit">Prześlij</button>
+    </form>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const PASSWORD_HASH = '37ba3d76293846ac3d3314714ef3a4438450b9c5ff48ab0c0252af9e2efe5285'; // sha256('edc_admin')
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    const uploadForm = document.getElementById('uploadForm');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pass = document.getElementById('password').value;
+      const hash = await sha256(pass);
+      if (hash === PASSWORD_HASH) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('uploader').style.display = 'block';
+        document.getElementById('passwordHash').value = hash;
+      } else {
+        alert('Błędne hasło');
+      }
+    });
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(uploadForm);
+      try {
+        const response = await fetch('upload.php', { method: 'POST', body: formData });
+        const text = await response.text();
+        document.getElementById('message').textContent = text;
+        uploadForm.reset();
+      } catch (err) {
+        document.getElementById('message').textContent = 'Błąd podczas przesyłania pliku';
+      }
+    });
+  </script>
+</body>
+</html>

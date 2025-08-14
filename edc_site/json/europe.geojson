@@ -146,6 +146,11 @@
       "type": "Feature",
       "properties": {"country": "Switzerland", "iso_a2": "CH"},
       "geometry": {"type": "Point", "coordinates": [7.4474, 46.9480]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "United Kingdom", "iso_a2": "GB"},
+      "geometry": {"type": "Point", "coordinates": [-0.1276, 51.5074]}
     }
   ]
 }

@@ -173,5 +173,11 @@
     "audi": 102,
     "vw": 175,
     "vw_commercial": 175
+  },
+  "GB": {
+    "country": "United Kingdom",
+    "audi": 125,
+    "vw": 160,
+    "vw_commercial": 160
   }
 }

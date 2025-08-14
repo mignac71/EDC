@@ -5,13 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const hero = document.querySelector('.hero');
   if (!hero) return;
 
-  fetch('images/banner/')
-    .then(response => response.text())
-    .then(text => {
-      const doc = new DOMParser().parseFromString(text, 'text/html');
-      const files = Array.from(doc.querySelectorAll('a'))
-        .map(a => a.getAttribute('href'))
-        .filter(href => href && href.match(/\.(jpe?g|png|gif)$/i))
+  fetch('./images/banner/banner-images.json')
+    .then(response => response.json())
+    .then(files => {
+      files = files
+        .filter(name => name.match(/\.(jpe?g|png|gif)$/i))
         .map(name => `images/banner/${name}`);
 
       if (files.length === 0) return;

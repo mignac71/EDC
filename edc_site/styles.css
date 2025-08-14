@@ -309,6 +309,7 @@ footer a {
 
 #map {
   height: 600px;
+  width: 100%;
 }
 
 .map-section {

@@ -26,7 +26,11 @@
     </div>
   </header>
 
-  <div id="map"></div>
+  <main class="map-section">
+    <h1>European Dealers of Audi and Volkswagen Brand</h1>
+    <p class="map-instruction">Move cursor of your mouse over country main city</p>
+    <div id="map"></div>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -54,7 +58,7 @@
           const info = dealers[iso];
           if (info) {
             const content = `<strong>${info.country}</strong><br>Audi: ${info.audi}<br>VW: ${info.vw}`;
-            layer.bindPopup(content);
+            layer.bindPopup(content, { className: 'dealer-popup', maxWidth: 400 });
             layer.on('mouseover', function() { this.openPopup(); });
             layer.on('mouseout', function() { this.closePopup(); });
           }

@@ -136,5 +136,16 @@
       "properties": {"country": "Sweden", "iso_a2": "SE"},
       "geometry": {"type": "Point", "coordinates": [18.0686, 59.3293]}
     }
+    ,
+    {
+      "type": "Feature",
+      "properties": {"country": "Norway", "iso_a2": "NO"},
+      "geometry": {"type": "Point", "coordinates": [10.7522, 59.9139]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"country": "Switzerland", "iso_a2": "CH"},
+      "geometry": {"type": "Point", "coordinates": [7.4474, 46.9480]}
+    }
   ]
 }

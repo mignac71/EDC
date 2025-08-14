@@ -161,4 +161,17 @@
     "vw": 91,
     "vw_commercial": 91
   }
+  ,
+  "NO": {
+    "country": "Norway",
+    "audi": 0,
+    "vw": 0,
+    "vw_commercial": 0
+  },
+  "CH": {
+    "country": "Switzerland",
+    "audi": 0,
+    "vw": 0,
+    "vw_commercial": 0
+  }
 }

@@ -39,6 +39,16 @@ body {
 
 .logo img {
   height: 50px;
+  max-width: 100%;
+  width: auto;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
 }
 
 .navbar nav ul {
@@ -263,7 +273,10 @@ body {
 }
 
 .partners-grid img {
-  height: 80px;
+  height: auto;
+  max-height: 80px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
   filter: grayscale(100%);
   transition: filter 0.3s ease;
@@ -332,4 +345,41 @@ footer a {
 .dealer-popup .leaflet-popup-content-wrapper {
   font-size: 1.2rem;
   padding: 15px;
+}
+
+@media (max-width: 768px) {
+  .navbar nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar nav.open {
+    display: block;
+  }
+
+  .navbar nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .partners-grid {
+    gap: 20px;
+  }
+
+  .partners-grid img {
+    flex: 1 1 calc(50% - 20px);
+    max-width: calc(50% - 20px);
+    width: calc(50% - 20px);
+  }
 }

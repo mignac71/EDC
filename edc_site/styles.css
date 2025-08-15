@@ -38,7 +38,8 @@ body {
 }
 
 .logo img {
-  height: 50px;
+  max-height: 50px;
+  height: auto;
   max-width: 100%;
   width: auto;
 }
@@ -348,6 +349,10 @@ footer a {
 }
 
 @media (max-width: 768px) {
+  .nav-container {
+    justify-content: flex-start;
+  }
+
   .navbar nav {
     display: none;
     position: absolute;
@@ -371,6 +376,7 @@ footer a {
 
   .nav-toggle {
     display: block;
+    margin-left: 10px;
   }
 
   .partners-grid {

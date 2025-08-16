@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dealer Map - European Dealer Council</title>
+    <title data-i18n="title.map">Dealer Map - European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -16,20 +16,35 @@
       <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
       <nav>
         <ul>
-          <li><a href="index.html#home">Home</a></li>
-          <li><a href="index.html#mission">Mission</a></li>
-          <li><a href="index.html#presidium">Presidium</a></li>
-          <li><a href="index.html#news">News</a></li>
-          <li><a href="map.html">Map</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
+            <li><a href="index.html#home" data-i18n="nav.home">Home</a></li>
+            <li><a href="index.html#mission" data-i18n="nav.mission">Mission</a></li>
+            <li><a href="index.html#presidium" data-i18n="nav.presidium">Presidium</a></li>
+            <li><a href="index.html#news" data-i18n="nav.news">News</a></li>
+            <li><a href="map.html" data-i18n="nav.map">Map</a></li>
+            <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+          <li class="language-selector">
+            <select id="language-select" aria-label="Select language">
+              <option value="en">🇬🇧 English</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="it">🇮🇹 Italiano</option>
+              <option value="pl">🇵🇱 Polski</option>
+              <option value="nl">🇳🇱 Nederlands</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="pt">🇵🇹 Português</option>
+              <option value="sv">🇸🇪 Svenska</option>
+              <option value="fi">🇫🇮 Suomi</option>
+              <option value="no">🇳🇴 Norsk</option>
+            </select>
+          </li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main class="map-section">
-    <h1>European Dealers of Audi and Volkswagen Brand</h1>
-    <p class="map-instruction">Move cursor of your mouse over country main city</p>
+      <h1 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h1>
+      <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
     <div id="map"></div>
   </main>
 
@@ -67,7 +82,8 @@
       }).addTo(map);
     });
   </script>
+  <script src="translations.js"></script>
   <script src="navbar.js"></script>
-</body>
-</html>
+  </body>
+  </html>
 

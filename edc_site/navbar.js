@@ -6,4 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
       nav.classList.toggle('open');
     });
   }
+
+  const langSelect = document.getElementById('language-select');
+  if (langSelect) {
+    const params = new URLSearchParams(window.location.search);
+    const currentLang = params.get('lang') || 'en';
+    langSelect.value = currentLang;
+    document.documentElement.lang = currentLang;
+
+    langSelect.addEventListener('change', (e) => {
+      const lang = e.target.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', lang);
+      window.location.href = url.toString();
+    });
+  }
 });

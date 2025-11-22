@@ -13,6 +13,26 @@ body {
   padding-top: 80px; /* space for fixed navbar */
 }
 
+main {
+  display: block;
+}
+
+.content-page {
+  padding: 40px 0 80px;
+}
+
+.content-page h1 {
+  color: #003366;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.content-page p {
+  margin-bottom: 16px;
+  font-size: 1rem;
+  color: #444;
+}
+
 .container {
   width: 90%;
   max-width: 1200px;
@@ -349,6 +369,13 @@ footer a {
   font-size: 1rem;
   color: #555;
   margin-bottom: 1rem;
+}
+
+.map-status {
+  font-size: 0.95rem;
+  color: #c0392b;
+  min-height: 1.2em;
+  margin-bottom: 0.75rem;
 }
 
 .dealer-popup .leaflet-popup-content-wrapper {

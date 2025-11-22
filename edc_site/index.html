@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title.main">European Dealer Council</title>
+  <meta name="description" content="European Dealer Council – connecting Volkswagen and Audi dealers across Europe with news, leadership, and dealer resources.">
+  <title data-i18n="title.main">European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -15,14 +16,14 @@
         <!-- Use a local copy of the EDC logo instead of hotlinking to the old site. -->
         <img src="images/edc_logo.jpeg" alt="European Dealer Council logo">
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav>
         <ul>
             <li><a href="#home" data-i18n="nav.home">Home</a></li>
             <li><a href="#mission" data-i18n="nav.mission">Mission</a></li>
             <li><a href="#presidium" data-i18n="nav.presidium">Presidium</a></li>
             <li><a href="#news" data-i18n="nav.news">News</a></li>
-            <li><a href="map.html" data-i18n="nav.map">Map</a></li>
+            <li><a href="#map-section" data-i18n="nav.map">Map</a></li>
             <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
           <li class="language-selector">
             <select id="language-select" aria-label="Select language">
@@ -165,6 +166,7 @@
   <section class="map-section" id="map-section">
       <h2 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h2>
       <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
+      <p id="map-status" class="map-status" aria-live="polite"></p>
     <div id="map"></div>
   </section>
 
@@ -195,39 +197,7 @@
   </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  const map = L.map('map').setView([54, 15], 4);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-
-  Promise.all([
-    fetch('json/europe.geojson').then(r => r.json()),
-    fetch('json/dealers.json').then(r => r.json())
-  ]).then(([geoData, dealers]) => {
-    L.geoJSON(geoData, {
-      pointToLayer: function(feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 5,
-          color: '#007BFF',
-          fillColor: '#007BFF',
-          fillOpacity: 0.8
-        });
-      },
-      onEachFeature: function(feature, layer) {
-        const iso = feature.properties.iso_a2;
-        const info = dealers[iso];
-        if (info) {
-          const content = `<strong>${info.country}</strong><br>Audi: ${info.audi}<br>VW: ${info.vw}`;
-          layer.bindPopup(content, { className: 'dealer-popup', maxWidth: 400 });
-          layer.on('mouseover', function() { this.openPopup(); });
-          layer.on('mouseout', function() { this.closePopup(); });
-        }
-      }
-    }).addTo(map);
-  });
-</script>
+<script src="map.js"></script>
   <script src="hero-banner.js"></script>
   <script src="slideshow.js"></script>
   <script src="translations.js"></script>

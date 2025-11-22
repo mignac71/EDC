@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title.map">Dealer Map - European Dealer Council</title>
+  <meta name="description" content="Dealer map of the European Dealer Council connecting Volkswagen and Audi partners across Europe.">
+  <title data-i18n="title.map">Dealer Map - European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -13,7 +14,7 @@
       <a href="index.html#home" class="logo">
         <img src="images/edc_logo.jpeg" alt="European Dealer Council logo">
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav>
         <ul>
             <li><a href="index.html#home" data-i18n="nav.home">Home</a></li>
@@ -45,43 +46,12 @@
   <main class="map-section">
       <h1 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h1>
       <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
+      <p id="map-status" class="map-status" aria-live="polite"></p>
     <div id="map"></div>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const map = L.map('map').setView([54, 15], 4);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    Promise.all([
-      fetch('json/europe.geojson').then(r => r.json()),
-      fetch('json/dealers.json').then(r => r.json())
-    ]).then(([geoData, dealers]) => {
-      L.geoJSON(geoData, {
-        pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            color: '#007BFF',
-            fillColor: '#007BFF',
-            fillOpacity: 0.8
-          });
-        },
-        onEachFeature: function(feature, layer) {
-          const iso = feature.properties.iso_a2;
-          const info = dealers[iso];
-          if (info) {
-            const content = `<strong>${info.country}</strong><br>Audi: ${info.audi}<br>VW: ${info.vw}`;
-            layer.bindPopup(content, { className: 'dealer-popup', maxWidth: 400 });
-            layer.on('mouseover', function() { this.openPopup(); });
-            layer.on('mouseout', function() { this.closePopup(); });
-          }
-        }
-      }).addTo(map);
-    });
-  </script>
+  <script src="map.js"></script>
   <script src="translations.js"></script>
   <script src="navbar.js"></script>
   </body>

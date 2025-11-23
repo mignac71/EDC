@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel CMS</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f5f5f5; }
+    .cms-container { max-width: 960px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .cms-container h1 { margin-top: 0; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+    input[type="text"], input[type="password"], input[type="date"], textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+    textarea { min-height: 100px; }
+    .form-actions { display: flex; gap: 1rem; align-items: center; }
+    .muted { color: #555; font-size: 0.9rem; }
+    .card { border: 1px solid #e0e0e0; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; background: #fafafa; }
+    .status { margin-top: 0.5rem; font-weight: 600; }
+    .status.success { color: #0a7a25; }
+    .status.error { color: #b00020; }
+    .news-preview { list-style: disc; padding-left: 1.25rem; }
+  </style>
+</head>
+<body>
+  <div class="cms-container">
+    <h1>Panel CMS</h1>
+    <p>Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.</p>
+
+    <div id="login-panel">
+      <div class="form-group">
+        <label for="password">Hasło administratora</label>
+        <input type="password" id="password" required>
+      </div>
+      <div class="form-actions">
+        <button id="login-button">Zaloguj</button>
+        <a href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted">Zapomniałem hasła</a>
+      </div>
+    </div>
+
+    <div id="cms-panel" style="display: none;">
+      <div class="card">
+        <h2>Nagłówek strony</h2>
+        <form id="hero-form">
+          <div class="form-group">
+            <label for="hero-title">Tytuł</label>
+            <input type="text" id="hero-title" name="heroTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="hero-subtitle">Podtytuł</label>
+            <input type="text" id="hero-subtitle" name="heroSubtitle" required>
+          </div>
+          <input type="hidden" name="action" value="updateHero">
+          <input type="hidden" name="password">
+          <div class="form-actions">
+            <button type="submit">Zapisz nagłówek</button>
+            <span class="status" id="hero-status"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Dodaj aktualność</h2>
+        <form id="news-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="news-title">Tytuł</label>
+            <input type="text" id="news-title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="news-date">Data</label>
+            <input type="date" id="news-date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="news-summary">Opis (opcjonalny)</label>
+            <textarea id="news-summary" name="summary" placeholder="Krótki opis wydarzenia"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="news-alt">Tekst alternatywny dla grafiki</label>
+            <input type="text" id="news-alt" name="alt" required>
+          </div>
+          <div class="form-group">
+            <label for="news-image">Główna grafika</label>
+            <input type="file" id="news-image" name="mainImage" accept="image/*" required>
+            <p class="muted">Plik zostanie zapisany w katalogu images/uploads.</p>
+          </div>
+          <div class="form-group">
+            <label for="news-gallery">Dodatkowe grafiki (opcjonalnie, wiele plików)</label>
+            <input type="file" id="news-gallery" name="gallery[]" accept="image/*" multiple>
+          </div>
+          <input type="hidden" name="action" value="addNews">
+          <input type="hidden" name="password">
+          <div class="form-actions">
+            <button type="submit">Dodaj aktualność</button>
+            <span class="status" id="news-status"></span>
+          </div>
+        </form>
+        <div class="form-group">
+          <label>Obecne aktualności</label>
+          <ul class="news-preview" id="news-preview"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD_HASH = '37ba3d76293846ac3d3314714ef3a4438450b9c5ff48ab0c0252af9e2efe5285'; // sha256('edc_admin')
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function setStatus(elementId, message, isSuccess = true) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.textContent = message;
+      el.classList.toggle('success', isSuccess);
+      el.classList.toggle('error', !isSuccess);
+    }
+
+    async function fetchContent() {
+      try {
+        const response = await fetch('json/content.json', { cache: 'no-cache' });
+        if (!response.ok) return;
+        const data = await response.json();
+        document.getElementById('hero-title').value = data.hero?.title || '';
+        document.getElementById('hero-subtitle').value = data.hero?.subtitle || '';
+        const preview = document.getElementById('news-preview');
+        preview.innerHTML = '';
+        (data.news || []).forEach(item => {
+          const li = document.createElement('li');
+          const date = new Date(item.date).toLocaleDateString();
+          li.textContent = `${date} – ${item.title}`;
+          preview.appendChild(li);
+        });
+      } catch (err) {
+        setStatus('hero-status', 'Nie udało się pobrać danych', false);
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      const hash = await sha256(password);
+      if (hash !== PASSWORD_HASH) {
+        setStatus('hero-status', 'Błędne hasło', false);
+        return;
+      }
+      document.querySelectorAll('input[name="password"]').forEach(input => {
+        input.value = hash;
+      });
+      document.getElementById('login-panel').style.display = 'none';
+      document.getElementById('cms-panel').style.display = 'block';
+      fetchContent();
+    }
+
+    async function submitForm(formId, statusId) {
+      const form = document.getElementById(formId);
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        try {
+          const response = await fetch('cms-save.php', {
+            method: 'POST',
+            body: formData
+          });
+          const text = await response.text();
+          const ok = response.ok;
+          setStatus(statusId, text, ok);
+          if (ok && formId === 'news-form') {
+            form.reset();
+            document.querySelectorAll('input[name="password"]').forEach(input => {
+              input.value = PASSWORD_HASH;
+            });
+            fetchContent();
+          }
+        } catch (err) {
+          setStatus(statusId, 'Nie udało się zapisać zmian', false);
+        }
+      });
+    }
+
+    document.getElementById('login-button').addEventListener('click', handleLogin);
+    submitForm('hero-form', 'hero-status');
+    submitForm('news-form', 'news-status');
+  </script>
+</body>
+</html>

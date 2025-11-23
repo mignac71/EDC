@@ -130,34 +130,8 @@
   <section class="news" id="news">
     <div class="container">
         <h2 data-i18n="news.title">Latest News</h2>
-      <div class="news-grid">
-        <article class="news-item">
-          <div class="slideshow">
-            <img src="images/edc70/L1331163.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331191.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331292.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331305.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331545.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331561.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331797.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331819.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-            <img src="images/edc70/L1331877.jpg" alt="70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg">
-          </div>
-            <h3 data-i18n="news.article1.title">70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg</h3>
-            <time datetime="2025-05-01" data-i18n="news.article1.date">May 2025</time>
-        </article>
-        <article class="news-item">
-          <!-- Local copy of the conference image -->
-          <img src="images/ed_berlin_vorstand.jpeg" alt="69th EDC Conference in Berlin on December 11 and 12, 2024">
-            <h3 data-i18n="news.article2.title">69th EDC Conference in Berlin on December 11 and 12, 2024</h3>
-            <time datetime="2024-12-13" data-i18n="news.article2.date">13 December 2024</time>
-        </article>
-        <article class="news-item">
-          <!-- Local copy of the scaled conference image -->
-          <img src="images/edc_berlin_scaled.jpeg" alt="69th EDC Conference in Berlin">
-            <h3 data-i18n="news.article3.title">69th EDC Conference in Berlin</h3>
-            <time datetime="2024-12-11" data-i18n="news.article3.date">11 December 2024</time>
-        </article>
+      <div class="news-grid" id="news-grid">
+        <p class="news-placeholder">Loading the latest updates...</p>
       </div>
     </div>
   </section>
@@ -192,11 +166,13 @@
           <li><a href="dataprotection.html" data-i18n="footer.dataProtection">Data protection</a></li>
           <li><a href="terms.html" data-i18n="footer.terms">Terms of use</a></li>
           <li><a href="imprint.html" data-i18n="footer.imprint">Imprint</a></li>
+          <li><a href="cms.html">CMS</a></li>
         </ul>
     </div>
   </footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="cms-content.js"></script>
 <script src="map.js"></script>
   <script src="hero-banner.js"></script>
   <script src="slideshow.js"></script>

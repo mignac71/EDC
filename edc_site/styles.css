@@ -243,6 +243,11 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
+.news-placeholder {
+  text-align: center;
+  color: #555;
+}
+
 .news-item {
   background: #ffffff;
   border-radius: 8px;
@@ -285,6 +290,12 @@ main {
   padding: 0 20px 15px;
   color: #777;
   font-size: 0.9rem;
+}
+
+.news-item p {
+  padding: 0 20px 20px;
+  color: #333;
+  line-height: 1.5;
 }
 
 /* Partners */

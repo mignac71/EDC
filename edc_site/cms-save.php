@@ -1,5 +1,4 @@
 <?php
-const PASSWORD_HASH = '37ba3d76293846ac3d3314714ef3a4438450b9c5ff48ab0c0252af9e2efe5285';
 const CONTENT_PATH = __DIR__ . '/json/content.json';
 const UPLOAD_DIR = __DIR__ . '/images/uploads/';
 
@@ -14,7 +13,24 @@ function t(string $pl, string $en, string $lang): string {
     return $lang === 'en' ? $en : $pl;
 }
 
-if (!isset($_POST['password']) || $_POST['password'] !== PASSWORD_HASH) {
+function configuredPasswordHash(string $lang): string {
+    $hash = getenv('CMS_PASSWORD_HASH');
+    if ($hash) {
+        return $hash;
+    }
+
+    $plain = getenv('CMS_PASSWORD');
+    if ($plain) {
+        return hash('sha256', $plain);
+    }
+
+    http_response_code(500);
+    exit(t('Hasło CMS nie zostało skonfigurowane na serwerze.', 'CMS password is not configured on the server.', $lang));
+}
+
+$passwordHash = configuredPasswordHash($lang);
+
+if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (string)$_POST['password']))) {
     http_response_code(401);
     exit(t('Błędne hasło', 'Incorrect password', $lang));
 }
@@ -116,6 +132,11 @@ function storeImage(array $file, string $lang): ?string {
 }
 
 $action = $_POST['action'] ?? '';
+
+if ($action === 'validate') {
+    exit(t('Hasło poprawne.', 'Password accepted.', $lang));
+}
+
 $content = loadContent();
 
 if ($action === 'updateHero') {

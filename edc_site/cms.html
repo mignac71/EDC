@@ -115,8 +115,6 @@
   </div>
 
   <script>
-    const PASSWORD_HASH = '37ba3d76293846ac3d3314714ef3a4438450b9c5ff48ab0c0252af9e2efe5285'; // sha256('edc_admin')
-
     const translations = {
       pl: {
         title: 'Panel CMS',
@@ -173,11 +171,7 @@
     };
 
     let currentLang = 'pl';
-
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+    let currentPassword = '';
 
     function applyLanguage(lang) {
       const dict = translations[lang] || translations.pl;
@@ -237,18 +231,38 @@
 
     async function handleLogin(event) {
       event.preventDefault();
-      const password = document.getElementById('password').value;
-      const hash = await sha256(password);
-      if (hash !== PASSWORD_HASH) {
+      const password = document.getElementById('password').value.trim();
+      if (!password) {
         setStatus('hero-status', translations[currentLang].errors.wrongPassword, false);
         return;
       }
-      document.querySelectorAll('input[name="password"]').forEach(input => {
-        input.value = hash;
-      });
-      document.getElementById('login-panel').style.display = 'none';
-      document.getElementById('cms-panel').style.display = 'block';
-      fetchContent();
+
+      const formData = new FormData();
+      formData.append('password', password);
+      formData.append('lang', currentLang);
+      formData.append('action', 'validate');
+
+      try {
+        const response = await fetch('cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await response.text();
+        if (!response.ok) {
+          setStatus('hero-status', text || translations[currentLang].errors.wrongPassword, false);
+          return;
+        }
+
+        currentPassword = password;
+        document.querySelectorAll('input[name="password"]').forEach(input => {
+          input.value = currentPassword;
+        });
+        document.getElementById('login-panel').style.display = 'none';
+        document.getElementById('cms-panel').style.display = 'block';
+        fetchContent();
+      } catch (err) {
+        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
+      }
     }
 
     async function submitForm(formId, statusId) {
@@ -267,7 +281,7 @@
           if (ok && formId === 'news-form') {
             form.reset();
             document.querySelectorAll('input[name="password"]').forEach(input => {
-              input.value = PASSWORD_HASH;
+              input.value = currentPassword;
             });
             document.querySelectorAll('input[name="lang"]').forEach(input => input.value = currentLang);
             fetchContent();

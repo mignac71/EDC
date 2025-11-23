@@ -35,11 +35,6 @@ if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (st
     exit(t('Błędne hasło', 'Incorrect password', $lang));
 }
 
-if (!is_dir(UPLOAD_DIR) && !mkdir(UPLOAD_DIR, 0775, true)) {
-    http_response_code(500);
-    exit(t('Nie udało się przygotować katalogu na pliki.', 'Could not prepare upload directory.', $lang));
-}
-
 function loadContent(): array {
     if (!file_exists(CONTENT_PATH)) {
         return ['hero' => [], 'news' => []];
@@ -59,10 +54,23 @@ function saveContent(array $data): void {
     file_put_contents(CONTENT_PATH, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
 }
 
+function ensureUploadDirExists(string $lang): void {
+    if (is_dir(UPLOAD_DIR)) {
+        return;
+    }
+
+    if (!mkdir(UPLOAD_DIR, 0775, true) && !is_dir(UPLOAD_DIR)) {
+        http_response_code(500);
+        exit(t('Nie udało się przygotować katalogu na pliki.', 'Could not prepare upload directory.', $lang));
+    }
+}
+
 function storeImage(array $file, string $lang): ?string {
     if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
         return null;
     }
+
+    ensureUploadDirExists($lang);
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);

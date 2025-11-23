@@ -24,78 +24,90 @@
 </head>
 <body>
   <div class="cms-container">
-    <h1>Panel CMS</h1>
-    <p>Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.</p>
+    <div class="form-actions" style="justify-content: space-between; align-items: center;">
+      <div>
+        <h1 id="cms-title">Panel CMS</h1>
+        <p id="cms-intro">Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.</p>
+      </div>
+      <label class="muted" style="margin: 0;">Język:
+        <select id="language-select">
+          <option value="pl" selected>Polski</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+    </div>
 
     <div id="login-panel">
       <div class="form-group">
-        <label for="password">Hasło administratora</label>
+        <label for="password" data-i18n="label.password">Hasło administratora</label>
         <input type="password" id="password" required>
       </div>
       <div class="form-actions">
-        <button id="login-button">Zaloguj</button>
-        <a href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted">Zapomniałem hasła</a>
+        <button id="login-button" data-i18n="action.login">Zaloguj</button>
+        <a id="forgot-password" href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted" data-i18n="link.forgot">Zapomniałem hasła</a>
       </div>
     </div>
 
     <div id="cms-panel" style="display: none;">
       <div class="card">
-        <h2>Nagłówek strony</h2>
+        <h2 data-i18n="section.hero">Nagłówek strony</h2>
         <form id="hero-form">
           <div class="form-group">
-            <label for="hero-title">Tytuł</label>
+            <label for="hero-title" data-i18n="label.title">Tytuł</label>
             <input type="text" id="hero-title" name="heroTitle" required>
           </div>
           <div class="form-group">
-            <label for="hero-subtitle">Podtytuł</label>
+            <label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label>
             <input type="text" id="hero-subtitle" name="heroSubtitle" required>
           </div>
           <input type="hidden" name="action" value="updateHero">
           <input type="hidden" name="password">
+          <input type="hidden" name="lang" value="pl">
           <div class="form-actions">
-            <button type="submit">Zapisz nagłówek</button>
+            <button type="submit" data-i18n="action.saveHero">Zapisz nagłówek</button>
             <span class="status" id="hero-status"></span>
           </div>
         </form>
       </div>
 
       <div class="card">
-        <h2>Dodaj aktualność</h2>
+        <h2 data-i18n="section.news">Dodaj aktualność</h2>
         <form id="news-form" enctype="multipart/form-data">
           <div class="form-group">
-            <label for="news-title">Tytuł</label>
+            <label for="news-title" data-i18n="label.newsTitle">Tytuł</label>
             <input type="text" id="news-title" name="title" required>
           </div>
           <div class="form-group">
-            <label for="news-date">Data</label>
+            <label for="news-date" data-i18n="label.date">Data</label>
             <input type="date" id="news-date" name="date" required>
           </div>
           <div class="form-group">
-            <label for="news-summary">Opis (opcjonalny)</label>
+            <label for="news-summary" data-i18n="label.summary">Opis (opcjonalny)</label>
             <textarea id="news-summary" name="summary" placeholder="Krótki opis wydarzenia"></textarea>
           </div>
           <div class="form-group">
-            <label for="news-alt">Tekst alternatywny dla grafiki</label>
+            <label for="news-alt" data-i18n="label.alt">Tekst alternatywny dla grafiki</label>
             <input type="text" id="news-alt" name="alt" required>
           </div>
           <div class="form-group">
-            <label for="news-image">Główna grafika</label>
+            <label for="news-image" data-i18n="label.mainImage">Główna grafika</label>
             <input type="file" id="news-image" name="mainImage" accept="image/*" required>
-            <p class="muted">Plik zostanie zapisany w katalogu images/uploads.</p>
+            <p class="muted" id="upload-hint">Plik zostanie zapisany w katalogu images/uploads.</p>
           </div>
           <div class="form-group">
-            <label for="news-gallery">Dodatkowe grafiki (opcjonalnie, wiele plików)</label>
+            <label for="news-gallery" data-i18n="label.gallery">Dodatkowe grafiki (opcjonalnie, wiele plików)</label>
             <input type="file" id="news-gallery" name="gallery[]" accept="image/*" multiple>
           </div>
           <input type="hidden" name="action" value="addNews">
           <input type="hidden" name="password">
+          <input type="hidden" name="lang" value="pl">
           <div class="form-actions">
-            <button type="submit">Dodaj aktualność</button>
+            <button type="submit" data-i18n="action.addNews">Dodaj aktualność</button>
             <span class="status" id="news-status"></span>
           </div>
         </form>
         <div class="form-group">
-          <label>Obecne aktualności</label>
+          <label data-i18n="label.preview">Obecne aktualności</label>
           <ul class="news-preview" id="news-preview"></ul>
         </div>
       </div>
@@ -105,9 +117,94 @@
   <script>
     const PASSWORD_HASH = '37ba3d76293846ac3d3314714ef3a4438450b9c5ff48ab0c0252af9e2efe5285'; // sha256('edc_admin')
 
+    const translations = {
+      pl: {
+        title: 'Panel CMS',
+        intro: 'Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.',
+        passwordLabel: 'Hasło administratora',
+        login: 'Zaloguj',
+        forgot: 'Zapomniałem hasła',
+        heroSection: 'Nagłówek strony',
+        newsSection: 'Dodaj aktualność',
+        titleLabel: 'Tytuł',
+        subtitleLabel: 'Podtytuł',
+        newsTitle: 'Tytuł',
+        date: 'Data',
+        summary: 'Opis (opcjonalny)',
+        alt: 'Tekst alternatywny dla grafiki',
+        mainImage: 'Główna grafika',
+        uploadHint: 'Plik zostanie zapisany w katalogu images/uploads.',
+        gallery: 'Dodatkowe grafiki (opcjonalnie, wiele plików)',
+        preview: 'Obecne aktualności',
+        saveHero: 'Zapisz nagłówek',
+        addNews: 'Dodaj aktualność',
+        errors: {
+          wrongPassword: 'Błędne hasło',
+          fetchFailed: 'Nie udało się pobrać danych',
+          saveFailed: 'Nie udało się zapisać zmian'
+        }
+      },
+      en: {
+        title: 'CMS Panel',
+        intro: 'Sign in to update site content and upload new media.',
+        passwordLabel: 'Administrator password',
+        login: 'Log in',
+        forgot: 'I forgot my password',
+        heroSection: 'Hero content',
+        newsSection: 'Add news item',
+        titleLabel: 'Title',
+        subtitleLabel: 'Subtitle',
+        newsTitle: 'Title',
+        date: 'Date',
+        summary: 'Summary (optional)',
+        alt: 'Alternative text for image',
+        mainImage: 'Main image',
+        uploadHint: 'File will be saved to images/uploads.',
+        gallery: 'Additional images (optional, multiple files)',
+        preview: 'Current news items',
+        saveHero: 'Save hero content',
+        addNews: 'Add news item',
+        errors: {
+          wrongPassword: 'Incorrect password',
+          fetchFailed: 'Unable to load data',
+          saveFailed: 'Unable to save changes'
+        }
+      }
+    };
+
+    let currentLang = 'pl';
+
     async function sha256(str) {
       const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function applyLanguage(lang) {
+      const dict = translations[lang] || translations.pl;
+      document.documentElement.lang = lang;
+      document.title = dict.title;
+      document.getElementById('cms-title').textContent = dict.title;
+      document.getElementById('cms-intro').textContent = dict.intro;
+      document.querySelector('label[for="password"]').textContent = dict.passwordLabel;
+      document.getElementById('login-button').textContent = dict.login;
+      document.getElementById('forgot-password').textContent = dict.forgot;
+      document.querySelector('[data-i18n="section.hero"]').textContent = dict.heroSection;
+      document.querySelector('[data-i18n="section.news"]').textContent = dict.newsSection;
+      document.querySelector('[for="hero-title"]').textContent = dict.titleLabel;
+      document.querySelector('[for="hero-subtitle"]').textContent = dict.subtitleLabel;
+      document.querySelector('[for="news-title"]').textContent = dict.newsTitle;
+      document.querySelector('[for="news-date"]').textContent = dict.date;
+      document.querySelector('[for="news-summary"]').textContent = dict.summary;
+      document.querySelector('[for="news-alt"]').textContent = dict.alt;
+      document.querySelector('[for="news-image"]').textContent = dict.mainImage;
+      document.getElementById('upload-hint').textContent = dict.uploadHint;
+      document.querySelector('[for="news-gallery"]').textContent = dict.gallery;
+      document.querySelector('[data-i18n="label.preview"]').textContent = dict.preview;
+      document.querySelector('[data-i18n="action.saveHero"]').textContent = dict.saveHero;
+      document.querySelector('[data-i18n="action.addNews"]').textContent = dict.addNews;
+
+      document.querySelectorAll('input[name="lang"]').forEach(input => input.value = lang);
+      currentLang = lang;
     }
 
     function setStatus(elementId, message, isSuccess = true) {
@@ -134,7 +231,7 @@
           preview.appendChild(li);
         });
       } catch (err) {
-        setStatus('hero-status', 'Nie udało się pobrać danych', false);
+        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
       }
     }
 
@@ -143,7 +240,7 @@
       const password = document.getElementById('password').value;
       const hash = await sha256(password);
       if (hash !== PASSWORD_HASH) {
-        setStatus('hero-status', 'Błędne hasło', false);
+        setStatus('hero-status', translations[currentLang].errors.wrongPassword, false);
         return;
       }
       document.querySelectorAll('input[name="password"]').forEach(input => {
@@ -172,10 +269,11 @@
             document.querySelectorAll('input[name="password"]').forEach(input => {
               input.value = PASSWORD_HASH;
             });
+            document.querySelectorAll('input[name="lang"]').forEach(input => input.value = currentLang);
             fetchContent();
           }
         } catch (err) {
-          setStatus(statusId, 'Nie udało się zapisać zmian', false);
+          setStatus(statusId, translations[currentLang].errors.saveFailed, false);
         }
       });
     }
@@ -183,6 +281,12 @@
     document.getElementById('login-button').addEventListener('click', handleLogin);
     submitForm('hero-form', 'hero-status');
     submitForm('news-form', 'news-status');
+
+    document.getElementById('language-select').addEventListener('change', (event) => {
+      applyLanguage(event.target.value);
+    });
+
+    applyLanguage('pl');
   </script>
 </body>
 </html>

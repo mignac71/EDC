@@ -44,6 +44,7 @@
       </div>
       <div class="form-actions">
         <button id="login-button" data-i18n="action.login">Zaloguj</button>
+        <span class="status" id="login-status"></span>
         <a id="forgot-password" href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted" data-i18n="link.forgot">Zapomniałem hasła</a>
       </div>
     </div>
@@ -225,7 +226,7 @@
           preview.appendChild(li);
         });
       } catch (err) {
-        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
+        setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
       }
     }
 
@@ -233,7 +234,7 @@
       event.preventDefault();
       const password = document.getElementById('password').value.trim();
       if (!password) {
-        setStatus('hero-status', translations[currentLang].errors.wrongPassword, false);
+        setStatus('login-status', translations[currentLang].errors.wrongPassword, false);
         return;
       }
 
@@ -249,11 +250,12 @@
         });
         const text = await response.text();
         if (!response.ok) {
-          setStatus('hero-status', text || translations[currentLang].errors.wrongPassword, false);
+          setStatus('login-status', text || translations[currentLang].errors.wrongPassword, false);
           return;
         }
 
         currentPassword = password;
+        setStatus('login-status', text, true);
         document.querySelectorAll('input[name="password"]').forEach(input => {
           input.value = currentPassword;
         });
@@ -261,7 +263,7 @@
         document.getElementById('cms-panel').style.display = 'block';
         fetchContent();
       } catch (err) {
-        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
+        setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
       }
     }
 

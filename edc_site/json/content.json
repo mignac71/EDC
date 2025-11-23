@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "title": "We connect European people and business",
+    "subtitle": "We bring European professionals together"
+  },
+  "news": [
+    {
+      "title": "70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg",
+      "date": "2025-05-01",
+      "image": "images/edc70/L1331163.jpg",
+      "gallery": [
+        "images/edc70/L1331163.jpg",
+        "images/edc70/L1331191.jpg",
+        "images/edc70/L1331292.jpg",
+        "images/edc70/L1331305.jpg",
+        "images/edc70/L1331545.jpg",
+        "images/edc70/L1331561.jpg",
+        "images/edc70/L1331797.jpg",
+        "images/edc70/L1331819.jpg",
+        "images/edc70/L1331877.jpg"
+      ],
+      "alt": "70th EUROPEAN DEALER COUNCIL Conference 2025 in Luxembourg",
+      "summary": "Highlights from the Luxembourg conference with rotating gallery imagery."
+    },
+    {
+      "title": "69th EDC Conference in Berlin on December 11 and 12, 2024",
+      "date": "2024-12-13",
+      "image": "images/ed_berlin_vorstand.jpeg",
+      "gallery": [],
+      "alt": "69th EDC Conference in Berlin on December 11 and 12, 2024",
+      "summary": "Delegates met in Berlin to discuss the future of the dealer network."
+    },
+    {
+      "title": "69th EDC Conference in Berlin",
+      "date": "2024-12-11",
+      "image": "images/edc_berlin_scaled.jpeg",
+      "gallery": [],
+      "alt": "69th EDC Conference in Berlin",
+      "summary": "Key outcomes from the Berlin meetings across the dealer community."
+    }
+  ]
+}

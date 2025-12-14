@@ -152,7 +152,7 @@
       div.innerHTML = `
           <img src="${m.image}" alt="${m.name}">
           <h3>${m.name}</h3>
-          <p class="role" data-i18n="role.${m.role}">${m.role}</p>
+          <p class="role">${m.role}</p>
           <p class="country">${m.country}</p>
         `;
       grid.appendChild(div);

@@ -6,9 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
     content="European Dealer Council – connecting Volkswagen and Audi dealers across Europe with news, leadership, and dealer resources.">
-  <title data-i18n="title.main">European Dealer Council</title>
+  <title>European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
@@ -22,27 +27,13 @@
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav>
         <ul>
-          <li><a href="#home" data-i18n="nav.home">Home</a></li>
-          <li><a href="#mission" data-i18n="nav.mission">Mission</a></li>
-          <li><a href="#presidium" data-i18n="nav.presidium">Presidium</a></li>
-          <li><a href="#news" data-i18n="nav.news">News</a></li>
-          <li><a href="#map-section" data-i18n="nav.map">Map</a></li>
-          <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
-          <li class="language-selector">
-            <select id="language-select" aria-label="Select language">
-              <option value="en">🇬🇧 English</option>
-              <option value="de">🇩🇪 Deutsch</option>
-              <option value="fr">🇫🇷 Français</option>
-              <option value="it">🇮🇹 Italiano</option>
-              <option value="pl">🇵🇱 Polski</option>
-              <option value="nl">🇳🇱 Nederlands</option>
-              <option value="es">🇪🇸 Español</option>
-              <option value="pt">🇵🇹 Português</option>
-              <option value="sv">🇸🇪 Svenska</option>
-              <option value="fi">🇫🇮 Suomi</option>
-              <option value="no">🇳🇴 Norsk</option>
-            </select>
-          </li>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#mission">Mission</a></li>
+          <li><a href="#presidium">Presidium</a></li>
+          <li><a href="#news">News</a></li>
+          <li><a href="#map-section">Map</a></li>
+          <li><a href="#contact">Contact</a></li>
+
         </ul>
       </nav>
     </div>
@@ -51,13 +42,13 @@
   <!-- Hero Section -->
   <section class="hero" id="home">
     <div class="hero-overlay">
-      <h1 data-i18n="hero.title">We connect European people and business</h1>
-      <p data-i18n="hero.subtitle">We bring European professionals together</p>
+      <h1>We connect European people and business</h1>
+      <p>We bring European professionals together</p>
     </div>
   </section>
 
   <!-- Mission and Overview -->
-  <section class="mission" id="mission">
+  <section class="mission reveal" id="mission">
     <div class="container">
       <h2 data-i18n="mission.title">Our Mission</h2>
       <p class="lead" data-i18n="mission.lead">We are the voice of the European VW/Audi dealers and service partners</p>
@@ -71,7 +62,7 @@
   </section>
 
   <!-- Presidium Section -->
-  <section class="presidium" id="presidium">
+  <section class="presidium reveal" id="presidium">
     <div class="container">
       <h2 data-i18n="presidium.title">Our Presidium</h2>
       <div class="team-grid">
@@ -110,7 +101,7 @@
   </section>
 
   <!-- News Section -->
-  <section class="news" id="news">
+  <section class="news reveal" id="news">
     <div class="container">
       <h2 data-i18n="news.title">Latest News</h2>
       <div class="news-grid" id="news-grid">
@@ -120,7 +111,7 @@
   </section>
 
   <!-- Map Section -->
-  <section class="map-section" id="map-section">
+  <section class="map-section reveal" id="map-section">
     <h2 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h2>
     <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
     <p id="map-status" class="map-status" aria-live="polite"></p>
@@ -128,7 +119,7 @@
   </section>
 
   <!-- Partners Section -->
-  <section class="partners">
+  <section class="partners reveal">
     <div class="container partners-grid">
       <!-- Local partner logos ensure fast loading and independence from the external site -->
       <img src="images/partner_wurth.png" alt="Würth">
@@ -160,8 +151,9 @@
   <script src="map.js"></script>
   <script src="hero-banner.js"></script>
   <script src="slideshow.js"></script>
-  <script src="translations.js"></script>
+
   <script src="navbar.js"></script>
+  <script src="animations.js"></script>
 </body>
 
 </html>

@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   Promise.all([
     fetch('json/europe.geojson').then((response) => response.json()),
-    fetch('json/dealers.json').then((response) => response.json())
+    fetch('api/cms-save.php').then(r => r.json())
+      .then(data => data.dealers || fetch('json/dealers.json').then(r => r.json()))
+      .catch(() => fetch('json/dealers.json').then(r => r.json()))
   ])
     .then(([geoData, dealers]) => {
       L.geoJSON(geoData, {

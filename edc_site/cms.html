@@ -192,6 +192,16 @@
         <span class="status" id="presidium-status"></span>
       </div>
 
+      <div class="card">
+        <h2>Dealerzy (Mapa)</h2>
+        <p style="font-size:0.8rem; color:#666;">Edytuj liczby dealerów dla poszczególnych krajów (kod ISO).</p>
+        <div id="dealers-list"
+          style="margin-bottom:10px; max-height:300px; overflow-y:auto; border:1px solid #ddd; padding:5px;"></div>
+        <button onclick="addDealerRow()">+ Dodaj Kraj</button>
+        <button onclick="saveDealers()">Zapisz Mapę</button>
+        <span class="status" id="dealers-status"></span>
+      </div>
+
 
       <div class="card">
         <h2 data-i18n="section.news">Dodaj aktualność</h2>
@@ -350,6 +360,7 @@
     let currentNewsData = [];
     let currentPresidium = [];
     let currentPartners = [];
+    let currentDealers = {};
     let editIndex = -1;
 
     function t(key) {
@@ -481,7 +492,11 @@
         currentPartners = data.partners || [];
         renderPartnersEditor();
 
-        // 5. News
+        // 5. Dealers
+        currentDealers = data.dealers || {};
+        renderDealersEditor();
+
+        // 6. News
         currentNewsData = data.news || [];
         // Sort by date desc
         currentNewsData.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -514,7 +529,7 @@
 
         const span = document.createElement('span');
         const date = new Date(item.date).toLocaleDateString();
-        const statusIcon = item.visible === false ? '👁️‍🗨️ (Ukryty)' : '👁️ (Widoczny)';
+        // const statusIcon = item.visible === false ? '👁️‍🗨️ (Ukryty)' : '👁️ (Widoczny)'; // Removed duplicate
         span.textContent = `${date} – ${item.title} ${item.visible === false ? '[UKRYTY]' : ''}`;
 
         const actionsDiv = document.createElement('div');
@@ -524,12 +539,12 @@
         const toggleBtn = document.createElement('button');
         toggleBtn.textContent = item.visible === false ? 'Pokaż' : 'Ukryj';
         toggleBtn.style.fontSize = '0.8rem';
-        toggleBtn.onclick = () => toggleVisibility(index);
+        toggleBtn.onclick = () => toggleVisibility(item.id);
 
         const editBtn = document.createElement('button');
         editBtn.textContent = dict.edit;
         editBtn.style.fontSize = '0.8rem';
-        editBtn.onclick = () => loadNewsForEdit(index);
+        editBtn.onclick = () => loadNewsForEdit(index); // Still index for memory load
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = dict.delete;
@@ -539,7 +554,7 @@
         deleteBtn.style.border = 'none';
         deleteBtn.style.padding = '2px 8px';
         deleteBtn.style.borderRadius = '3px';
-        deleteBtn.onclick = () => deleteNewsItem(index);
+        deleteBtn.onclick = () => deleteNewsItem(item.id);
 
         actionsDiv.appendChild(toggleBtn);
         actionsDiv.appendChild(editBtn);
@@ -551,17 +566,18 @@
       });
     }
 
-    async function toggleVisibility(index) {
+    async function toggleVisibility(id) {
+      if (!id) return;
       const formData = new FormData();
       formData.append('action', 'toggleVisibility');
-      formData.append('index', index);
+      formData.append('id', id);
       formData.append('password', currentPassword);
       formData.append('lang', currentLang);
 
       try {
         const response = await fetch('api/cms-save.php', { method: 'POST', body: formData });
         if (response.ok) {
-          fetchContent(); // Reload list
+          fetchContent();
         } else {
           alert(translations[currentLang].errors.saveFailed);
         }
@@ -582,15 +598,15 @@
       form.querySelector('[name="action"]').value = 'updateNews';
       form.querySelector('[name="mainImage"]').required = false; // Not required on edit
 
-      // Add hidden index field
-      let idxInput = form.querySelector('input[name="index"]');
-      if (!idxInput) {
-        idxInput = document.createElement('input');
-        idxInput.type = 'hidden';
-        idxInput.name = 'index';
-        form.appendChild(idxInput);
+      // Add hidden ID field
+      let idInput = form.querySelector('input[name="id"]');
+      if (!idInput) {
+        idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        form.appendChild(idInput);
       }
-      idxInput.value = index;
+      idInput.value = item.id || ''; // Fallback to empty if missing
 
       updateNewsFormTitle();
       updateNewsFormButtons();
@@ -606,19 +622,19 @@
       form.querySelector('[name="action"]').value = 'addNews';
       form.querySelector('[name="mainImage"]').required = true;
 
-      const idxInput = form.querySelector('input[name="index"]');
-      if (idxInput) idxInput.remove();
+      const idInput = form.querySelector('input[name="id"]');
+      if (idInput) idInput.remove();
 
       updateNewsFormTitle();
       updateNewsFormButtons();
     }
 
-    async function deleteNewsItem(index) {
+    async function deleteNewsItem(id) {
       if (!confirm(translations[currentLang].confirmDelete)) return;
 
       const formData = new FormData();
       formData.append('action', 'deleteNews');
-      formData.append('index', index);
+      formData.append('id', id);
       formData.append('password', currentPassword);
       formData.append('lang', currentLang);
 
@@ -773,6 +789,59 @@
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
         setStatus('presidium-status', await res.text(), res.ok);
       } catch (e) { setStatus('presidium-status', 'Error', false); }
+    };
+
+    // Dealers Editor
+    function renderDealersEditor() {
+      const div = document.getElementById('dealers-list');
+      div.innerHTML = '';
+      // Sort by country code
+      const keys = Object.keys(currentDealers).sort();
+      keys.forEach(key => {
+        const d = currentDealers[key];
+        const row = document.createElement('div');
+        row.style.marginBottom = '5px';
+        row.style.display = 'grid';
+        row.style.gridTemplateColumns = '50px 1fr 60px 60px 60px 50px';
+        row.style.gap = '5px';
+        row.style.alignItems = 'center';
+        row.innerHTML = `
+             <input type="text" value="${key}" disabled style="font-weight:bold; width:40px;">
+             <input type="text" value="${d.country}" onchange="updateDealer('${key}', 'country', this.value)" placeholder="Kraj">
+             <input type="number" value="${d.audi}" onchange="updateDealer('${key}', 'audi', this.value)" title="Audi">
+             <input type="number" value="${d.vw}" onchange="updateDealer('${key}', 'vw', this.value)" title="VW">
+             <input type="number" value="${d.vw_commercial}" onchange="updateDealer('${key}', 'vw_commercial', this.value)" title="VW Comm">
+             <button onclick="removeDealer('${key}')" style="color:red; font-size:0.8rem;">X</button>
+           `;
+        div.appendChild(row);
+      });
+    }
+    window.updateDealer = (key, field, val) => {
+      if (!currentDealers[key]) return;
+      if (field !== 'country') val = parseInt(val) || 0;
+      currentDealers[key][field] = val;
+    };
+    window.removeDealer = (key) => {
+      delete currentDealers[key];
+      renderDealersEditor();
+    };
+    window.addDealerRow = () => {
+      const code = prompt("Podaj kod kraju (np. PL, DE):");
+      if (code && !currentDealers[code]) {
+        currentDealers[code.toUpperCase()] = { country: '', audi: 0, vw: 0, vw_commercial: 0 };
+        renderDealersEditor();
+      }
+    };
+    window.saveDealers = async () => {
+      const formData = new FormData();
+      formData.append('action', 'updateDealers');
+      formData.append('dealers', JSON.stringify(currentDealers));
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+      try {
+        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        setStatus('dealers-status', await res.text(), res.ok);
+      } catch (e) { setStatus('dealers-status', 'Error', false); }
     };
 
     document.getElementById('language-select').addEventListener('change', (event) => {

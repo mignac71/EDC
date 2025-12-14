@@ -242,26 +242,31 @@ if ($action === 'addNews') {
         $newsItem['gallery'][] = $_POST['image_url'];
     }
 
+    // Generate ID
+    $newsItem['id'] = uniqid('news_');
+
     if (isset($_FILES['gallery']['name'])) {
-        foreach ($_FILES['gallery']['name'] as $i => $name) {
+        $count = count($_FILES['gallery']['name']);
+        for ($i = 0; $i < $count; $i++) {
             if ($_FILES['gallery']['error'][$i] === UPLOAD_ERR_OK) {
-                $file = [
-                    'name' => $name,
+                $f = [
+                    'name' => $_FILES['gallery']['name'][$i],
+                    'type' => $_FILES['gallery']['type'][$i],
                     'tmp_name' => $_FILES['gallery']['tmp_name'][$i],
-                    'error' => $_FILES['gallery']['error'][$i]
+                    'error' => $_FILES['gallery']['error'][$i],
+                    'size' => $_FILES['gallery']['size'][$i]
                 ];
-                $path = storeImage($file, $lang);
-                if ($path)
-                    $newsItem['gallery'][] = $path;
+                $p = storeImage($f, $lang);
+                if ($p)
+                    $newsItem['gallery'][] = $p;
             }
         }
     }
 
-    $newsItem['gallery'] = array_values(array_unique($newsItem['gallery']));
-
+    // Prepend to array (newest first logic, though frontend sorts)
     array_unshift($content['news'], $newsItem);
     saveContent($content);
-    exit(t('Dodano.', 'Added.', $lang));
+    exit(t('Dodano pomyślnie.', 'Added successfully.', $lang));
 }
 
 if ($action === 'updateSection') {
@@ -308,38 +313,90 @@ if ($action === 'updateContact') {
     exit(t('Zaktualizowano stopkę.', 'Footer updated.', $lang));
 }
 
+if ($action === 'updateDealers') {
+    $dealers = json_decode($_POST['dealers'] ?? '{}', true);
+    if (!is_array($dealers))
+        exit('Error: Invalid data');
+    $content['dealers'] = $dealers;
+    saveContent($content);
+    exit(t('Zaktualizowano dane mapy.', 'Map data updated.', $lang));
+}
+
 if ($action === 'deleteNews') {
-    $index = (int) ($_POST['index'] ?? -1);
-    if ($index < 0 || !isset($content['news'][$index])) {
-        http_response_code(400);
-        exit(t('Błąd: Nieprawidłowy indeks (odśwież stronę).', 'Error: Invalid index (refresh page).', $lang));
+    $id = $_POST['id'] ?? '';
+    if (!$id)
+        exit('Error: Missing ID');
+
+    $foundIndex = -1;
+    foreach ($content['news'] as $i => $item) {
+        if (isset($item['id']) && $item['id'] === $id) {
+            $foundIndex = $i;
+            break;
+        }
+    }
+
+    if ($foundIndex === -1) {
+        // Fallback to index if ID missing? No, safer to fail.
+        http_response_code(404);
+        exit(t('Nie znaleziono wpisu.', 'Item not found.', $lang));
     }
 
     // Optional: Auto-delete image from Blob if it's there? 
     // For now, keep it simple to avoid deleting shared images.
 
-    array_splice($content['news'], $index, 1);
+    array_splice($content['news'], $foundIndex, 1);
     saveContent($content);
     exit(t('Usunięto pomyślnie.', 'Deleted successfully.', $lang));
 }
 
 if ($action === 'updateNews') {
-    $index = (int) ($_POST['index'] ?? -1);
-    if (!isset($content['news'][$index]))
-        exit('Error');
+    $id = $_POST['id'] ?? '';
+    // If ID is missing, we might be editing a legacy item without ID or new item
+    // But `addNews` handles creation. `updateNews` implies existing.
 
-    $item = $content['news'][$index];
+    $foundIndex = -1;
+    foreach ($content['news'] as $i => $item) {
+        if (isset($item['id']) && $item['id'] === $id) {
+            $foundIndex = $i;
+            break;
+        }
+    }
+
+    if ($foundIndex === -1) {
+        // Fallback: look for index?
+        $index = (int) ($_POST['index'] ?? -1);
+        if ($index >= 0 && isset($content['news'][$index])) {
+            $foundIndex = $index;
+            // Assign ID if missing
+            if (!isset($content['news'][$index]['id'])) {
+                $content['news'][$index]['id'] = uniqid('news_');
+            }
+        } else {
+            exit('Error: Item not found');
+        }
+    }
+
+    $item = &$content['news'][$foundIndex]; // Reference logic
+
+    // Update fields...
     $item['title'] = $_POST['title'] ?? $item['title'];
     $item['date'] = $_POST['date'] ?? $item['date'];
     $item['summary'] = $_POST['summary'] ?? $item['summary'];
     $item['alt'] = $_POST['alt'] ?? $item['alt'];
+    if (!empty($_POST['image_url'])) {
+        $item['image'] = $_POST['image_url'];
+        // Add to gallery if not present?
+        if (!in_array($_POST['image_url'], $item['gallery'])) {
+            $item['gallery'][] = $_POST['image_url'];
+        }
+    }
 
-    if (isset($_FILES['mainImage']) && $_FILES['mainImage']['size'] > 0) {
+    // Image upload handling
+    if (isset($_FILES['mainImage'])) {
         $path = storeImage($_FILES['mainImage'], $lang);
         if ($path) {
             $item['image'] = $path;
-            if (!in_array($path, $item['gallery']))
-                array_unshift($item['gallery'], $path);
+            $item['gallery'][] = $path;
         }
     }
     if (isset($_FILES['gallery']['name'])) {
@@ -354,18 +411,26 @@ if ($action === 'updateNews') {
     }
     $item['gallery'] = array_values(array_unique($item['gallery']));
 
-    $content['news'][$index] = $item;
     saveContent($content);
     exit(t('Zaktualizowano.', 'Updated.', $lang));
 }
 
 if ($action === 'toggleVisibility') {
-    $index = (int) ($_POST['index'] ?? -1);
-    if (!isset($content['news'][$index]))
-        exit('Error: Invalid index');
+    $id = $_POST['id'] ?? '';
 
-    $currentState = $content['news'][$index]['visible'] ?? true;
-    $content['news'][$index]['visible'] = !$currentState;
+    $foundIndex = -1;
+    foreach ($content['news'] as $i => $item) {
+        if (isset($item['id']) && $item['id'] === $id) {
+            $foundIndex = $i;
+            break;
+        }
+    }
+
+    if ($foundIndex === -1)
+        exit('Error: Item not found');
+
+    $currentState = $content['news'][$foundIndex]['visible'] ?? true;
+    $content['news'][$foundIndex]['visible'] = !$currentState;
 
     saveContent($content);
     exit(t('Zmieniono widoczność.', 'Visibility toggled.', $lang));

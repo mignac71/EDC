@@ -91,8 +91,10 @@
       if (!response.ok) return;
       const data = await response.json();
       applyHeroCopy(data.hero);
-      if (data.mission) applyMissionCopy(data.mission);
-      if (data.mission) applyMissionCopy(data.mission);
+      if (data.mission) {
+        applyMissionCopy(data.mission);
+        if (data.mission.cards) applyMissionCards(data.mission.cards);
+      }
       // Pass the whole data object to specific render functions
       if (Array.isArray(data.presidium)) renderPresidium(data.presidium);
       if (Array.isArray(data.partners)) renderPartners(data.partners);
@@ -109,13 +111,31 @@
     const leadEl = document.querySelector('.mission .lead');
     if (titleEl && mission.title) {
       titleEl.textContent = mission.title;
-      // Also update i18n text content to avoid overwrite race conditions if any
       titleEl.removeAttribute('data-i18n');
     }
     if (leadEl && mission.lead) {
       leadEl.textContent = mission.lead;
       leadEl.removeAttribute('data-i18n');
     }
+  }
+
+  function applyMissionCards(cards) {
+    if (!cards) return;
+    const keys = ['founding', 'members', 'organization', 'body', 'community', 'tasks'];
+    keys.forEach(key => {
+      if (!cards[key]) return;
+      const titleEl = document.querySelector(`[data-i18n="mission.card.${key}.title"]`);
+      const textEl = document.querySelector(`[data-i18n="mission.card.${key}.text"]`);
+
+      if (titleEl && cards[key].title) {
+        titleEl.textContent = cards[key].title;
+        titleEl.removeAttribute('data-i18n');
+      }
+      if (textEl && cards[key].text) {
+        textEl.textContent = cards[key].text;
+        textEl.removeAttribute('data-i18n');
+      }
+    });
   }
 
   function renderPresidium(members) {

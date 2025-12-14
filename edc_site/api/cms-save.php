@@ -122,25 +122,35 @@ function t(string $pl, string $en, string $lang): string
     return $lang === 'en' ? $en : $pl;
 }
 // Auth
-$hash = getenv('CMS_PASSWORD_HASH');
-$plain = getenv('CMS_PASSWORD');
-$passwordHash = $hash ? $hash : ($plain ? hash('sha256', $plain) : hash('sha256', DEFAULT_PASSWORD));
+// Auth Logic
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
+$isAuthenticated = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $content = loadContent();
-    header('Content-Type: application/json');
-    echo json_encode($content);
-    exit;
+if ($username) {
+    // DB Auth
+    $pdo = getPdo();
+    if ($pdo) {
+        $stmt = $pdo->prepare("SELECT password_hash FROM cms_users WHERE username = :u");
+        $stmt->execute([':u' => $username]);
+        $hash = $stmt->fetchColumn();
+        if ($hash && password_verify($password, $hash)) {
+            $isAuthenticated = true;
+        }
+    }
+} else {
+    // Legacy Env Auth
+    $envHash = getenv('CMS_PASSWORD_HASH');
+    $envPlain = getenv('CMS_PASSWORD');
+    $masterHash = $envHash ? $envHash : ($envPlain ? hash('sha256', $envPlain) : hash('sha256', DEFAULT_PASSWORD));
+    if (hash_equals($masterHash, hash('sha256', (string) $password))) {
+        $isAuthenticated = true;
+    }
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    exit('Method not allowed');
-}
-
-if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (string) $_POST['password']))) {
+if (!$isAuthenticated) {
     http_response_code(401);
-    exit(t('Błędne hasło', 'Incorrect password', $lang));
+    exit(t('Błędne hasło lub użytkownik.', 'Incorrect username or password.', $lang));
 }
 
 
@@ -276,9 +286,15 @@ if ($action === 'updateSection') {
 
     $data = [];
     foreach ($_POST as $k => $v) {
-        if (!in_array($k, ['action', 'password', 'lang', 'section']))
+        if (!in_array($k, ['action', 'username', 'password', 'lang', 'section']))
             $data[$k] = trim($v);
     }
+
+    // Handle JSON fields (e.g. mission cards)
+    if (isset($_POST['cards'])) {
+        $data['cards'] = json_decode($_POST['cards'], true);
+    }
+
     $content[$section] = $data;
     saveContent($content);
     exit(t('Zaktualizowano.', 'Updated.', $lang));

@@ -7,265 +7,374 @@
   <title>Panel CMS</title>
   <link rel="stylesheet" href="styles.css">
   <style>
+    :root {
+      --primary: #0040C5;
+      /* EDC Blue */
+      --danger: #b00020;
+      --bg: #f0f2f5;
+      --card-bg: #fff;
+    }
+
     body {
-      background: #f5f5f5;
+      background: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      color: #333;
     }
 
     .cms-container {
-      max-width: 960px;
+      max-width: 1400px;
       margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-panel {
+      max-width: 400px;
+      margin: 10vh auto;
       background: #fff;
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .cms-container h1 {
-      margin-top: 0;
+    /* Layout */
+    .cms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 1.5rem;
+      align-items: start;
     }
 
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* Cards as Details */
+    details.card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 0;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
+
+    details.card>summary {
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      background: #fdfdfd;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    details.card>summary::after {
+      content: "▼";
+      font-size: 0.8em;
+    }
+
+    details.card[open]>summary {
+      border-bottom: 1px solid #eee;
+    }
+
+    details.card[open]>summary::after {
+      content: "▲";
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    /* Forms */
     .form-group {
       margin-bottom: 1rem;
     }
 
     label {
       display: block;
-      font-weight: 600;
+      font-weight: 500;
       margin-bottom: 0.25rem;
+      color: #444;
     }
 
     input[type="text"],
     input[type="password"],
+    input[type="number"],
     input[type="date"],
+    select,
     textarea {
       width: 100%;
-      padding: 0.5rem;
+      padding: 0.6rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+      /* Fix padding issues */
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 80px;
+      resize: vertical;
     }
 
-    .form-actions {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
+    /* Buttons */
+    button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 4px;
+      background: #e0e0e0;
+      cursor: pointer;
+      font-weight: 500;
     }
 
-    .muted {
-      color: #555;
-      font-size: 0.9rem;
+    button[type="submit"] {
+      background: var(--primary);
+      color: #fff;
     }
 
-    .card {
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      background: #fafafa;
+    button:hover {
+      opacity: 0.9;
     }
 
     .status {
-      margin-top: 0.5rem;
       font-weight: 600;
+      margin-left: 10px;
+      font-size: 0.9rem;
     }
 
     .status.success {
-      color: #0a7a25;
+      color: green;
     }
 
     .status.error {
-      color: #b00020;
-    }
-
-    .news-preview {
-      list-style: disc;
-      padding-left: 1.25rem;
+      color: red;
     }
   </style>
 </head>
 
 <body>
   <div class="cms-container">
-    <div class="form-actions" style="justify-content: space-between; align-items: center;">
+    <header>
       <div>
-        <h1 id="cms-title">Panel CMS</h1>
-        <p id="cms-intro">Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.</p>
+        <h1 id="cms-title" style="margin:0; font-size:1.5rem;">Panel CMS</h1>
+        <p id="cms-intro" style="margin:0; color:#666;">Zarządzanie treścią EDC.</p>
       </div>
-      <label class="muted" style="margin: 0;">Język:
-        <select id="language-select">
+      <div>
+        <label class="muted" style="margin: 0; display:inline-block; margin-right:10px;">Język:</label>
+        <select id="language-select" style="width:auto; display:inline-block;">
           <option value="pl" selected>Polski</option>
           <option value="en">English</option>
         </select>
-      </label>
-    </div>
+      </div>
+    </header>
 
-    <div id="login-panel">
+    <!-- Login Panel -->
+    <div id="login-panel" class="login-panel">
+      <h2 style="margin-top:0;">Logowanie</h2>
       <div class="form-group">
-        <label for="password" data-i18n="label.password">Hasło administratora</label>
-        <input type="password" id="password" required>
+        <label for="username">Użytkownik</label>
+        <input type="text" id="username" placeholder="admin">
       </div>
-      <div class="form-actions">
-        <button id="login-button" data-i18n="action.login">Zaloguj</button>
+      <div class="form-group">
+        <label for="password">Hasło</label>
+        <input type="password" id="password" placeholder="Hasło">
+      </div>
+      <div class="form-group">
+        <button id="login-button">Zaloguj się</button>
         <span class="status" id="login-status"></span>
-        <a id="forgot-password" href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted"
-          data-i18n="link.forgot">Zapomniałem hasła</a>
       </div>
+      <p id="forgot-password" class="muted" style="text-align: center; margin-top: 1rem;">Zapomniałem hasła</p>
     </div>
 
+    <!-- Main CMS Panel -->
     <div id="cms-panel" style="display: none;">
-      <div class="card">
-        <h2 data-i18n="section.hero">Nagłówek strony</h2>
-        <form id="hero-form">
-          <div class="form-group">
-            <label for="hero-title" data-i18n="label.title">Tytuł</label>
-            <input type="text" id="hero-title" name="heroTitle" required>
+      <div class="cms-grid">
+        <details class="card" open>
+          <summary>
+            <h2 data-i18n="section.hero">Nagłówek strony</h2>
+          </summary>
+          <div class="card-content">
+            <form id="hero-form">
+              <div class="form-group"><label for="hero-title">Tytuł</label><input type="text" id="hero-title"
+                  name="heroTitle"></div>
+              <div class="form-group"><label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label><input
+                  type="text" id="hero-subtitle" name="heroSubtitle"></div>
+              <input type="hidden" name="action" value="updateHero">
+              <input type="hidden" name="password">
+              <input type="hidden" name="username">
+              <input type="hidden" name="lang" value="pl">
+              <div class="form-actions"><button type="submit" data-i18n="action.save">Zapisz</button><span
+                  class="status" id="hero-status"></span></div>
+            </form>
           </div>
-          <div class="form-group">
-            <label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label>
-            <input type="text" id="hero-subtitle" name="heroSubtitle" required>
-          </div>
-          <input type="hidden" name="action" value="updateHero">
-          <input type="hidden" name="password">
-          <input type="hidden" name="lang" value="pl">
-          <div class="form-actions">
-            <button type="submit" data-i18n="action.saveHero">Zapisz nagłówek</button>
-            <span class="status" id="hero-status"></span>
-          </div>
-        </form>
-      </div>
+        </details>
 
-      <div class="card">
-        <h2 data-i18n="section.mission">Misja</h2>
-        <form id="mission-form">
-          <div class="form-group">
-            <label for="mission-title" data-i18n="label.title">Tytuł</label>
-            <input type="text" id="mission-title" name="title" required>
-          </div>
-          <div class="form-group">
-            <label for="mission-lead" data-i18n="label.lead">Wprowadzenie</label>
-            <textarea id="mission-lead" name="lead" required></textarea>
-          </div>
-          <input type="hidden" name="action" value="updateSection">
-          <input type="hidden" name="section" value="mission">
-          <input type="hidden" name="password">
-          <input type="hidden" name="lang" value="pl">
-          <div class="form-actions">
-            <button type="submit" data-i18n="action.save">Zapisz</button>
-            <span class="status" id="mission-status"></span>
-          </div>
-        </form>
-      </div>
+        <details class="card">
+          <summary>
+            <h2 data-i18n="section.mission">Misja</h2>
+          </summary>
+          <div class="card-content">
+            <form id="mission-form">
+              <div class="form-group"><label for="mission-title">Tytuł sekcji</label><input type="text"
+                  id="mission-title" name="title"></div>
+              <div class="form-group"><label for="mission-lead" data-i18n="label.lead">Tekst
+                  wprowadzający</label><textarea id="mission-lead" name="lead"></textarea></div>
 
-      <div class="card">
-        <h2>Stopka / Kontakt</h2>
-        <form id="contact-form">
-          <div class="form-group"><label>Nazwa organizacji</label><input type="text" id="contact-name"
-              name="contactName"></div>
-          <div class="form-group"><label>Adres</label><input type="text" id="contact-address" name="contactAddress">
-          </div>
-          <div class="form-group"><label>Telefon</label><input type="text" id="contact-phone" name="contactPhone"></div>
-          <div class="form-group"><label>Email</label><input type="text" id="contact-email" name="contactEmail"></div>
-          <input type="hidden" name="action" value="updateContact">
-          <input type="hidden" name="password">
-          <input type="hidden" name="lang" value="pl">
-          <div class="form-actions"><button type="submit">Zapisz Kontakt</button><span class="status"
-              id="contact-status"></span></div>
-        </form>
-      </div>
+              <h3>Karty Misji</h3>
+              <div id="mission-cards-list" style="margin-bottom:10px;"></div>
+              <!-- Hidden input to store JSON of cards -->
+              <input type="hidden" id="mission-cards-json" name="cards">
 
-      <div class="card">
-        <h2>Partnerzy (Logo URL)</h2>
-        <div id="partners-list" style="margin-bottom:10px;"></div>
-        <button onclick="addPartnerRow()">+ Dodaj Partnera</button>
-        <button onclick="savePartners()">Zapisz Partnerów</button>
-        <span class="status" id="partners-status"></span>
-      </div>
+              <input type="hidden" name="action" value="updateSection">
+              <input type="hidden" name="section" value="mission">
+              <input type="hidden" name="password">
+              <input type="hidden" name="username">
+              <input type="hidden" name="lang" value="pl">
+              <div class="form-actions"><button type="submit" onclick="prepareMissionData()"
+                  data-i18n="action.save">Zapisz Misję</button><span class="status" id="mission-status"></span></div>
+            </form>
+          </div>
+        </details>
 
-      <div class="card">
-        <h2>Prezydium (Zarząd)</h2>
-        <div id="presidium-list" style="margin-bottom:10px;"></div>
-        <button onclick="addPresidiumRow()">+ Dodaj Osobę</button>
-        <button onclick="savePresidium()">Zapisz Prezydium</button>
-        <span class="status" id="presidium-status"></span>
-      </div>
+        <details class="card">
+          <summary>
+            <h2>Stopka / Kontakt</h2>
+          </summary>
+          <div class="card-content">
+            <form id="contact-form">
+              <div class="form-group"><label>Nazwa organizacji</label><input type="text" id="contact-name"
+                  name="contactName"></div>
+              <div class="form-group"><label>Adres</label><input type="text" id="contact-address" name="contactAddress">
+              </div>
+              <div class="form-group"><label>Telefon</label><input type="text" id="contact-phone" name="contactPhone">
+              </div>
+              <div class="form-group"><label>Email</label><input type="text" id="contact-email" name="contactEmail">
+              </div>
+              <input type="hidden" name="action" value="updateContact">
+              <input type="hidden" name="password">
+              <input type="hidden" name="username">
+              <input type="hidden" name="lang" value="pl">
+              <div class="form-actions"><button type="submit">Zapisz Kontakt</button><span class="status"
+                  id="contact-status"></span></div>
+            </form>
+          </div>
+        </details>
 
-      <div class="card">
-        <h2>Dealerzy (Mapa)</h2>
-        <p style="font-size:0.8rem; color:#666;">Edytuj liczby dealerów dla poszczególnych krajów (kod ISO).</p>
-        <div
-          style="display:grid; grid-template-columns: 50px 1fr 60px 60px 60px 50px; gap:5px; font-weight:bold; font-size:0.8rem; margin-bottom:5px;">
-          <span>Kod</span>
-          <span>Kraj</span>
-          <span title="Audi">Audi</span>
-          <span title="Volkswagen">VW</span>
-          <span title="VW Samochody Użytkowe">VWC</span>
-          <span>Usuń</span>
-        </div>
-        <div id="dealers-list"
-          style="margin-bottom:10px; max-height:300px; overflow-y:auto; border:1px solid #ddd; padding:5px;"></div>
-        <button onclick="addDealerRow()">+ Dodaj Kraj</button>
-        <button onclick="saveDealers()">Zapisz Mapę</button>
-        <span class="status" id="dealers-status"></span>
-      </div>
+        <details class="card">
+          <summary>
+            <h2>Partnerzy (Logo URL)</h2>
+          </summary>
+          <div class="card-content">
+            <div id="partners-list" style="margin-bottom:10px;"></div>
+            <button onclick="addPartnerRow()">+ Dodaj Partnera</button>
+            <button onclick="savePartners()">Zapisz Partnerów</button>
+            <span class="status" id="partners-status"></span>
+          </div>
+        </details>
+
+        <details class="card">
+          <summary>
+            <h2>Prezydium (Zarząd)</h2>
+          </summary>
+          <div class="card-content">
+            <div id="presidium-list" style="margin-bottom:10px;"></div>
+            <button onclick="addPresidiumRow()">+ Dodaj Osobę</button>
+            <button onclick="savePresidium()">Zapisz Prezydium</button>
+            <span class="status" id="presidium-status"></span>
+          </div>
+        </details>
+
+        <details class="card">
+          <summary>
+            <h2>Dealerzy (Mapa)</h2>
+          </summary>
+          <div class="card-content">
+            <p style="font-size:0.8rem; color:#666;">Edytuj liczby dealerów dla poszczególnych krajów (kod ISO).</p>
+            <div
+              style="display:grid; grid-template-columns: 50px 1fr 60px 60px 60px 50px; gap:5px; font-weight:bold; font-size:0.8rem; margin-bottom:5px;">
+              <span>Kod</span>
+              <span>Kraj</span>
+              <span title="Audi">Audi</span>
+              <span title="Volkswagen">VW</span>
+              <span title="VW Samochody Użytkowe">VWC</span>
+              <span>Usuń</span>
+            </div>
+            <div id="dealers-list"
+              style="margin-bottom:10px; max-height:300px; overflow-y:auto; border:1px solid #ddd; padding:5px;"></div>
+            <button onclick="addDealerRow()">+ Dodaj Kraj</button>
+            <button onclick="saveDealers()">Zapisz Mapę</button>
+            <span class="status" id="dealers-status"></span>
+          </div>
+        </details>
 
 
-      <div class="card">
-        <h2 data-i18n="section.news">Dodaj aktualność</h2>
-        <form id="news-form" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="news-title" data-i18n="label.newsTitle">Tytuł</label>
-            <input type="text" id="news-title" name="title" required>
-          </div>
-          <div class="form-group">
-            <label for="news-date" data-i18n="label.date">Data</label>
-            <input type="date" id="news-date" name="date" required>
-          </div>
-          <div class="form-group">
-            <label for="news-summary" data-i18n="label.summary">Opis (opcjonalny)</label>
-            <textarea id="news-summary" name="summary" placeholder="Krótki opis wydarzenia"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="news-alt" data-i18n="label.alt">Tekst alternatywny dla grafiki</label>
-            <input type="text" id="news-alt" name="alt" required>
-          </div>
-          <div class="form-group">
-            <label for="news-image" data-i18n="label.mainImage">Główna grafika</label>
-            <input type="file" id="news-image" name="mainImage" accept="image/*">
-            <p class="muted" style="margin: 5px 0 10px;">LUB podaj URL (np. z biblioteki):</p>
-            <input type="text" id="news-image-url" name="image_url" placeholder="https://...">
-            <p class="muted" id="upload-hint">Plik zostanie zapisany w katalogu images/uploads.</p>
-          </div>
-          <div class="form-group">
-            <label for="news-gallery" data-i18n="label.gallery">Dodatkowe grafiki (opcjonalnie, wiele plików)</label>
-            <input type="file" id="news-gallery" name="gallery[]" accept="image/*" multiple>
-          </div>
-          <input type="hidden" name="action" value="addNews">
-          <input type="hidden" name="password">
-          <input type="hidden" name="lang" value="pl">
-          <div class="form-actions">
-            <button type="submit" data-i18n="action.addNews">Dodaj aktualność</button>
-            <span class="status" id="news-status"></span>
-          </div>
-        </form>
-        <div class="form-group">
-          <label data-i18n="label.preview">Obecne aktualności</label>
-          <ul class="news-preview" id="news-preview"></ul>
-        </div>
-      </div>
+        <details class="card full-width" open>
+          <summary>
+            <h2 data-i18n="section.news">Zarządzanie Aktualnościami</h2>
+          </summary>
+          <div class="card-content">
+            <form id="news-form" enctype="multipart/form-data">
+              <h3>Dodaj / Edytuj</h3>
+              <div class="form-group"><label for="news-title">Tytuł</label><input type="text" id="news-title"
+                  name="title" required></div>
+              <div class="form-group"><label for="news-date">Data</label><input type="date" id="news-date" name="date"
+                  required></div>
+              <div class="form-group"><label for="news-summary">Opis</label><textarea id="news-summary"
+                  name="summary"></textarea></div>
+              <div class="form-group"><label for="news-alt">Tekst alt</label><input type="text" id="news-alt"
+                  name="alt"></div>
 
-      <div class="card">
-        <h2 onclick="toggleMediaLib()" style="cursor: pointer;">📂 Biblioteka Mediów (Kliknij aby rozwinąć)</h2>
-        <div id="media-library" style="display:none; margin-top: 1rem;">
-          <p class="muted">Kliknij na zdjęcie, aby skopiować jego URL lub użyć go w formularzu.</p>
-          <div id="media-grid"
-            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
-            <p>Ładowanie...</p>
+              <div class="form-group">
+                <label>Główna grafika</label>
+                <input type="file" id="news-image" name="mainImage" accept="image/*">
+                <p class="muted" style="margin:5px 0;">LUB URL (np. z biblioteki poniżej):</p>
+                <input type="text" id="news-image-url" name="image_url" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label for="news-gallery">Galeria (opcjonalnie)</label>
+                <input type="file" id="news-gallery" name="gallery[]" accept="image/*" multiple>
+              </div>
+
+              <input type="hidden" name="action" value="addNews">
+              <input type="hidden" name="password">
+              <input type="hidden" name="username">
+              <input type="hidden" name="lang" value="pl">
+              <div class="form-actions">
+                <button type="submit" data-i18n="action.addNews">Dodaj</button>
+                <button type="button" id="cancel-edit" style="display:none;">Anuluj Edycję</button>
+                <span class="status" id="news-status"></span>
+              </div>
+            </form>
+
+            <hr style="margin: 2rem 0; border-top:1px solid #eee;">
+
+            <h3 data-i18n="label.preview">Lista Aktualności</h3>
+            <ul class="news-preview" id="news-preview"></ul>
           </div>
-        </div>
-      </div>
+        </details>
+
+        <details class="card full-width">
+          <summary>
+            <h2>Biblioteka Mediów</h2>
+          </summary>
+          <div class="card-content">
+            <p class="muted">Kliknij na zdjęcie, aby skopiować URL.</p>
+            <div id="media-grid"
+              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+              <p>Ładowanie...</p>
+            </div>
+          </div>
+        </details>
+      </div> <!-- End .cms-grid -->
     </div>
   </div>
 
@@ -366,10 +475,12 @@
 
     let currentLang = 'pl';
     let currentPassword = '';
+    let currentUsername = '';
     let currentNewsData = [];
     let currentPresidium = [];
     let currentPartners = [];
     let currentDealers = {};
+    let currentMissionCards = {}; // For mission cards editor
     let editIndex = -1;
 
     function t(key) {
@@ -484,6 +595,8 @@
         if (data.mission) {
           document.getElementById('mission-title').value = data.mission.title || '';
           document.getElementById('mission-lead').value = data.mission.lead || '';
+          currentMissionCards = data.mission.cards || {};
+          renderMissionCardsEditor();
         }
 
         // 3. Contact
@@ -510,6 +623,8 @@
         // Sort by date desc
         currentNewsData.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderNewsList();
+
+        loadMedia(); // Load media library
 
       } catch (err) {
         console.error(err);
@@ -670,13 +785,16 @@
 
     async function handleLogin(event) {
       event.preventDefault();
+      const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      if (!password) {
+
+      if (!username || !password) {
         setStatus('login-status', translations[currentLang].errors.wrongPassword, false);
         return;
       }
 
       const formData = new FormData();
+      formData.append('username', username);
       formData.append('password', password);
       formData.append('lang', currentLang);
       formData.append('action', 'validate');
@@ -692,14 +810,20 @@
           return;
         }
 
+        currentUsername = username;
         currentPassword = password;
         setStatus('login-status', text, true);
-        document.querySelectorAll('input[name="password"]').forEach(input => {
-          input.value = currentPassword;
-        });
+
+        // Populate hidden username/password fields
+        document.querySelectorAll('input[name="password"]').forEach(input => input.value = currentPassword);
+        document.querySelectorAll('input[name="username"]').forEach(input => input.value = currentUsername);
+
         document.getElementById('login-panel').style.display = 'none';
         document.getElementById('cms-panel').style.display = 'block';
         fetchContent();
+
+        // Auto-load media?
+        // loadMedia(); 
       } catch (err) {
         setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
       }
@@ -711,8 +835,9 @@
         event.preventDefault();
         const formData = new FormData(form);
 
-        // Ensure password is set from memory as hidden fields might be reset
+        // Ensure password/username is set from memory
         formData.set('password', currentPassword);
+        formData.set('username', currentUsername);
 
         try {
           const response = await fetch('api/cms-save.php', {
@@ -855,20 +980,56 @@
       } catch (e) { setStatus('dealers-status', 'Error', false); }
     };
 
+    // Mission Cards Editor
+    function renderMissionCardsEditor() {
+      const container = document.getElementById('mission-cards-list');
+      if (!container) return;
+      container.innerHTML = '';
+      const keys = ['founding', 'members', 'organization', 'body', 'community', 'tasks'];
+
+      // Ensure defaults
+      keys.forEach(key => {
+        if (!currentMissionCards[key]) currentMissionCards[key] = { title: '', text: '' };
+      });
+
+      keys.forEach(key => {
+        const data = currentMissionCards[key];
+        const div = document.createElement('div');
+        div.style.marginBottom = '10px';
+        div.style.padding = '10px';
+        div.style.background = '#f9f9f9';
+        div.style.border = '1px solid #eee';
+        div.style.borderRadius = '4px';
+
+        div.innerHTML = `
+            <div style="font-weight:600; margin-bottom:5px; text-transform:uppercase; font-size:0.8rem; color:#666;">${key}</div>
+            <div style="display:grid; grid-template-columns: 1fr; gap:5px;">
+               <input type="text" placeholder="Tytuł karty" value="${data.title || ''}" onchange="updateMissionCard('${key}', 'title', this.value)">
+               <textarea placeholder="Treść karty" onchange="updateMissionCard('${key}', 'text', this.value)" style="min-height:50px;">${data.text || ''}</textarea>
+            </div>
+          `;
+        container.appendChild(div);
+      });
+    }
+    window.updateMissionCard = (key, field, val) => {
+      if (!currentMissionCards[key]) currentMissionCards[key] = {};
+      currentMissionCards[key][field] = val;
+    };
+    window.prepareMissionData = () => {
+      const jsonInput = document.getElementById('mission-cards-json');
+      if (jsonInput) jsonInput.value = JSON.stringify(currentMissionCards);
+    };
+
     document.getElementById('language-select').addEventListener('change', (event) => {
       applyLanguage(event.target.value);
     });
 
     applyLanguage('pl');
-    async function toggleMediaLib() {
-      const lib = document.getElementById('media-library');
-      if (lib.style.display === 'none') {
-        lib.style.display = 'block';
-        await loadMedia();
-      } else {
-        lib.style.display = 'none';
-      }
-    }
+    applyLanguage('pl');
+
+    // Auto-load media logic moved to fetchContent or manual trigger
+    // toggleMediaLib removed as we use details element now
+
 
     async function loadMedia() {
       const grid = document.getElementById('media-grid');

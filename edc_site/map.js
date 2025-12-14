@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span class="dealer-count">${info.audi}</span>
                 </div>
                 <div class="dealer-row">
-                  <span><img src="images/logo_vw.svg" alt="VW" class="dealer-logo"></span>
+                  <span><img src="images/logo_vw.png" alt="VW" class="dealer-logo"></span>
                   <span class="dealer-count">${info.vw}</span>
                 </div>
               </div>

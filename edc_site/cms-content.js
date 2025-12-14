@@ -92,8 +92,12 @@
       const data = await response.json();
       applyHeroCopy(data.hero);
       if (data.mission) applyMissionCopy(data.mission);
-      if (data.presidium) applyPresidiumCopy(data.presidium);
-      renderNews(data.news);
+      if (data.mission) applyMissionCopy(data.mission);
+      // Pass the whole data object to specific render functions
+      if (Array.isArray(data.presidium)) renderPresidium(data.presidium);
+      if (Array.isArray(data.partners)) renderPartners(data.partners);
+      if (data.contact) renderContact(data.contact);
+      if (Array.isArray(data.news)) renderNews(data.news);
     } catch (err) {
       console.error('Unable to load CMS content', err);
     }
@@ -114,8 +118,60 @@
     }
   }
 
-  function applyPresidiumCopy(presidium) {
-    // Future implementation if specific fields are editable
+  function renderPresidium(members) {
+    if (!members || members.length === 0) return;
+    const grid = document.querySelector('.presidium .team-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    members.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'team-member';
+      div.innerHTML = `
+          <img src="${m.image}" alt="${m.name}">
+          <h3>${m.name}</h3>
+          <p class="role" data-i18n="role.${m.role}">${m.role}</p>
+          <p class="country">${m.country}</p>
+        `;
+      grid.appendChild(div);
+    });
+  }
+
+  function renderPartners(partners) {
+    if (!partners || partners.length === 0) return;
+    const grid = document.querySelector('.partners-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    partners.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      grid.appendChild(img);
+    });
+  }
+
+  function renderContact(contact) {
+    if (!contact) return;
+    const footer = document.querySelector('footer#contact .container');
+    if (!footer) return;
+
+    // We can't easily target paragraphs without classes, so I'll try to find them or rewrite innerHTML of specific parts.
+    // Index.html has structure:
+    // <p><strong>European Dealer Council ...</strong></p>
+    // <p>Address</p>
+    // <p>Phone</p>
+    // <p>Email</p>
+
+    // Let's try to update by content or structure if stable.
+    const ps = footer.querySelectorAll('p');
+    if (ps.length >= 4) {
+      if (contact.name) ps[0].innerHTML = `<strong>${contact.name}</strong>`;
+      if (contact.address) ps[1].textContent = contact.address;
+      if (contact.phone) ps[2].querySelector('a').textContent = contact.phone;
+      if (contact.phone) ps[2].querySelector('a').href = `tel:${contact.phone.replace(/[^0-9+]/g, '')}`;
+      if (contact.email) ps[3].querySelector('a').textContent = contact.email;
+      if (contact.email) ps[3].querySelector('a').href = `mailto:${contact.email}`;
+    }
   }
 
   document.addEventListener('DOMContentLoaded', loadContent);

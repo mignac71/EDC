@@ -159,6 +159,39 @@
         </form>
       </div>
 
+      <div class="card">
+        <h2>Stopka / Kontakt</h2>
+        <form id="contact-form">
+          <div class="form-group"><label>Nazwa organizacji</label><input type="text" id="contact-name"
+              name="contactName"></div>
+          <div class="form-group"><label>Adres</label><input type="text" id="contact-address" name="contactAddress">
+          </div>
+          <div class="form-group"><label>Telefon</label><input type="text" id="contact-phone" name="contactPhone"></div>
+          <div class="form-group"><label>Email</label><input type="text" id="contact-email" name="contactEmail"></div>
+          <input type="hidden" name="action" value="updateContact">
+          <input type="hidden" name="password">
+          <input type="hidden" name="lang" value="pl">
+          <div class="form-actions"><button type="submit">Zapisz Kontakt</button><span class="status"
+              id="contact-status"></span></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Partnerzy (Logo URL)</h2>
+        <div id="partners-list" style="margin-bottom:10px;"></div>
+        <button onclick="addPartnerRow()">+ Dodaj Partnera</button>
+        <button onclick="savePartners()">Zapisz Partnerów</button>
+        <span class="status" id="partners-status"></span>
+      </div>
+
+      <div class="card">
+        <h2>Prezydium (Zarząd)</h2>
+        <div id="presidium-list" style="margin-bottom:10px;"></div>
+        <button onclick="addPresidiumRow()">+ Dodaj Osobę</button>
+        <button onclick="savePresidium()">Zapisz Prezydium</button>
+        <span class="status" id="presidium-status"></span>
+      </div>
+
 
       <div class="card">
         <h2 data-i18n="section.news">Dodaj aktualność</h2>
@@ -315,6 +348,8 @@
     let currentLang = 'pl';
     let currentPassword = '';
     let currentNewsData = [];
+    let currentPresidium = [];
+    let currentPartners = [];
     let editIndex = -1;
 
     function t(key) {
@@ -415,22 +450,46 @@
 
     async function fetchContent() {
       try {
-        const response = await fetch('api/cms-save.php', { cache: 'no-cache' });
-        if (!response.ok) return;
+        const response = await fetch('api/cms-save.php'); // default GET
+        if (!response.ok) throw new Error('Fetch failed');
         const data = await response.json();
-        document.getElementById('hero-title').value = data.hero?.title || '';
-        document.getElementById('hero-subtitle').value = data.hero?.subtitle || '';
 
+        // 1. Hero
+        if (data.hero) {
+          document.getElementById('hero-title').value = data.hero.title || '';
+          document.getElementById('hero-subtitle').value = data.hero.subtitle || '';
+        }
+
+        // 2. Mission
         if (data.mission) {
           document.getElementById('mission-title').value = data.mission.title || '';
           document.getElementById('mission-lead').value = data.mission.lead || '';
         }
 
+        // 3. Contact
+        if (data.contact) {
+          document.getElementById('contact-name').value = data.contact.name || '';
+          document.getElementById('contact-address').value = data.contact.address || '';
+          document.getElementById('contact-phone').value = data.contact.phone || '';
+          document.getElementById('contact-email').value = data.contact.email || '';
+        }
+
+        // 4. Presidium & Partners
+        currentPresidium = data.presidium || [];
+        renderPresidiumEditor();
+
+        currentPartners = data.partners || [];
+        renderPartnersEditor();
+
+        // 5. News
         currentNewsData = data.news || [];
+        // Sort by date desc
+        currentNewsData.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderNewsList();
 
       } catch (err) {
-        setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
+        console.error(err);
+        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
       }
     }
 
@@ -650,7 +709,71 @@
     document.getElementById('login-button').addEventListener('click', handleLogin);
     submitForm('hero-form', 'hero-status');
     submitForm('mission-form', 'mission-status');
+    submitForm('contact-form', 'contact-status');
     submitForm('news-form', 'news-status');
+
+    // Partners Editor
+    function renderPartnersEditor() {
+      const div = document.getElementById('partners-list');
+      div.innerHTML = '';
+      currentPartners.forEach((url, i) => {
+        const row = document.createElement('div');
+        row.style.marginBottom = '5px';
+        row.style.display = 'flex';
+        row.style.gap = '5px';
+        row.innerHTML = `<input type="text" value="${url}" onchange="currentPartners[${i}] = this.value" placeholder="URL logo" style="flex:1">
+            <button onclick="removePartner(${i})" style="background:#b00020; color:fff; border:none; padding:5px;">X</button>`;
+        div.appendChild(row);
+      });
+    }
+    window.addPartnerRow = () => { currentPartners.push(''); renderPartnersEditor(); };
+    window.removePartner = (i) => { currentPartners.splice(i, 1); renderPartnersEditor(); };
+    window.savePartners = async () => {
+      const formData = new FormData();
+      formData.append('action', 'updatePartners');
+      formData.append('partners', JSON.stringify(currentPartners));
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+      try {
+        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        setStatus('partners-status', await res.text(), res.ok);
+      } catch (e) { setStatus('partners-status', 'Error', false); }
+    };
+
+    // Presidium Editor
+    function renderPresidiumEditor() {
+      const div = document.getElementById('presidium-list');
+      div.innerHTML = '';
+      currentPresidium.forEach((p, i) => {
+        const row = document.createElement('div');
+        row.style.marginBottom = '10px';
+        row.style.padding = '10px';
+        row.style.border = '1px solid #ddd';
+        row.style.background = '#f9f9f9';
+        row.innerHTML = `
+            <div style="display:flex; justify-content:space-between;"><strong>Osoba #${i + 1}</strong> <button onclick="removePresidium(${i})" style="color:red;">Usuń</button></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:5px;">
+                <input type="text" value="${p.name || ''}" onchange="currentPresidium[${i}].name=this.value" placeholder="Imię i Nazwisko">
+                <input type="text" value="${p.role || ''}" onchange="currentPresidium[${i}].role=this.value" placeholder="Rola (klucz, np. president)">
+                <input type="text" value="${p.country || ''}" onchange="currentPresidium[${i}].country=this.value" placeholder="Kraj">
+                <input type="text" value="${p.image || ''}" onchange="currentPresidium[${i}].image=this.value" placeholder="URL Zdjęcia">
+            </div>`;
+        div.appendChild(row);
+      });
+    }
+    window.addPresidiumRow = () => { currentPresidium.push({ name: '', role: '', country: '', image: '' }); renderPresidiumEditor(); };
+    window.removePresidium = (i) => { currentPresidium.splice(i, 1); renderPresidiumEditor(); };
+    window.savePresidium = async () => {
+      const formData = new FormData();
+      formData.append('action', 'updatePresidium');
+      formData.append('members', JSON.stringify(currentPresidium));
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+      try {
+        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        setStatus('presidium-status', await res.text(), res.ok);
+      } catch (e) { setStatus('presidium-status', 'Error', false); }
+    };
 
     document.getElementById('language-select').addEventListener('change', (event) => {
       applyLanguage(event.target.value);
@@ -669,7 +792,7 @@
 
     async function loadMedia() {
       const grid = document.getElementById('media-grid');
-      grid.innerHTML = 'Ładowanie...';
+      grid.innerHTML = 'Ładowanie (może potrwać chwilę)...';
 
       const formData = new FormData();
       formData.append('action', 'listMedia');
@@ -679,39 +802,88 @@
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
         const data = await res.json();
 
-        if (data.blobs) {
+        if (data.blobs && data.blobs.length > 0) {
           grid.innerHTML = '';
           data.blobs.forEach(blob => {
-            const div = document.createElement('div');
-            div.style.border = '1px solid #ddd';
-            div.style.padding = '5px';
-            div.style.cursor = 'pointer';
-            div.title = 'Kliknij aby użyć';
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.border = '1px solid #ddd';
 
             const img = document.createElement('img');
             img.src = blob.url;
             img.style.width = '100%';
             img.style.height = '100px';
             img.style.objectFit = 'cover';
-
-            div.onclick = () => {
+            img.style.cursor = 'pointer';
+            img.title = 'Użyj tego zdjęcia';
+            img.onclick = () => {
               document.getElementById('news-image-url').value = blob.url;
-              document.getElementById('news-image').value = ''; // clear file input
-              setStatus('news-status', 'Wybrano zdjęcie z biblioteki!', true);
-              lib.style.display = 'none';
+              document.getElementById('news-image').value = '';
+              setStatus('news-status', 'Wybrano zdjęcie!', true);
+              document.getElementById('media-library').style.display = 'none';
             };
 
-            div.appendChild(img);
-            grid.appendChild(div);
+            container.appendChild(img);
+
+            // Delete button (only for non-local)
+            if (!blob.isLocal) {
+              const delBtn = document.createElement('button');
+              delBtn.textContent = '❌';
+              delBtn.title = 'Usuń plik z chmury';
+              delBtn.style.position = 'absolute';
+              delBtn.style.top = '0';
+              delBtn.style.right = '0';
+              delBtn.style.background = 'rgba(255,0,0,0.7)';
+              delBtn.style.color = '#fff';
+              delBtn.style.border = 'none';
+              delBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteMediaFile(blob.url);
+              };
+              container.appendChild(delBtn);
+            } else {
+              const badger = document.createElement('span');
+              badger.textContent = 'Lokalny';
+              badger.style.position = 'absolute';
+              badger.style.bottom = '0';
+              badger.style.right = '0';
+              badger.style.background = 'rgba(0,0,0,0.5)';
+              badger.style.color = '#fff';
+              badger.style.fontSize = '10px';
+              badger.style.padding = '2px';
+              container.appendChild(badger);
+            }
+
+            grid.appendChild(container);
           });
         } else {
-          grid.innerHTML = 'Brak zdjęć lub błąd API.';
+          grid.innerHTML = 'Brak zdjęć.';
         }
       } catch (e) {
         grid.innerHTML = 'Błąd ładowania.';
         console.error(e);
       }
     }
+
+    async function deleteMediaFile(url) {
+      if (!confirm('Czy na pewno usunąć ten plik z chmury? Operacja jest nieodwracalna.')) return;
+
+      const formData = new FormData();
+      formData.append('action', 'deleteMedia');
+      formData.append('url', url);
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+
+      try {
+        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        const text = await res.text();
+        alert(text);
+        loadMedia(); // Refresh
+      } catch (e) {
+        alert('Błąd usuwania');
+      }
+    }
+
 
   </script>
 </body>

@@ -279,14 +279,48 @@ if ($action === 'updateSection') {
     exit(t('Zaktualizowano.', 'Updated.', $lang));
 }
 
+if ($action === 'updatePresidium') {
+    $members = json_decode($_POST['members'] ?? '[]', true);
+    if (!is_array($members))
+        exit('Error: Invalid data');
+    $content['presidium'] = $members;
+    saveContent($content);
+    exit(t('Zaktualizowano prezydium.', 'Presidium updated.', $lang));
+}
+
+if ($action === 'updatePartners') {
+    $partners = json_decode($_POST['partners'] ?? '[]', true);
+    if (!is_array($partners))
+        exit('Error: Invalid data');
+    $content['partners'] = $partners;
+    saveContent($content);
+    exit(t('Zaktualizowano partnerów.', 'Partners updated.', $lang));
+}
+
+if ($action === 'updateContact') {
+    $contact = [];
+    $contact['name'] = $_POST['contactName'] ?? '';
+    $contact['address'] = $_POST['contactAddress'] ?? '';
+    $contact['phone'] = $_POST['contactPhone'] ?? '';
+    $contact['email'] = $_POST['contactEmail'] ?? '';
+    $content['contact'] = $contact;
+    saveContent($content);
+    exit(t('Zaktualizowano stopkę.', 'Footer updated.', $lang));
+}
+
 if ($action === 'deleteNews') {
     $index = (int) ($_POST['index'] ?? -1);
-    if (isset($content['news'][$index])) {
-        array_splice($content['news'], $index, 1);
-        saveContent($content);
-        exit(t('Usunięto.', 'Deleted.', $lang));
+    if ($index < 0 || !isset($content['news'][$index])) {
+        http_response_code(400);
+        exit(t('Błąd: Nieprawidłowy indeks (odśwież stronę).', 'Error: Invalid index (refresh page).', $lang));
     }
-    exit('Error');
+
+    // Optional: Auto-delete image from Blob if it's there? 
+    // For now, keep it simple to avoid deleting shared images.
+
+    array_splice($content['news'], $index, 1);
+    saveContent($content);
+    exit(t('Usunięto pomyślnie.', 'Deleted successfully.', $lang));
 }
 
 if ($action === 'updateNews') {
@@ -339,18 +373,78 @@ if ($action === 'toggleVisibility') {
 
 if ($action === 'listMedia') {
     $token = getenv('BLOB_READ_WRITE_TOKEN');
-    if (!$token)
-        exit(json_encode(['error' => 'No token']));
+    $blobs = [];
 
-    $ch = curl_init('https://blob.vercel-storage.com');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
-    $res = curl_exec($ch);
-    curl_close($ch);
+    // 1. Fetch from Blob
+    if ($token) {
+        $ch = curl_init('https://blob.vercel-storage.com');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        $json = json_decode($res, true);
+        if (isset($json['blobs'])) {
+            $blobs = $json['blobs']; // Structure: [{url: "...", pathname: "..."}]
+        }
+    }
+
+    // 2. Fetch from Local Files (legacy)
+    $localDirs = ['../images', '../images/edc70'];
+    foreach ($localDirs as $dir) {
+        $files = glob(__DIR__ . "/$dir/*.{jpg,jpeg,png,gif,webp}", GLOB_BRACE);
+        if ($files) {
+            foreach ($files as $file) {
+                // Convert absolute path to relative URL
+                // __DIR__ is .../api
+                // $file is .../api/../images/foo.jpg -> .../images/foo.jpg
+                // We want URL relative to site root: 'images/foo.jpg'
+                $relativePath = str_replace(realpath(__DIR__ . '/..') . '/', '', realpath($file));
+                $blobs[] = [
+                    'url' => $relativePath,
+                    'pathname' => $relativePath,
+                    'isLocal' => true
+                ];
+            }
+        }
+    }
 
     header('Content-Type: application/json');
-    echo $res;
+    echo json_encode(['blobs' => $blobs]);
     exit;
+}
+
+if ($action === 'deleteMedia') {
+    $url = $_POST['url'] ?? '';
+    if (!$url)
+        exit('Error: Missing URL');
+
+    // Check if local
+    if (strpos($url, 'blob.vercel-storage.com') === false) {
+        exit(t('Nie można usunąć plików lokalnych z repozytorium.', 'Cannot delete local repository files.', $lang));
+    }
+
+    $token = getenv('BLOB_READ_WRITE_TOKEN');
+    if (!$token)
+        exit('Error: No token');
+
+    // Vercel Blob Delete API: POST /delete {urls: [url]}
+    // Header includes x-api-version: 1 (optional?)
+    $ch = curl_init('https://blob.vercel-storage.com/delete');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['urls' => [$url]]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $token,
+        'Content-Type: application/json'
+    ]);
+    $res = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($code === 200) {
+        exit(t('Usunięto plik.', 'File deleted.', $lang));
+    }
+    exit('Error deleting file: ' . $res);
 }
 
 http_response_code(400);

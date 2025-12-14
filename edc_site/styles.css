@@ -494,13 +494,19 @@ h2 {
 }
 
 .partners-grid {
-  justify-content: space-around;
-  /* Better spreading */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 60px;
+  flex-wrap: wrap;
+  /* Safe wrap for small screens, but behaves as single row if space allows */
 }
 
 .partners-grid img {
-  max-height: 60px;
+  height: 60px;
+  /* Fixed height for all */
+  width: auto;
+  object-fit: contain;
   opacity: 0.6;
   filter: grayscale(100%);
   transition: all 0.3s ease;
@@ -542,7 +548,15 @@ footer a:hover {
 
 .footer-links {
   margin-top: 40px;
-  gap: 30px;
+  display: flex !important;
+  /* Force flex */
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+  padding: 0;
+  flex-wrap: wrap;
+  /* Allow wrap on mobile, but centered singlerow on desktop */
 }
 
 .footer-links li a {

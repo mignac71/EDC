@@ -23,17 +23,20 @@ function loadContent($pdo)
     if (!$pdo)
         return [];
     try {
-        // Create table if not exists (should exist)
-        $pdo->exec("CREATE TABLE IF NOT EXISTS cms_content (
-            id SERIAL PRIMARY KEY,
-            key VARCHAR(50) UNIQUE NOT NULL,
-            data JSONB
-        )");
+        // Create table if not exists (matching cms-save.php schema)
+        $pdo->exec("CREATE TABLE IF NOT EXISTS cms_content (id INT PRIMARY KEY, json_data TEXT)");
 
-        $stmt = $pdo->prepare("SELECT data FROM cms_content WHERE key = 'site_data'");
+        // Ensure row exists
+        $stmt = $pdo->prepare("SELECT 1 FROM cms_content WHERE id = 1");
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? json_decode($row['data'], true) : [];
+        if (!$stmt->fetch()) {
+            $pdo->exec("INSERT INTO cms_content (id, json_data) VALUES (1, '{}')");
+        }
+
+        $stmt = $pdo->prepare("SELECT json_data FROM cms_content WHERE id = 1");
+        $stmt->execute();
+        $json = $stmt->fetchColumn();
+        return $json ? json_decode($json, true) : [];
     } catch (Exception $e) {
         return [];
     }
@@ -44,8 +47,7 @@ function saveContent($pdo, $data)
     if (!$pdo)
         return;
     $json = json_encode($data);
-    $stmt = $pdo->prepare("INSERT INTO cms_content (key, data) VALUES ('site_data', :data) 
-                          ON CONFLICT (key) DO UPDATE SET data = :data");
+    $stmt = $pdo->prepare("UPDATE cms_content SET json_data = :data WHERE id = 1");
     $stmt->execute([':data' => $json]);
 }
 

@@ -64,13 +64,21 @@
     return article;
   }
 
-  function renderNews(items) {
-    const grid = document.getElementById('news-grid');
-    if (!grid || !Array.isArray(items)) return;
+  function renderNews(newsItems) {
+    const container = document.getElementById('news-grid');
+    if (!container) return; // May be on a page without news
 
-    grid.innerHTML = '';
-    items.forEach((item) => {
-      grid.appendChild(buildNewsItem(item));
+    // Filter out hidden items
+    const visibleItems = newsItems.filter(item => item.visible !== false);
+
+    if (visibleItems.length === 0) {
+      container.innerHTML = '<p>No news at the moment.</p>';
+      return;
+    }
+
+    container.innerHTML = ''; // Clear existing content
+    visibleItems.forEach((item) => {
+      container.appendChild(buildNewsItem(item));
     });
 
     const refreshEvent = new Event('slideshows:refresh');

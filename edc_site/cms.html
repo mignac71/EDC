@@ -181,7 +181,9 @@
           </div>
           <div class="form-group">
             <label for="news-image" data-i18n="label.mainImage">Główna grafika</label>
-            <input type="file" id="news-image" name="mainImage" accept="image/*" required>
+            <input type="file" id="news-image" name="mainImage" accept="image/*">
+            <p class="muted" style="margin: 5px 0 10px;">LUB podaj URL (np. z biblioteki):</p>
+            <input type="text" id="news-image-url" name="image_url" placeholder="https://...">
             <p class="muted" id="upload-hint">Plik zostanie zapisany w katalogu images/uploads.</p>
           </div>
           <div class="form-group">
@@ -199,6 +201,17 @@
         <div class="form-group">
           <label data-i18n="label.preview">Obecne aktualności</label>
           <ul class="news-preview" id="news-preview"></ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 onclick="toggleMediaLib()" style="cursor: pointer;">📂 Biblioteka Mediów (Kliknij aby rozwinąć)</h2>
+        <div id="media-library" style="display:none; margin-top: 1rem;">
+          <p class="muted">Kliknij na zdjęcie, aby skopiować jego URL lub użyć go w formularzu.</p>
+          <div id="media-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
+            <p>Ładowanie...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -432,27 +445,44 @@
         li.style.justifyContent = 'space-between';
         li.style.alignItems = 'center';
         li.style.marginBottom = '0.5rem';
+        li.style.padding = '0.5rem';
+        li.style.borderBottom = '1px solid #eee';
+
+        if (item.visible === false) {
+          li.style.opacity = '0.5';
+          li.style.background = '#f0f0f0';
+        }
 
         const span = document.createElement('span');
         const date = new Date(item.date).toLocaleDateString();
-        span.textContent = `${date} – ${item.title}`;
+        const statusIcon = item.visible === false ? '👁️‍🗨️ (Ukryty)' : '👁️ (Widoczny)';
+        span.textContent = `${date} – ${item.title} ${item.visible === false ? '[UKRYTY]' : ''}`;
 
         const actionsDiv = document.createElement('div');
+        actionsDiv.style.display = 'flex';
+        actionsDiv.style.gap = '5px';
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.textContent = item.visible === false ? 'Pokaż' : 'Ukryj';
+        toggleBtn.style.fontSize = '0.8rem';
+        toggleBtn.onclick = () => toggleVisibility(index);
 
         const editBtn = document.createElement('button');
         editBtn.textContent = dict.edit;
         editBtn.style.fontSize = '0.8rem';
-        editBtn.style.marginRight = '5px';
-        editBtn.style.padding = '2px 8px';
         editBtn.onclick = () => loadNewsForEdit(index);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = dict.delete;
         deleteBtn.style.fontSize = '0.8rem';
-        deleteBtn.style.padding = '2px 8px';
         deleteBtn.style.backgroundColor = '#b00020';
+        deleteBtn.style.color = '#fff';
+        deleteBtn.style.border = 'none';
+        deleteBtn.style.padding = '2px 8px';
+        deleteBtn.style.borderRadius = '3px';
         deleteBtn.onclick = () => deleteNewsItem(index);
 
+        actionsDiv.appendChild(toggleBtn);
         actionsDiv.appendChild(editBtn);
         actionsDiv.appendChild(deleteBtn);
 
@@ -460,6 +490,25 @@
         li.appendChild(actionsDiv);
         preview.appendChild(li);
       });
+    }
+
+    async function toggleVisibility(index) {
+      const formData = new FormData();
+      formData.append('action', 'toggleVisibility');
+      formData.append('index', index);
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+
+      try {
+        const response = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        if (response.ok) {
+          fetchContent(); // Reload list
+        } else {
+          alert(translations[currentLang].errors.saveFailed);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     function loadNewsForEdit(index) {
@@ -608,6 +657,62 @@
     });
 
     applyLanguage('pl');
+    async function toggleMediaLib() {
+      const lib = document.getElementById('media-library');
+      if (lib.style.display === 'none') {
+        lib.style.display = 'block';
+        await loadMedia();
+      } else {
+        lib.style.display = 'none';
+      }
+    }
+
+    async function loadMedia() {
+      const grid = document.getElementById('media-grid');
+      grid.innerHTML = 'Ładowanie...';
+
+      const formData = new FormData();
+      formData.append('action', 'listMedia');
+      formData.append('password', currentPassword);
+
+      try {
+        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.blobs) {
+          grid.innerHTML = '';
+          data.blobs.forEach(blob => {
+            const div = document.createElement('div');
+            div.style.border = '1px solid #ddd';
+            div.style.padding = '5px';
+            div.style.cursor = 'pointer';
+            div.title = 'Kliknij aby użyć';
+
+            const img = document.createElement('img');
+            img.src = blob.url;
+            img.style.width = '100%';
+            img.style.height = '100px';
+            img.style.objectFit = 'cover';
+
+            div.onclick = () => {
+              document.getElementById('news-image-url').value = blob.url;
+              document.getElementById('news-image').value = ''; // clear file input
+              setStatus('news-status', 'Wybrano zdjęcie z biblioteki!', true);
+              lib.style.display = 'none';
+            };
+
+            div.appendChild(img);
+            grid.appendChild(div);
+          });
+        } else {
+          grid.innerHTML = 'Brak zdjęć lub błąd API.';
+        }
+      } catch (e) {
+        grid.innerHTML = 'Błąd ładowania.';
+        console.error(e);
+      }
+    }
+
   </script>
 </body>
 

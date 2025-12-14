@@ -237,6 +237,9 @@ if ($action === 'addNews') {
             $newsItem['image'] = $path;
             $newsItem['gallery'][] = $path;
         }
+    } elseif (!empty($_POST['image_url'])) {
+        $newsItem['image'] = $_POST['image_url'];
+        $newsItem['gallery'][] = $_POST['image_url'];
     }
 
     if (isset($_FILES['gallery']['name'])) {
@@ -320,6 +323,34 @@ if ($action === 'updateNews') {
     $content['news'][$index] = $item;
     saveContent($content);
     exit(t('Zaktualizowano.', 'Updated.', $lang));
+}
+
+if ($action === 'toggleVisibility') {
+    $index = (int) ($_POST['index'] ?? -1);
+    if (!isset($content['news'][$index]))
+        exit('Error: Invalid index');
+
+    $currentState = $content['news'][$index]['visible'] ?? true;
+    $content['news'][$index]['visible'] = !$currentState;
+
+    saveContent($content);
+    exit(t('Zmieniono widoczność.', 'Visibility toggled.', $lang));
+}
+
+if ($action === 'listMedia') {
+    $token = getenv('BLOB_READ_WRITE_TOKEN');
+    if (!$token)
+        exit(json_encode(['error' => 'No token']));
+
+    $ch = curl_init('https://blob.vercel-storage.com');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+
+    header('Content-Type: application/json');
+    echo $res;
+    exit;
 }
 
 http_response_code(400);

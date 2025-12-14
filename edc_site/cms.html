@@ -563,7 +563,8 @@
         deleteBtn.style.border = 'none';
         deleteBtn.style.padding = '2px 8px';
         deleteBtn.style.borderRadius = '3px';
-        deleteBtn.onclick = () => deleteNewsItem(item.id);
+        // Pass both ID and Index
+        deleteBtn.onclick = () => deleteNewsItem(item.id, index);
 
         actionsDiv.appendChild(toggleBtn);
         actionsDiv.appendChild(editBtn);
@@ -638,12 +639,13 @@
       updateNewsFormButtons();
     }
 
-    async function deleteNewsItem(id) {
+    async function deleteNewsItem(id, index) {
       if (!confirm(translations[currentLang].confirmDelete)) return;
 
       const formData = new FormData();
       formData.append('action', 'deleteNews');
-      formData.append('id', id);
+      if (id) formData.append('id', id);
+      if (index !== undefined) formData.append('index', index);
       formData.append('password', currentPassword);
       formData.append('lang', currentLang);
 

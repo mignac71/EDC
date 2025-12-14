@@ -324,25 +324,32 @@ if ($action === 'updateDealers') {
 
 if ($action === 'deleteNews') {
     $id = $_POST['id'] ?? '';
-    if (!$id)
-        exit('Error: Missing ID');
+    // $index = (int)($_POST['index'] ?? -1); // Optional fallback
 
     $foundIndex = -1;
-    foreach ($content['news'] as $i => $item) {
-        if (isset($item['id']) && $item['id'] === $id) {
-            $foundIndex = $i;
-            break;
+
+    // 1. Try ID
+    if ($id) {
+        foreach ($content['news'] as $i => $item) {
+            if (isset($item['id']) && $item['id'] === $id) {
+                $foundIndex = $i;
+                break;
+            }
+        }
+    }
+
+    // 2. Fallback to Index if ID failed or not provided
+    if ($foundIndex === -1 && isset($_POST['index'])) {
+        $idx = (int) $_POST['index'];
+        if ($idx >= 0 && isset($content['news'][$idx])) {
+            $foundIndex = $idx;
         }
     }
 
     if ($foundIndex === -1) {
-        // Fallback to index if ID missing? No, safer to fail.
         http_response_code(404);
-        exit(t('Nie znaleziono wpisu.', 'Item not found.', $lang));
+        exit(t('Nie znaleziono wpisu (ID/Index error).', 'Item not found (ID/Index error).', $lang));
     }
-
-    // Optional: Auto-delete image from Blob if it's there? 
-    // For now, keep it simple to avoid deleting shared images.
 
     array_splice($content['news'], $foundIndex, 1);
     saveContent($content);
@@ -500,7 +507,8 @@ if ($action === 'deleteMedia') {
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['urls' => [$url]]));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Authorization: Bearer ' . $token,
-        'Content-Type: application/json'
+        'Content-Type: application/json',
+        'x-api-version: 1'
     ]);
     $res = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

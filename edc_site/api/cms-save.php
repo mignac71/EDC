@@ -472,16 +472,29 @@ if ($action === 'listMedia') {
     $blobs = [];
 
     // 1. Fetch from Blob
+    $debug = [];
+    // 1. Fetch from Blob
     if ($token) {
-        $ch = curl_init('https://blob.vercel-storage.com');
+        $ch = curl_init('https://blob.vercel-storage.com?limit=500');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
         $res = curl_exec($ch);
-        curl_close($ch);
-        $json = json_decode($res, true);
-        if (isset($json['blobs'])) {
-            $blobs = $json['blobs']; // Structure: [{url: "...", pathname: "..."}]
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($res === false) {
+            $debug['curl_error'] = curl_error($ch);
+        } else {
+            $json = json_decode($res, true);
+            if (isset($json['blobs'])) {
+                $blobs = $json['blobs'];
+            } else {
+                $debug['api_response'] = $res;
+                $debug['http_code'] = $httpCode;
+            }
         }
+        curl_close($ch);
+    } else {
+        $debug['error'] = 'No BLOB_READ_WRITE_TOKEN found';
     }
 
     // 2. Fetch from Local Files (legacy)
@@ -505,7 +518,9 @@ if ($action === 'listMedia') {
     }
 
     header('Content-Type: application/json');
-    echo json_encode(['blobs' => $blobs]);
+    header('Content-Type: application/json');
+    echo json_encode(['blobs' => $blobs, 'debug' => $debug]);
+    exit;
     exit;
 }
 
@@ -539,10 +554,36 @@ if ($action === 'deleteMedia') {
     curl_close($ch);
 
     if ($code === 200) {
-        exit(t('Usunięto plik.', 'File deleted.', $lang));
+        exit(t('Usunięto.', 'Deleted.', $lang));
+    } else {
+        exit('Error deleting: ' . $res);
     }
-    exit('Error deleting file: ' . $res);
 }
+
+if ($action === 'changePassword') {
+    $newPass = $_POST['new_password'] ?? '';
+    // $oldPass = $_POST['old_password'] ?? ''; 
+    // We already verified current password via Auth block logic ($isAuthenticated is true).
+
+    if (!$newPass) {
+        http_response_code(400);
+        exit(t('Brak nowego hasła.', 'Missing new password.', $lang));
+    }
+
+    // DB Update
+    $pdo = getPdo();
+    if ($pdo && $username) {
+        $hash = password_hash($newPass, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("UPDATE cms_users SET password_hash = :h WHERE username = :u");
+        $stmt->execute([':h' => $hash, ':u' => $username]);
+
+        exit(t('Hasło zmienione pomyślnie.', 'Password changed successfully.', $lang));
+    } else {
+        http_response_code(500);
+        exit(t('Błąd: Brak dostępu do bazy lub brak nazwy użytkownika (Czy jesteś zalogowany przez ENV?).', 'Error: No DB or no username (Env auth?).', $lang));
+    }
+}
+
 
 http_response_code(400);
 exit('Unknown action');

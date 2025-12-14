@@ -169,11 +169,14 @@
         <p id="cms-intro" style="margin:0; color:#666;">Zarządzanie treścią EDC.</p>
       </div>
       <div>
-        <label class="muted" style="margin: 0; display:inline-block; margin-right:10px;">Język:</label>
+        <label class="muted" style="margin: 0; display:inline-block; margin-right:10px;">Language:</label>
         <select id="language-select" style="width:auto; display:inline-block;">
-          <option value="pl" selected>Polski</option>
-          <option value="en">English</option>
+          <option value="pl">Polski</option>
+          <option value="en" selected>English</option>
         </select>
+        <a href="/" class="button"
+          style="margin-left:10px; text-decoration:none; display:inline-block; font-size:0.9rem;"
+          data-i18n="backToSite">Back to Site</a>
       </div>
     </header>
 
@@ -374,6 +377,31 @@
             </div>
           </div>
         </details>
+        <details class="card full-width">
+          <summary>
+            <h2 data-i18n="section.account">Account Settings</h2>
+          </summary>
+          <div class="card-content">
+            <form id="password-form">
+              <h3 data-i18n="changePassword">Change Password</h3>
+              <div class="form-group">
+                <label data-i18n="oldPassword">Old Password</label>
+                <input type="password" name="old_password" required>
+              </div>
+              <div class="form-group">
+                <label data-i18n="newPassword">New Password</label>
+                <input type="password" name="new_password" required>
+              </div>
+              <p class="muted" style="font-size:0.8rem">Applies to currently logged in user.</p>
+              <input type="hidden" name="action" value="changePassword">
+              <input type="hidden" name="password"> <!-- Will be populated with currentPassword -->
+              <div class="form-actions">
+                <button type="submit" data-i18n="action.changePassword">Update Password</button>
+                <span class="status" id="password-status"></span>
+              </div>
+            </form>
+          </div>
+        </details>
       </div> <!-- End .cms-grid -->
     </div>
   </div>
@@ -412,8 +440,18 @@
         section: {
           hero: 'Nagłówek strony',
           mission: 'Misja',
-          news: 'Dodaj aktualność'
+          news: 'Dodaj aktualność',
+          account: 'Ustawienia Konta'
         },
+        action: {
+          save: 'Zapisz',
+          addNews: 'Dodaj aktualność',
+          changePassword: 'Zmień hasło'
+        },
+        changePassword: 'Zmiana hasła',
+        oldPassword: 'Stare hasło',
+        newPassword: 'Nowe hasło',
+        backToSite: 'Powrót do strony',
         label: {
           title: 'Tytuł',
           lead: 'Wprowadzenie'
@@ -452,6 +490,19 @@
         newsTitle: 'Title',
         date: 'Date',
         summary: 'Summary (optional)',
+        changePassword: 'Change Password',
+        oldPassword: 'Old Password',
+        newPassword: 'New Password',
+        backToSite: 'Back to Website',
+        section: {
+          hero: 'Hero Content',
+          mission: 'Mission',
+          account: 'Account Settings'
+        },
+        action: {
+          changePassword: 'Change Password',
+          addNews: 'Add News'
+        },
         alt: 'Alternative text for image',
         mainImage: 'Main image',
         uploadHint: 'File will be saved to images/uploads.',
@@ -473,7 +524,7 @@
       }
     };
 
-    let currentLang = 'pl';
+    let currentLang = 'en';
     let currentPassword = '';
     let currentUsername = '';
     let currentNewsData = [];
@@ -833,6 +884,12 @@
       const form = document.getElementById(formId);
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
+
+        // Mission Fix
+        if (formId === 'mission-form') {
+          if (window.prepareMissionData) window.prepareMissionData();
+        }
+
         const formData = new FormData(form);
 
         // Ensure password/username is set from memory
@@ -863,6 +920,7 @@
     submitForm('mission-form', 'mission-status');
     submitForm('contact-form', 'contact-status');
     submitForm('news-form', 'news-status');
+    submitForm('password-form', 'password-status');
 
     // Partners Editor
     function renderPartnersEditor() {
@@ -1024,8 +1082,8 @@
       applyLanguage(event.target.value);
     });
 
-    applyLanguage('pl');
-    applyLanguage('pl');
+    applyLanguage('en');
+    applyLanguage('en');
 
     // Auto-load media logic moved to fetchContent or manual trigger
     // toggleMediaLib removed as we use details element now

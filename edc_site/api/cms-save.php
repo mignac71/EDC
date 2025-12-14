@@ -121,11 +121,22 @@ function t(string $pl, string $en, string $lang): string
 {
     return $lang === 'en' ? $en : $pl;
 }
-
 // Auth
 $hash = getenv('CMS_PASSWORD_HASH');
 $plain = getenv('CMS_PASSWORD');
 $passwordHash = $hash ? $hash : ($plain ? hash('sha256', $plain) : hash('sha256', DEFAULT_PASSWORD));
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $content = loadContent();
+    header('Content-Type: application/json');
+    echo json_encode($content);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed');
+}
 
 if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (string) $_POST['password']))) {
     http_response_code(401);

@@ -402,7 +402,7 @@
 
     async function fetchContent() {
       try {
-        const response = await fetch('json/content.json', { cache: 'no-cache' });
+        const response = await fetch('api/cms-save.php', { cache: 'no-cache' });
         if (!response.ok) return;
         const data = await response.json();
         document.getElementById('hero-title').value = data.hero?.title || '';

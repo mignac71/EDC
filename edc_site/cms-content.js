@@ -1,6 +1,6 @@
 // Load CMS-managed content for the public site
 (function () {
-  const CONTENT_URL = 'json/content.json';
+  const CONTENT_URL = 'api/cms-save.php';
 
   function applyHeroCopy(hero) {
     if (!hero) return;

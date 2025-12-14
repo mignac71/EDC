@@ -223,7 +223,13 @@ if (!isset($content['presidium']))
 if ($action === 'updateHero') {
     $title = trim($_POST['heroTitle'] ?? '');
     $subtitle = trim($_POST['heroSubtitle'] ?? '');
-    $image = trim($_POST['heroImage'] ?? '');
+    $title = trim($_POST['heroTitle'] ?? '');
+    $subtitle = trim($_POST['heroSubtitle'] ?? '');
+    $images = json_decode($_POST['heroImages'] ?? '[]', true);
+    if (!is_array($images))
+        $images = [];
+
+    // Legacy/Fallback: If single image was sent but no array, could handle here, but let's stick to new structure
 
     if ($title === '' || $subtitle === '')
         exit(t('Uzupełnij pola.', 'Fill fields.', $lang));
@@ -231,7 +237,7 @@ if ($action === 'updateHero') {
     $content['hero'] = [
         'title' => $title,
         'subtitle' => $subtitle,
-        'image' => $image
+        'images' => $images
     ];
     saveContent($content);
     exit(t('Zaktualizowano.', 'Updated.', $lang));

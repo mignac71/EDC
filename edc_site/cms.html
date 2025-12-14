@@ -218,9 +218,10 @@
               <div class="form-group"><label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label><input
                   type="text" id="hero-subtitle" name="heroSubtitle"></div>
               <div class="form-group">
-                <label>Zdjęcie tła (URL)</label>
-                <input type="text" id="hero-image" name="heroImage"
-                  placeholder="https://... (Pozostaw puste dla domyślnego)">
+                <label>Zdjęcia w tle (Slideshow)</label>
+                <div id="hero-images-list" style="margin-bottom:10px;"></div>
+                <button type="button" onclick="addHeroImageRow()">+ Dodaj zdjęcie</button>
+                <input type="hidden" name="heroImages" id="hero-images-json">
               </div>
               <input type="hidden" name="action" value="updateHero">
               <input type="hidden" name="password">
@@ -553,7 +554,10 @@
     let currentPresidium = [];
     let currentPartners = [];
     let currentDealers = {};
+    let currentPartners = [];
+    let currentDealers = {};
     let currentMissionCards = []; // Dynamic Array
+    let currentHeroImages = []; // Dynamic Array for Hero
     let editIndex = -1;
 
     function t(key) {
@@ -651,8 +655,12 @@
         // 1. Hero
         if (data.hero) {
           document.getElementById('hero-title').value = data.hero.title || '';
+          document.getElementById('hero-title').value = data.hero.title || '';
           document.getElementById('hero-subtitle').value = data.hero.subtitle || '';
-          document.getElementById('hero-image').value = data.hero.image || '';
+          // document.getElementById('hero-image').value = data.hero.image || ''; // Legacy
+
+          currentHeroImages = data.hero.images || (data.hero.image ? [data.hero.image] : []);
+          renderHeroImagesEditor();
         }
 
         // 2. Mission
@@ -1117,6 +1125,29 @@
       const jsonInput = document.getElementById('mission-cards-json');
       if (jsonInput) jsonInput.value = JSON.stringify(currentMissionCards);
     };
+
+    // Hero Images Editor
+    function renderHeroImagesEditor() {
+      const container = document.getElementById('hero-images-list');
+      if (!container) return;
+      container.innerHTML = '';
+      currentHeroImages.forEach((url, index) => {
+        const row = document.createElement('div');
+        row.style.marginBottom = '5px';
+        row.style.display = 'flex';
+        row.style.gap = '5px';
+        row.innerHTML = `<input type="text" value="${url}" onchange="currentHeroImages[${index}] = this.value" placeholder="URL obrazka" style="flex:1">
+             <button type="button" onclick="removeHeroImage(${index})" style="background:#b00020; color:fff; border:none; padding:5px;">X</button>`;
+        container.appendChild(row);
+      });
+    }
+    window.addHeroImageRow = () => { currentHeroImages.push(''); renderHeroImagesEditor(); };
+    window.removeHeroImage = (i) => { currentHeroImages.splice(i, 1); renderHeroImagesEditor(); };
+
+    // Update Hero Form Submit to include JSON
+    document.getElementById('hero-form').addEventListener('submit', () => {
+      document.getElementById('hero-images-json').value = JSON.stringify(currentHeroImages);
+    });
 
     document.getElementById('language-select').addEventListener('change', (event) => {
       applyLanguage(event.target.value);

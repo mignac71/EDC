@@ -12,8 +12,47 @@
     if (subtitleEl && hero.subtitle) {
       subtitleEl.textContent = hero.subtitle;
     }
-    if (hero.image) {
-      const heroSection = document.querySelector('.hero');
+
+    // Handle Hero Slideshow or Single Image
+    const heroSection = document.querySelector('.hero');
+    if (heroSection && hero.images && Array.isArray(hero.images) && hero.images.length > 0) {
+      heroSection.style.backgroundImage = 'none'; // Clear static bg
+
+      // Remove existing slideshow if any
+      const existing = heroSection.querySelector('.slideshow-container');
+      if (existing) existing.remove();
+
+      const container = document.createElement('div');
+      container.className = 'slideshow-container slideshow'; // .slideshow trigger for slideshow.js
+      container.style.position = 'absolute';
+      container.style.top = '0';
+      container.style.left = '0';
+      container.style.width = '100%';
+      container.style.height = '100%';
+      container.style.zIndex = '-1'; // Behind content
+
+      hero.images.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.position = 'absolute';
+        img.style.top = '0';
+        img.style.left = '0';
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 1s ease-in-out';
+        if (index === 0) img.classList.add('active'); // Pre-set active for CSS logic if needed
+        container.appendChild(img);
+      });
+
+      heroSection.insertBefore(container, heroSection.firstChild);
+
+      // Trigger slideshow.js logic if available
+      const evt = new Event('slideshows:refresh');
+      document.dispatchEvent(evt);
+    } else if (hero.image) {
+      // Fallback for single image property (legacy)
       if (heroSection) heroSection.style.backgroundImage = `url('${hero.image}')`;
     }
   }

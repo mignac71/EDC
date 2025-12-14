@@ -18,20 +18,10 @@
     const article = document.createElement('article');
     article.className = 'news-item';
 
-    const gallery = Array.isArray(item.gallery) ? item.gallery.filter(Boolean) : [];
-    const hasSlideshow = gallery.length > 1;
-    const mainImage = item.image || gallery[0];
+    // Fix: Show only single image (Main or First form gallery)
+    const mainImage = item.image || (Array.isArray(item.gallery) && item.gallery.length > 0 ? item.gallery[0] : null);
 
-    if (hasSlideshow) {
-      const slideshow = document.createElement('div');
-      slideshow.className = 'slideshow';
-      gallery.forEach((src) => {
-        const img = document.createElement('img');
-        img.src = src;
-        slideshow.appendChild(img);
-      });
-      article.appendChild(slideshow);
-    } else if (mainImage) {
+    if (mainImage) {
       const img = document.createElement('img');
       img.src = mainImage;
       img.alt = item.alt || item.title || 'News image';

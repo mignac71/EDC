@@ -10,11 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $lang = $_POST['lang'] ?? 'pl';
 
-function t(string $pl, string $en, string $lang): string {
+function t(string $pl, string $en, string $lang): string
+{
     return $lang === 'en' ? $en : $pl;
 }
 
-function configuredPasswordHash(string $lang): string {
+function configuredPasswordHash(string $lang): string
+{
     $hash = getenv('CMS_PASSWORD_HASH');
     if ($hash) {
         return $hash;
@@ -30,12 +32,13 @@ function configuredPasswordHash(string $lang): string {
 
 $passwordHash = configuredPasswordHash($lang);
 
-if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (string)$_POST['password']))) {
+if (!isset($_POST['password']) || !hash_equals($passwordHash, hash('sha256', (string) $_POST['password']))) {
     http_response_code(401);
     exit(t('Błędne hasło', 'Incorrect password', $lang));
 }
 
-function loadContent(): array {
+function loadContent(): array
+{
     if (!file_exists(CONTENT_PATH)) {
         return ['hero' => [], 'news' => []];
     }
@@ -50,11 +53,13 @@ function loadContent(): array {
     return $data;
 }
 
-function saveContent(array $data): void {
+function saveContent(array $data): void
+{
     file_put_contents(CONTENT_PATH, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
 }
 
-function ensureUploadDirExists(string $lang): void {
+function ensureUploadDirExists(string $lang): void
+{
     if (is_dir(UPLOAD_DIR)) {
         return;
     }
@@ -65,7 +70,8 @@ function ensureUploadDirExists(string $lang): void {
     }
 }
 
-function storeImage(array $file, string $lang): ?string {
+function storeImage(array $file, string $lang): ?string
+{
     if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
         return null;
     }
@@ -97,7 +103,7 @@ function storeImage(array $file, string $lang): ?string {
         [$width, $height] = $info;
         $ratio = 1600 / $width;
         $newWidth = 1600;
-        $newHeight = (int)($height * $ratio);
+        $newHeight = (int) ($height * $ratio);
 
         switch ($ext) {
             case 'jpg':
@@ -219,6 +225,107 @@ if ($action === 'addNews') {
     array_unshift($content['news'], $newsItem);
     saveContent($content);
     exit(t('Aktualność została dodana.', 'News item added.', $lang));
+}
+
+if ($action === 'updateSection') {
+    $section = $_POST['section'] ?? '';
+    // Allowed sections validation
+    $allowed = ['mission', 'presidium'];
+    if (!in_array($section, $allowed)) {
+        http_response_code(400);
+        exit(t('Nieznana sekcja.', 'Unknown section.', $lang));
+    }
+
+    $data = [];
+    foreach ($_POST as $key => $val) {
+        if ($key !== 'action' && $key !== 'password' && $key !== 'lang' && $key !== 'section') {
+            $data[$key] = trim($val);
+        }
+    }
+
+    $content[$section] = $data;
+    saveContent($content);
+    exit(t('Sekcja została zaktualizowana.', 'Section updated.', $lang));
+}
+
+if ($action === 'deleteNews') {
+    $index = (int) ($_POST['index'] ?? -1);
+
+    if ($index < 0 || !isset($content['news'][$index])) {
+        http_response_code(400);
+        exit(t('Nieprawidłowy identyfikator aktualności.', 'Invalid news ID.', $lang));
+    }
+
+    array_splice($content['news'], $index, 1);
+    saveContent($content);
+    exit(t('Aktualność została usunięta.', 'News item deleted.', $lang));
+}
+
+if ($action === 'updateNews') {
+    $index = (int) ($_POST['index'] ?? -1);
+
+    if ($index < 0 || !isset($content['news'][$index])) {
+        http_response_code(400);
+        exit(t('Nieprawidłowy identyfikator aktualności.', 'Invalid news ID.', $lang));
+    }
+
+    $title = trim($_POST['title'] ?? '');
+    $date = trim($_POST['date'] ?? '');
+    $summary = trim($_POST['summary'] ?? '');
+    $alt = trim($_POST['alt'] ?? '');
+
+    if ($title === '' || $date === '' || $alt === '') {
+        http_response_code(400);
+        exit(t('Tytuł, data i tekst alternatywny są wymagane.', 'Title, date and alternative text are required.', $lang));
+    }
+
+    // Preserve existing image/gallery if not replaced
+    $existingItem = $content['news'][$index];
+    $newsItem = [
+        'title' => $title,
+        'date' => $date,
+        'summary' => $summary,
+        'alt' => $alt,
+        'image' => $existingItem['image'],
+        'gallery' => $existingItem['gallery'] ?? [],
+    ];
+
+    if (isset($_FILES['mainImage']) && $_FILES['mainImage']['size'] > 0) {
+        $path = storeImage($_FILES['mainImage'], $lang);
+        if ($path) {
+            $newsItem['image'] = $path;
+            // Optionally add new main image to gallery if not present? 
+            // For now, let's just update the main image.
+            if (!in_array($path, $newsItem['gallery'])) {
+                array_unshift($newsItem['gallery'], $path);
+            }
+        }
+    }
+
+    if (isset($_FILES['gallery']) && is_array($_FILES['gallery']['name'])) {
+        foreach ($_FILES['gallery']['name'] as $idx => $name) {
+            if ($_FILES['gallery']['size'][$idx] > 0) {
+                $file = [
+                    'name' => $name,
+                    'type' => $_FILES['gallery']['type'][$idx],
+                    'tmp_name' => $_FILES['gallery']['tmp_name'][$idx],
+                    'error' => $_FILES['gallery']['error'][$idx],
+                    'size' => $_FILES['gallery']['size'][$idx],
+                ];
+                $path = storeImage($file, $lang);
+                if ($path) {
+                    $newsItem['gallery'][] = $path;
+                }
+            }
+        }
+    }
+
+    // De-duplicate gallery
+    $newsItem['gallery'] = array_values(array_unique($newsItem['gallery']));
+
+    $content['news'][$index] = $newsItem;
+    saveContent($content);
+    exit(t('Aktualność została zaktualizowana.', 'News item updated.', $lang));
 }
 
 http_response_code(400);

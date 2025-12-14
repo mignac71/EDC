@@ -1,27 +1,92 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel CMS</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    body { background: #f5f5f5; }
-    .cms-container { max-width: 960px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .cms-container h1 { margin-top: 0; }
-    .form-group { margin-bottom: 1rem; }
-    label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
-    input[type="text"], input[type="password"], input[type="date"], textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-    textarea { min-height: 100px; }
-    .form-actions { display: flex; gap: 1rem; align-items: center; }
-    .muted { color: #555; font-size: 0.9rem; }
-    .card { border: 1px solid #e0e0e0; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; background: #fafafa; }
-    .status { margin-top: 0.5rem; font-weight: 600; }
-    .status.success { color: #0a7a25; }
-    .status.error { color: #b00020; }
-    .news-preview { list-style: disc; padding-left: 1.25rem; }
+    body {
+      background: #f5f5f5;
+    }
+
+    .cms-container {
+      max-width: 960px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .cms-container h1 {
+      margin-top: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .muted {
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .card {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      background: #fafafa;
+    }
+
+    .status {
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+
+    .status.success {
+      color: #0a7a25;
+    }
+
+    .status.error {
+      color: #b00020;
+    }
+
+    .news-preview {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
   </style>
 </head>
+
 <body>
   <div class="cms-container">
     <div class="form-actions" style="justify-content: space-between; align-items: center;">
@@ -45,7 +110,8 @@
       <div class="form-actions">
         <button id="login-button" data-i18n="action.login">Zaloguj</button>
         <span class="status" id="login-status"></span>
-        <a id="forgot-password" href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted" data-i18n="link.forgot">Zapomniałem hasła</a>
+        <a id="forgot-password" href="mailto:michal@ignasza.pl?subject=Reset%20has%C5%82a" class="muted"
+          data-i18n="link.forgot">Zapomniałem hasła</a>
       </div>
     </div>
 
@@ -70,6 +136,29 @@
           </div>
         </form>
       </div>
+
+      <div class="card">
+        <h2 data-i18n="section.mission">Misja</h2>
+        <form id="mission-form">
+          <div class="form-group">
+            <label for="mission-title" data-i18n="label.title">Tytuł</label>
+            <input type="text" id="mission-title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="mission-lead" data-i18n="label.lead">Wprowadzenie</label>
+            <textarea id="mission-lead" name="lead" required></textarea>
+          </div>
+          <input type="hidden" name="action" value="updateSection">
+          <input type="hidden" name="section" value="mission">
+          <input type="hidden" name="password">
+          <input type="hidden" name="lang" value="pl">
+          <div class="form-actions">
+            <button type="submit" data-i18n="action.save">Zapisz</button>
+            <span class="status" id="mission-status"></span>
+          </div>
+        </form>
+      </div>
+
 
       <div class="card">
         <h2 data-i18n="section.news">Dodaj aktualność</h2>
@@ -125,6 +214,7 @@
         forgot: 'Zapomniałem hasła',
         heroSection: 'Nagłówek strony',
         newsSection: 'Dodaj aktualność',
+        editNewsSection: 'Edytuj aktualność',
         titleLabel: 'Tytuł',
         subtitleLabel: 'Podtytuł',
         newsTitle: 'Tytuł',
@@ -135,8 +225,25 @@
         uploadHint: 'Plik zostanie zapisany w katalogu images/uploads.',
         gallery: 'Dodatkowe grafiki (opcjonalnie, wiele plików)',
         preview: 'Obecne aktualności',
+        preview: 'Obecne aktualności',
         saveHero: 'Zapisz nagłówek',
+        save: 'Zapisz',
         addNews: 'Dodaj aktualność',
+        updateNews: 'Zapisz zmiany',
+        cancelEdit: 'Anuluj edycję',
+        confirmDelete: 'Czy na pewno chcesz usunąć tę aktualność?',
+        actions: 'Akcje',
+        edit: 'Edytuj',
+        delete: 'Usuń',
+        section: {
+          hero: 'Nagłówek strony',
+          mission: 'Misja',
+          news: 'Dodaj aktualność'
+        },
+        label: {
+          title: 'Tytuł',
+          lead: 'Wprowadzenie'
+        },
         errors: {
           wrongPassword: 'Błędne hasło',
           fetchFailed: 'Nie udało się pobrać danych',
@@ -151,6 +258,21 @@
         forgot: 'I forgot my password',
         heroSection: 'Hero content',
         newsSection: 'Add news item',
+        editNewsSection: 'Edit news item',
+        titleLabel: 'Title',
+        subtitleLabel: 'Subtitle',
+        newsTitle: 'Title',
+        date: 'Date',
+        summary: 'Summary (optional)',
+        alt: 'Alternative text for image',
+        mainImage: 'Main image',
+        uploadHint: 'File will be saved to images/uploads.',
+        gallery: 'Additional images (optional, multiple files)',
+        preview: 'Current news items',
+        saveHero: 'Save hero content',
+        save: 'Save',
+        addNews: 'Add news item',
+        editNewsSection: 'Edit news item',
         titleLabel: 'Title',
         subtitleLabel: 'Subtitle',
         newsTitle: 'Title',
@@ -163,6 +285,12 @@
         preview: 'Current news items',
         saveHero: 'Save hero content',
         addNews: 'Add news item',
+        updateNews: 'Save changes',
+        cancelEdit: 'Cancel edit',
+        confirmDelete: 'Are you sure you want to delete this news item?',
+        actions: 'Actions',
+        edit: 'Edit',
+        delete: 'Delete',
         errors: {
           wrongPassword: 'Incorrect password',
           fetchFailed: 'Unable to load data',
@@ -173,6 +301,12 @@
 
     let currentLang = 'pl';
     let currentPassword = '';
+    let currentNewsData = [];
+    let editIndex = -1;
+
+    function t(key) {
+      return translations[currentLang][key] || key;
+    }
 
     function applyLanguage(lang) {
       const dict = translations[lang] || translations.pl;
@@ -184,9 +318,21 @@
       document.getElementById('login-button').textContent = dict.login;
       document.getElementById('forgot-password').textContent = dict.forgot;
       document.querySelector('[data-i18n="section.hero"]').textContent = dict.heroSection;
-      document.querySelector('[data-i18n="section.news"]').textContent = dict.newsSection;
+
+      updateNewsFormTitle();
+
       document.querySelector('[for="hero-title"]').textContent = dict.titleLabel;
       document.querySelector('[for="hero-subtitle"]').textContent = dict.subtitleLabel;
+
+      // Update new section labels
+      const missionTitle = document.querySelector('[data-i18n="section.mission"]');
+      if (missionTitle) missionTitle.textContent = dict.section?.mission || 'Mission';
+
+      const missionLeadLbl = document.querySelector('[for="mission-lead"]');
+      if (missionLeadLbl) missionLeadLbl.textContent = dict.label?.lead || 'Lead';
+
+      document.querySelectorAll('[data-i18n="action.save"]').forEach(btn => btn.textContent = dict.save);
+
       document.querySelector('[for="news-title"]').textContent = dict.newsTitle;
       document.querySelector('[for="news-date"]').textContent = dict.date;
       document.querySelector('[for="news-summary"]').textContent = dict.summary;
@@ -196,10 +342,49 @@
       document.querySelector('[for="news-gallery"]').textContent = dict.gallery;
       document.querySelector('[data-i18n="label.preview"]').textContent = dict.preview;
       document.querySelector('[data-i18n="action.saveHero"]').textContent = dict.saveHero;
-      document.querySelector('[data-i18n="action.addNews"]').textContent = dict.addNews;
+
+      // Dynamic buttons
+      updateNewsFormButtons();
 
       document.querySelectorAll('input[name="lang"]').forEach(input => input.value = lang);
       currentLang = lang;
+      renderNewsList(); // Re-render list to update button labels
+    }
+
+    function updateNewsFormTitle() {
+      const dict = translations[currentLang];
+      const titleEl = document.querySelector('[data-i18n="section.news"]');
+      if (editIndex >= 0) {
+        titleEl.textContent = dict.editNewsSection;
+      } else {
+        titleEl.textContent = dict.newsSection;
+      }
+    }
+
+    function updateNewsFormButtons() {
+      const dict = translations[currentLang];
+      const submitBtn = document.querySelector('#news-form button[type="submit"]');
+      const cancelBtn = document.getElementById('cancel-edit-btn');
+
+      if (editIndex >= 0) {
+        submitBtn.textContent = dict.updateNews;
+        if (!cancelBtn) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.id = 'cancel-edit-btn';
+          btn.textContent = dict.cancelEdit;
+          btn.onclick = resetNewsForm;
+          btn.style.marginLeft = '10px';
+          btn.style.backgroundColor = '#666';
+          document.querySelector('#news-form .form-actions').appendChild(btn);
+        } else {
+          cancelBtn.textContent = dict.cancelEdit;
+          cancelBtn.style.display = 'inline-block';
+        }
+      } else {
+        submitBtn.textContent = dict.addNews;
+        if (cancelBtn) cancelBtn.style.display = 'none';
+      }
     }
 
     function setStatus(elementId, message, isSuccess = true) {
@@ -208,6 +393,11 @@
       el.textContent = message;
       el.classList.toggle('success', isSuccess);
       el.classList.toggle('error', !isSuccess);
+
+      // clear status after 5 seconds
+      setTimeout(() => {
+        if (el.textContent === message) el.textContent = '';
+      }, 5000);
     }
 
     async function fetchContent() {
@@ -217,16 +407,129 @@
         const data = await response.json();
         document.getElementById('hero-title').value = data.hero?.title || '';
         document.getElementById('hero-subtitle').value = data.hero?.subtitle || '';
-        const preview = document.getElementById('news-preview');
-        preview.innerHTML = '';
-        (data.news || []).forEach(item => {
-          const li = document.createElement('li');
-          const date = new Date(item.date).toLocaleDateString();
-          li.textContent = `${date} – ${item.title}`;
-          preview.appendChild(li);
-        });
+
+        if (data.mission) {
+          document.getElementById('mission-title').value = data.mission.title || '';
+          document.getElementById('mission-lead').value = data.mission.lead || '';
+        }
+
+        currentNewsData = data.news || [];
+        renderNewsList();
+
       } catch (err) {
         setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
+      }
+    }
+
+    function renderNewsList() {
+      const preview = document.getElementById('news-preview');
+      preview.innerHTML = '';
+      const dict = translations[currentLang];
+
+      currentNewsData.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.style.marginBottom = '0.5rem';
+
+        const span = document.createElement('span');
+        const date = new Date(item.date).toLocaleDateString();
+        span.textContent = `${date} – ${item.title}`;
+
+        const actionsDiv = document.createElement('div');
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = dict.edit;
+        editBtn.style.fontSize = '0.8rem';
+        editBtn.style.marginRight = '5px';
+        editBtn.style.padding = '2px 8px';
+        editBtn.onclick = () => loadNewsForEdit(index);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = dict.delete;
+        deleteBtn.style.fontSize = '0.8rem';
+        deleteBtn.style.padding = '2px 8px';
+        deleteBtn.style.backgroundColor = '#b00020';
+        deleteBtn.onclick = () => deleteNewsItem(index);
+
+        actionsDiv.appendChild(editBtn);
+        actionsDiv.appendChild(deleteBtn);
+
+        li.appendChild(span);
+        li.appendChild(actionsDiv);
+        preview.appendChild(li);
+      });
+    }
+
+    function loadNewsForEdit(index) {
+      editIndex = index;
+      const item = currentNewsData[index];
+      const form = document.getElementById('news-form');
+
+      form.querySelector('[name="title"]').value = item.title;
+      form.querySelector('[name="date"]').value = item.date;
+      form.querySelector('[name="summary"]').value = item.summary;
+      form.querySelector('[name="alt"]').value = item.alt;
+      form.querySelector('[name="action"]').value = 'updateNews';
+      form.querySelector('[name="mainImage"]').required = false; // Not required on edit
+
+      // Add hidden index field
+      let idxInput = form.querySelector('input[name="index"]');
+      if (!idxInput) {
+        idxInput = document.createElement('input');
+        idxInput.type = 'hidden';
+        idxInput.name = 'index';
+        form.appendChild(idxInput);
+      }
+      idxInput.value = index;
+
+      updateNewsFormTitle();
+      updateNewsFormButtons();
+
+      // Scroll to form
+      form.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetNewsForm() {
+      editIndex = -1;
+      const form = document.getElementById('news-form');
+      form.reset();
+      form.querySelector('[name="action"]').value = 'addNews';
+      form.querySelector('[name="mainImage"]').required = true;
+
+      const idxInput = form.querySelector('input[name="index"]');
+      if (idxInput) idxInput.remove();
+
+      updateNewsFormTitle();
+      updateNewsFormButtons();
+    }
+
+    async function deleteNewsItem(index) {
+      if (!confirm(translations[currentLang].confirmDelete)) return;
+
+      const formData = new FormData();
+      formData.append('action', 'deleteNews');
+      formData.append('index', index);
+      formData.append('password', currentPassword);
+      formData.append('lang', currentLang);
+
+      try {
+        const response = await fetch('cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await response.text();
+
+        if (response.ok) {
+          setStatus('news-status', text, true);
+          fetchContent();
+          if (editIndex === index) resetNewsForm();
+        } else {
+          setStatus('news-status', text, false);
+        }
+      } catch (err) {
+        setStatus('news-status', translations[currentLang].errors.saveFailed, false);
       }
     }
 
@@ -272,6 +575,10 @@
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(form);
+
+        // Ensure password is set from memory as hidden fields might be reset
+        formData.set('password', currentPassword);
+
         try {
           const response = await fetch('cms-save.php', {
             method: 'POST',
@@ -281,11 +588,8 @@
           const ok = response.ok;
           setStatus(statusId, text, ok);
           if (ok && formId === 'news-form') {
-            form.reset();
-            document.querySelectorAll('input[name="password"]').forEach(input => {
-              input.value = currentPassword;
-            });
-            document.querySelectorAll('input[name="lang"]').forEach(input => input.value = currentLang);
+            // Only reset if it was an add action, or just reset to clear/reload
+            resetNewsForm();
             fetchContent();
           }
         } catch (err) {
@@ -296,6 +600,7 @@
 
     document.getElementById('login-button').addEventListener('click', handleLogin);
     submitForm('hero-form', 'hero-status');
+    submitForm('mission-form', 'mission-status');
     submitForm('news-form', 'news-status');
 
     document.getElementById('language-select').addEventListener('change', (event) => {
@@ -305,4 +610,5 @@
     applyLanguage('pl');
   </script>
 </body>
+
 </html>

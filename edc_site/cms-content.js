@@ -84,10 +84,31 @@
       if (!response.ok) return;
       const data = await response.json();
       applyHeroCopy(data.hero);
+      if (data.mission) applyMissionCopy(data.mission);
+      if (data.presidium) applyPresidiumCopy(data.presidium);
       renderNews(data.news);
     } catch (err) {
       console.error('Unable to load CMS content', err);
     }
+  }
+
+  function applyMissionCopy(mission) {
+    if (!mission) return;
+    const titleEl = document.querySelector('.mission h2');
+    const leadEl = document.querySelector('.mission .lead');
+    if (titleEl && mission.title) {
+        titleEl.textContent = mission.title;
+        // Also update i18n text content to avoid overwrite race conditions if any
+        titleEl.removeAttribute('data-i18n');
+    }
+    if (leadEl && mission.lead) {
+        leadEl.textContent = mission.lead;
+        leadEl.removeAttribute('data-i18n');
+    }
+  }
+
+  function applyPresidiumCopy(presidium) {
+      // Future implementation if specific fields are editable
   }
 
   document.addEventListener('DOMContentLoaded', loadContent);

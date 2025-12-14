@@ -34,7 +34,8 @@ function vercelBlobPut(array $file): ?string
     $postCode = curl_getinfo($postCh, CURLINFO_HTTP_CODE);
     curl_close($postCh);
 
-    if ($postCode === 200) {
+    // Vercel Blob may return 200 or 201 on success depending on API version
+    if ($postCode >= 200 && $postCode < 300) {
         $json = json_decode($postResponse, true);
         if (isset($json['url'])) {
             return $json['url'];

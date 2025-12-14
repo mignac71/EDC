@@ -24,9 +24,9 @@
 
     .media-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      /* Fixed min width, fill available */
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      /* Slightly larger than 60 to fit padding */
+      gap: 10px;
       margin-top: 10px;
     }
 
@@ -38,6 +38,15 @@
       border-radius: 4px;
       background: #fff;
       align-items: center;
+      justify-content: center;
+    }
+
+    .media-item img {
+      width: 60px;
+      height: auto;
+      max-height: 40px;
+      object-fit: contain;
+      cursor: pointer;
     }
 
     .cms-container {
@@ -1286,6 +1295,40 @@
         console.error(err);
         list.textContent = translations[currentLang]?.errors?.fetchFailed || 'Błąd';
       }
+    }
+
+    // Media Upload Handler - Critical to prevent page reload (logout)
+    const mediaUploadForm = document.getElementById('media-upload-form');
+    if (mediaUploadForm) {
+      mediaUploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // STOP DEFAULT SUBMISSION
+        const statusEl = document.getElementById('media-upload-status');
+        statusEl.textContent = 'Przesyłanie...';
+        statusEl.className = 'status';
+
+        const formData = new FormData(mediaUploadForm);
+        formData.append('action', 'uploadMedia');
+        formData.append('password', currentPassword);
+        formData.append('username', currentUsername);
+        formData.append('lang', currentLang);
+
+        try {
+          const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+          const text = await res.text();
+          if (res.ok) {
+            statusEl.textContent = text;
+            statusEl.classList.add('success');
+            mediaUploadForm.reset();
+            fetchMediaLibrary(); // Refresh list
+          } else {
+            statusEl.textContent = text;
+            statusEl.classList.add('error');
+          }
+        } catch (err) {
+          statusEl.textContent = 'Błąd połączenia.';
+          statusEl.classList.add('error');
+        }
+      });
     }
 
     async function deleteMediaFile(url) {

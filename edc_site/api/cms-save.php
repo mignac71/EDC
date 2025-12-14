@@ -607,5 +607,20 @@ if ($action === 'changePassword') {
 }
 
 
+
+if ($action === 'uploadMedia') {
+    if (!isset($_FILES['file'])) {
+        exit(t('Brak pliku.', 'No file uploaded.', $lang));
+    }
+
+    $path = storeImage($_FILES['file'], $lang);
+    if ($path) {
+        exit(t('Plik przesłany pomyślnie.', 'File uploaded successfully.', $lang));
+    } else {
+        http_response_code(500);
+        exit(t('Błąd przesyłania.', 'Upload failed.', $lang));
+    }
+}
+
 http_response_code(400);
 exit('Unknown action');

@@ -22,6 +22,24 @@
       color: #333;
     }
 
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      /* Fixed min width, fill available */
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .media-item {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 4px;
+      background: #fff;
+      align-items: center;
+    }
+
     .cms-container {
       max-width: 1400px;
       margin: 2rem auto;
@@ -382,9 +400,16 @@
             <h2 data-i18n="section.media">Biblioteka Mediów</h2>
           </summary>
           <div class="card-content">
+            <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+              <h4>Dodaj nowe zdjęcie</h4>
+              <form id="media-upload-form" style="display: flex; gap: 10px; align-items: center;">
+                <input type="file" name="file" accept="image/*" required>
+                <button type="submit">Prześlij</button>
+              </form>
+              <div id="media-upload-status" class="status"></div>
+            </div>
             <p class="muted">Kliknij na zdjęcie, aby skopiować URL.</p>
-            <div id="media-grid"
-              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+            <div id="media-list" class="media-grid">
               <p>Ładowanie...</p>
             </div>
           </div>
@@ -695,7 +720,7 @@
         currentNewsData.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderNewsList();
 
-        loadMedia(); // Load media library
+        fetchMediaLibrary(); // Load media library
 
       } catch (err) {
         console.error(err);
@@ -1194,9 +1219,9 @@
     // toggleMediaLib removed as we use details element now
 
 
-    async function loadMedia() {
-      const grid = document.getElementById('media-grid');
-      grid.innerHTML = 'Ładowanie (może potrwać chwilę)...';
+    async function fetchMediaLibrary() {
+      const list = document.getElementById('media-list');
+      list.innerHTML = 'Ładowanie (może potrwać chwilę)...';
 
       const formData = new FormData();
       formData.append('action', 'listMedia');
@@ -1209,18 +1234,13 @@
         const data = await res.json();
 
         if (data.blobs && data.blobs.length > 0) {
-          grid.innerHTML = '';
+          list.innerHTML = '';
           data.blobs.forEach(blob => {
             const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.border = '1px solid #ddd';
+            container.className = 'media-item';
 
             const img = document.createElement('img');
             img.src = blob.url;
-            img.style.width = '100%';
-            img.style.height = '100px';
-            img.style.objectFit = 'cover';
-            img.style.cursor = 'pointer';
             img.title = 'Użyj tego zdjęcia';
             img.onclick = () => {
               // Priority 1: Fill Active Hero Input

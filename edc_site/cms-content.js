@@ -12,6 +12,10 @@
     if (subtitleEl && hero.subtitle) {
       subtitleEl.textContent = hero.subtitle;
     }
+    if (hero.image) {
+      const heroSection = document.querySelector('.hero');
+      if (heroSection) heroSection.style.backgroundImage = `url('${hero.image}')`;
+    }
   }
 
   function buildNewsItem(item) {

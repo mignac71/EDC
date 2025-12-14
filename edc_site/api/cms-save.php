@@ -223,10 +223,16 @@ if (!isset($content['presidium']))
 if ($action === 'updateHero') {
     $title = trim($_POST['heroTitle'] ?? '');
     $subtitle = trim($_POST['heroSubtitle'] ?? '');
+    $image = trim($_POST['heroImage'] ?? '');
+
     if ($title === '' || $subtitle === '')
         exit(t('Uzupełnij pola.', 'Fill fields.', $lang));
 
-    $content['hero'] = ['title' => $title, 'subtitle' => $subtitle];
+    $content['hero'] = [
+        'title' => $title,
+        'subtitle' => $subtitle,
+        'image' => $image
+    ];
     saveContent($content);
     exit(t('Zaktualizowano.', 'Updated.', $lang));
 }

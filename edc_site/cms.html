@@ -217,6 +217,11 @@
                   name="heroTitle"></div>
               <div class="form-group"><label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label><input
                   type="text" id="hero-subtitle" name="heroSubtitle"></div>
+              <div class="form-group">
+                <label>Zdjęcie tła (URL)</label>
+                <input type="text" id="hero-image" name="heroImage"
+                  placeholder="https://... (Pozostaw puste dla domyślnego)">
+              </div>
               <input type="hidden" name="action" value="updateHero">
               <input type="hidden" name="password">
               <input type="hidden" name="username">
@@ -647,6 +652,7 @@
         if (data.hero) {
           document.getElementById('hero-title').value = data.hero.title || '';
           document.getElementById('hero-subtitle').value = data.hero.subtitle || '';
+          document.getElementById('hero-image').value = data.hero.image || '';
         }
 
         // 2. Mission
@@ -1152,10 +1158,17 @@
             img.style.cursor = 'pointer';
             img.title = 'Użyj tego zdjęcia';
             img.onclick = () => {
-              document.getElementById('news-image-url').value = blob.url;
-              document.getElementById('news-image').value = '';
-              setStatus('news-status', 'Wybrano zdjęcie!', true);
-              // document.getElementById('media-library').style.display = 'none'; // Keep open?
+              // Copy to clipboard
+              navigator.clipboard.writeText(blob.url).then(() => {
+                setStatus('news-status', 'URL skopiowany do schowka! Możesz go wkleić w polu News lub Hero.', true);
+              });
+
+              // Convenience: Is there an empty active input? No easy way to know. 
+              // Legacy convenience: Fill news input if empty
+              const newsInput = document.getElementById('news-image-url');
+              if (newsInput && !newsInput.value) {
+                newsInput.value = blob.url;
+              }
             };
 
             container.appendChild(img);

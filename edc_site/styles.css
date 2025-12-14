@@ -684,6 +684,38 @@ footer a:hover {
     line-height: 1.6;
   }
 
+  .navbar {
+    padding: 10px 0;
+  }
+
+  .navbar .container {
+    width: 100%;
+    max-width: none;
+    padding: 0 16px;
+  }
+
+  .nav-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 100%;
+  }
+
+  .logo img {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    display: block;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-self: flex-end;
+  }
+
   .navbar nav {
     background: var(--white);
     padding: 20px;
@@ -721,7 +753,7 @@ footer a:hover {
   }
 
   .nav-container {
-    justify-content: space-between;
+    justify-content: center;
   }
 
   .navbar nav {

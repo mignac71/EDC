@@ -554,8 +554,12 @@
     let currentPresidium = [];
     let currentPartners = [];
     let currentDealers = {};
+    let currentPresidium = [];
+    let currentPartners = [];
+    let currentDealers = {};
     let currentMissionCards = []; // Dynamic Array
     let currentHeroImages = []; // Dynamic Array for Hero
+    let activeHeroInput = null; // Track focused input for Media Library interaction
     let editIndex = -1;
 
     function t(key) {
@@ -1131,11 +1135,46 @@
       container.innerHTML = '';
       currentHeroImages.forEach((url, index) => {
         const row = document.createElement('div');
-        row.style.marginBottom = '5px';
+        row.style.marginBottom = '10px';
         row.style.display = 'flex';
-        row.style.gap = '5px';
-        row.innerHTML = `<input type="text" value="${url}" onchange="currentHeroImages[${index}] = this.value" placeholder="URL obrazka" style="flex:1">
-             <button type="button" onclick="removeHeroImage(${index})" style="background:#b00020; color:fff; border:none; padding:5px;">X</button>`;
+        row.style.alignItems = 'center';
+        row.style.gap = '10px';
+
+        // Thumbnail
+        const thumb = document.createElement('img');
+        // Better: only show if url exists.
+        if (url) {
+          thumb.src = url;
+          thumb.style.width = '60px';
+          thumb.style.height = '40px';
+          thumb.style.objectFit = 'cover';
+          thumb.style.borderRadius = '4px';
+          thumb.style.border = '1px solid #ddd';
+        } else {
+          thumb.style.display = 'none';
+        }
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = url;
+        input.placeholder = 'Kliknij tutaj, potem wybierz zdjęcie z biblioteki';
+        input.style.flex = '1';
+        input.onchange = (e) => { currentHeroImages[index] = e.target.value; renderHeroImagesEditor(); };
+        input.onfocus = (e) => { activeHeroInput = e.target; }; // Track focus!
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Usuń';
+        removeBtn.style.background = '#ff4d4d'; // Brighter red
+        removeBtn.style.color = 'white';
+        removeBtn.style.border = 'none';
+        removeBtn.style.borderRadius = '4px';
+        removeBtn.style.padding = '5px 10px';
+        removeBtn.onclick = () => removeHeroImage(index);
+
+        row.appendChild(thumb);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
         container.appendChild(row);
       });
     }
@@ -1187,13 +1226,21 @@
             img.style.cursor = 'pointer';
             img.title = 'Użyj tego zdjęcia';
             img.onclick = () => {
-              // Copy to clipboard
+              // Priority 1: Fill Active Hero Input
+              if (activeHeroInput) {
+                activeHeroInput.value = blob.url;
+                // Trigger change event manually to update array
+                activeHeroInput.dispatchEvent(new Event('change'));
+                setStatus('hero-status', 'Zdjęcie dodane do listy!', true);
+                // Optional: clear active input or keep it focused? Keep it.
+                return;
+              }
+
+              // Priority 2: Standard Copy & News Fallback
               navigator.clipboard.writeText(blob.url).then(() => {
-                setStatus('news-status', 'URL skopiowany do schowka! Możesz go wkleić w polu News lub Hero.', true);
+                setStatus('news-status', 'URL skopiowany! Wybierz pole, aby wkleić.', true);
               });
 
-              // Convenience: Is there an empty active input? No easy way to know. 
-              // Legacy convenience: Fill news input if empty
               const newsInput = document.getElementById('news-image-url');
               if (newsInput && !newsInput.value) {
                 newsInput.value = blob.url;

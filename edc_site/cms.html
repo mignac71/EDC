@@ -1231,84 +1231,44 @@
 
       try {
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        const data = await res.json();
-
-        if (data.blobs && data.blobs.length > 0) {
-          list.innerHTML = '';
-          data.blobs.forEach(blob => {
-            const container = document.createElement('div');
-            container.className = 'media-item';
-
-            const img = document.createElement('img');
-            img.src = blob.url;
-            img.title = 'Użyj tego zdjęcia';
-            img.onclick = () => {
-              // Priority 1: Fill Active Hero Input
-              if (activeHeroInput) {
-                activeHeroInput.value = blob.url;
-                // Trigger change event manually to update array
-                activeHeroInput.dispatchEvent(new Event('change'));
-                setStatus('hero-status', 'Zdjęcie dodane do listy!', true);
-                // Optional: clear active input or keep it focused? Keep it.
-                return;
-              }
-
-              // Priority 2: Standard Copy & News Fallback
-              navigator.clipboard.writeText(blob.url).then(() => {
-                setStatus('news-status', 'URL skopiowany! Wybierz pole, aby wkleić.', true);
-              });
-
-              const newsInput = document.getElementById('news-image-url');
-              if (newsInput && !newsInput.value) {
-                newsInput.value = blob.url;
-              }
-            };
-
-            container.appendChild(img);
-
-            // Delete button (only for non-local)
-            if (!blob.isLocal) {
-              const delBtn = document.createElement('button');
-              delBtn.textContent = '❌';
-              delBtn.title = 'Usuń plik z chmury';
-              delBtn.style.position = 'absolute';
-              delBtn.style.top = '0';
-              delBtn.style.right = '0';
-              delBtn.style.background = 'rgba(255,0,0,0.7)';
-              delBtn.style.color = '#fff';
-              delBtn.style.border = 'none';
-              delBtn.onclick = (e) => {
-                e.stopPropagation();
-                deleteMediaFile(blob.url);
-              };
-              container.appendChild(delBtn);
-            } else {
-              const badger = document.createElement('span');
-              badger.textContent = 'Lokalny';
-              badger.style.position = 'absolute';
-              badger.style.bottom = '0';
-              badger.style.right = '0';
-              badger.style.background = 'rgba(0,0,0,0.5)';
-              badger.style.color = '#fff';
-              badger.style.fontSize = '10px';
-              badger.style.padding = '2px';
-              container.appendChild(badger);
-            }
-
-            grid.appendChild(container);
-          });
-        } else {
-          grid.innerHTML = 'Brak zdjęć.';
-          if (data.debug) {
-            console.error('Blob Debug:', data.debug);
-            const debugStr = JSON.stringify(data.debug, null, 2);
-            grid.innerHTML += `<pre style="font-size:10px; color:red; overflow:auto;">Debug: ${debugStr}</pre>`;
-          }
-        }
-      } catch (e) {
-        grid.innerHTML = 'Błąd ładowania.';
-        console.error(e);
+        delBtn.style.position = 'absolute';
+        delBtn.style.top = '0';
+        delBtn.style.right = '0';
+        delBtn.style.background = 'rgba(255,0,0,0.7)';
+        delBtn.style.color = '#fff';
+        delBtn.style.border = 'none';
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteMediaFile(blob.url);
+        };
+        container.appendChild(delBtn);
+      } else {
+        const badger = document.createElement('span');
+        badger.textContent = 'Lokalny';
+        badger.style.position = 'absolute';
+        badger.style.bottom = '0';
+        badger.style.right = '0';
+        badger.style.background = 'rgba(0,0,0,0.5)';
+        badger.style.color = '#fff';
+        badger.style.fontSize = '10px';
+        badger.style.padding = '2px';
+        container.appendChild(badger);
       }
+
+      grid.appendChild(container);
+    });
+        } else {
+      grid.innerHTML = 'Brak zdjęć.';
+      if (data.debug) {
+        console.error('Blob Debug:', data.debug);
+        const debugStr = JSON.stringify(data.debug, null, 2);
+        grid.innerHTML += `<pre style="font-size:10px; color:red; overflow:auto;">Debug: ${debugStr}</pre>`;
+      }
+    }
+      } catch (e) {
+      grid.innerHTML = 'Błąd ładowania.';
+      console.error(e);
+    }
     }
 
     async function deleteMediaFile(url) {

@@ -477,7 +477,10 @@ if ($action === 'listMedia') {
     if ($token) {
         $ch = curl_init('https://blob.vercel-storage.com');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $token,
+            'x-api-version: 1'
+        ]);
         $res = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
@@ -520,7 +523,6 @@ if ($action === 'listMedia') {
     header('Content-Type: application/json');
     header('Content-Type: application/json');
     echo json_encode(['blobs' => $blobs, 'debug' => $debug]);
-    exit;
     exit;
 }
 

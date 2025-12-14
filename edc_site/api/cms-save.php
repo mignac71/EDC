@@ -194,30 +194,19 @@ function storeImage(array $file, string $lang): ?string
     }
 
     // 1. Try Vercel Blob
+    $token = getenv('BLOB_READ_WRITE_TOKEN');
+    if (!$token) {
+        http_response_code(500);
+        exit(t('Błąd: Brak tokenu Vercel Blob (BLOB_READ_WRITE_TOKEN). Skonfiguruj go w ustawieniach Vercel.', 'Error: Vercel Blob Token (BLOB_READ_WRITE_TOKEN) is missing. Configure it in Vercel Settings.', $lang));
+    }
+
     $url = vercelBlobPut($file);
     if ($url) {
         return $url;
     }
 
-    // 2. Fallback: Local Uploads
-    $uploadDir = __DIR__ . '/../images/uploads/';
-    if (!is_dir($uploadDir)) {
-        if (!mkdir($uploadDir, 0755, true)) {
-            http_response_code(500);
-            exit(t('Nie udało się utworzyć lokalnego katalogu uploads.', 'Failed to create local uploads dir.', $lang));
-        }
-    }
-
-    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid('upload_') . '.' . $ext;
-    $destination = $uploadDir . $filename;
-
-    if (move_uploaded_file($file['tmp_name'], $destination)) {
-        return 'images/uploads/' . $filename;
-    }
-
     http_response_code(500);
-    exit(t('Nie udało się zapisać pliku (Blob Storage Error i Local Error).', 'Failed to save file (Blob Storage Error & Local Error).', $lang));
+    exit(t('Nie udało się zapisać pliku w Vercel Blob (Upload Failed).', 'Failed to upload file to Vercel Blob.', $lang));
 }
 
 

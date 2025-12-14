@@ -1221,6 +1221,7 @@
 
     async function fetchMediaLibrary() {
       const list = document.getElementById('media-list');
+      if (!list) return;
       list.innerHTML = 'Ładowanie (może potrwać chwilę)...';
 
       const formData = new FormData();
@@ -1231,63 +1232,83 @@
 
       try {
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        delBtn.style.position = 'absolute';
-        delBtn.style.top = '0';
-        delBtn.style.right = '0';
-        delBtn.style.background = 'rgba(255,0,0,0.7)';
-        delBtn.style.color = '#fff';
-        delBtn.style.border = 'none';
-        delBtn.onclick = (e) => {
-          e.stopPropagation();
-          deleteMediaFile(blob.url);
-        };
-        container.appendChild(delBtn);
-      } else {
-        const badger = document.createElement('span');
-        badger.textContent = 'Lokalny';
-        badger.style.position = 'absolute';
-        badger.style.bottom = '0';
-        badger.style.right = '0';
-        badger.style.background = 'rgba(0,0,0,0.5)';
-        badger.style.color = '#fff';
-        badger.style.fontSize = '10px';
-        badger.style.padding = '2px';
-        container.appendChild(badger);
-      }
+        if (res.ok) {
+          const data = await res.json();
 
-      grid.appendChild(container);
-    });
+          if (data.blobs && data.blobs.length > 0) {
+            list.innerHTML = '';
+            data.blobs.forEach(blob => {
+              const container = document.createElement('div');
+              container.className = 'media-item';
+
+              const img = document.createElement('img');
+              img.src = blob.url;
+              img.title = 'Użyj tego zdjęcia';
+              img.onclick = () => {
+                // Priority 1: Fill Active Hero Input
+                if (activeHeroInput) {
+                  activeHeroInput.value = blob.url;
+                  // Trigger change event manually to update array
+                  activeHeroInput.dispatchEvent(new Event('change'));
+                  setStatus('hero-status', 'Zdjęcie dodane do listy!', true);
+                  return;
+                }
+
+                // Priority 2: Standard Copy & News Fallback
+                navigator.clipboard.writeText(blob.url).then(() => {
+                  setStatus('news-status', 'URL skopiowany! Wybierz pole, aby wkleić.', true);
+                });
+
+                const newsInput = document.getElementById('news-image-url');
+                if (newsInput && !newsInput.value) {
+                  newsInput.value = blob.url;
+                }
+              };
+              container.appendChild(img);
+
+              const deleteBtn = document.createElement('button');
+              deleteBtn.textContent = 'Usuń';
+              deleteBtn.className = 'delete-btn';
+              deleteBtn.style.marginTop = '5px';
+              deleteBtn.style.width = '100%';
+              deleteBtn.onclick = () => deleteMediaFile(blob.url);
+              container.appendChild(deleteBtn);
+
+              list.appendChild(container);
+            });
+          } else {
+            list.innerHTML = '<p>Brak mediów w bibliotece.</p>';
+          }
         } else {
-      grid.innerHTML = 'Brak zdjęć.';
-      if (data.debug) {
-        console.error('Blob Debug:', data.debug);
-        const debugStr = JSON.stringify(data.debug, null, 2);
-        grid.innerHTML += `<pre style="font-size:10px; color:red; overflow:auto;">Debug: ${debugStr}</pre>`;
+          list.innerHTML = '<p>Błąd pobierania mediów.</p>';
+        }
+      } catch (err) {
+        console.error(err);
+        list.textContent = translations[currentLang]?.errors?.fetchFailed || 'Błąd';
       }
-    }
-      } catch (e) {
-      grid.innerHTML = 'Błąd ładowania.';
-      console.error(e);
-    }
     }
 
     async function deleteMediaFile(url) {
-      if (!confirm('Czy na pewno usunąć ten plik z chmury? Operacja jest nieodwracalna.')) return;
+      if (!confirm('Czy na pewno usunąć ten plik?')) return;
 
       const formData = new FormData();
       formData.append('action', 'deleteMedia');
       formData.append('url', url);
       formData.append('password', currentPassword);
       formData.append('username', currentUsername);
-      formData.append('lang', currentLang);
 
       try {
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
         const text = await res.text();
-        alert(text);
-        loadMedia(); // Refresh
+        if (res.ok) {
+          alert(text);
+          fetchMediaLibrary();
+        } else {
+          alert('Błąd: ' + text);
+        }
       } catch (e) {
-        alert('Błąd usuwania');
+        console.error(e);
+        alert('Błąd połączenia');
       }
     }
 

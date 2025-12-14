@@ -515,7 +515,7 @@
       formData.append('lang', currentLang);
 
       try {
-        const response = await fetch('cms-save.php', {
+        const response = await fetch('api/cms-save.php', {
           method: 'POST',
           body: formData
         });
@@ -547,7 +547,7 @@
       formData.append('action', 'validate');
 
       try {
-        const response = await fetch('cms-save.php', {
+        const response = await fetch('api/cms-save.php', {
           method: 'POST',
           body: formData
         });
@@ -580,7 +580,7 @@
         formData.set('password', currentPassword);
 
         try {
-          const response = await fetch('cms-save.php', {
+          const response = await fetch('api/cms-save.php', {
             method: 'POST',
             body: formData
           });

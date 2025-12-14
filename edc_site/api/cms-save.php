@@ -1,6 +1,6 @@
 <?php
-const CONTENT_PATH = __DIR__ . '/json/content.json';
-const UPLOAD_DIR = __DIR__ . '/images/uploads/';
+const CONTENT_PATH = __DIR__ . '/../json/content.json';
+const UPLOAD_DIR = __DIR__ . '/../images/uploads/';
 const DEFAULT_PASSWORD = 'edc_admin';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -28,7 +28,6 @@
       gallery.forEach((src) => {
         const img = document.createElement('img');
         img.src = src;
-        img.alt = item.alt || item.title || 'News image';
         slideshow.appendChild(img);
       });
       article.appendChild(slideshow);
@@ -97,18 +96,18 @@
     const titleEl = document.querySelector('.mission h2');
     const leadEl = document.querySelector('.mission .lead');
     if (titleEl && mission.title) {
-        titleEl.textContent = mission.title;
-        // Also update i18n text content to avoid overwrite race conditions if any
-        titleEl.removeAttribute('data-i18n');
+      titleEl.textContent = mission.title;
+      // Also update i18n text content to avoid overwrite race conditions if any
+      titleEl.removeAttribute('data-i18n');
     }
     if (leadEl && mission.lead) {
-        leadEl.textContent = mission.lead;
-        leadEl.removeAttribute('data-i18n');
+      leadEl.textContent = mission.lead;
+      leadEl.removeAttribute('data-i18n');
     }
   }
 
   function applyPresidiumCopy(presidium) {
-      // Future implementation if specific fields are editable
+    // Future implementation if specific fields are editable
   }
 
   document.addEventListener('DOMContentLoaded', loadContent);

@@ -250,7 +250,7 @@
 
         <details class="card">
           <summary>
-            <h2>Stopka / Kontakt</h2>
+            <h2 data-i18n="section.contact">Stopka / Kontakt</h2>
           </summary>
           <div class="card-content">
             <form id="contact-form">
@@ -274,7 +274,7 @@
 
         <details class="card">
           <summary>
-            <h2>Partnerzy (Logo URL)</h2>
+            <h2 data-i18n="section.partners">Partnerzy (Logo URL)</h2>
           </summary>
           <div class="card-content">
             <div id="partners-list" style="margin-bottom:10px;"></div>
@@ -286,7 +286,7 @@
 
         <details class="card">
           <summary>
-            <h2>Prezydium (Zarząd)</h2>
+            <h2 data-i18n="section.presidium">Prezydium (Zarząd)</h2>
           </summary>
           <div class="card-content">
             <div id="presidium-list" style="margin-bottom:10px;"></div>
@@ -298,7 +298,7 @@
 
         <details class="card">
           <summary>
-            <h2>Dealerzy (Mapa)</h2>
+            <h2 data-i18n="section.dealers">Dealerzy (Mapa)</h2>
           </summary>
           <div class="card-content">
             <p style="font-size:0.8rem; color:#666;">Edytuj liczby dealerów dla poszczególnych krajów (kod ISO).</p>
@@ -367,7 +367,7 @@
 
         <details class="card full-width">
           <summary>
-            <h2>Biblioteka Mediów</h2>
+            <h2 data-i18n="section.media">Biblioteka Mediów</h2>
           </summary>
           <div class="card-content">
             <p class="muted">Kliknij na zdjęcie, aby skopiować URL.</p>
@@ -440,7 +440,12 @@
         section: {
           hero: 'Nagłówek strony',
           mission: 'Misja',
+          contact: 'Kontakt / Stopka',
+          partners: 'Partnerzy',
+          presidium: 'Prezydium',
+          dealers: 'Dealerzy (Mapa)',
           news: 'Dodaj aktualność',
+          media: 'Biblioteka Mediów',
           account: 'Ustawienia Konta'
         },
         action: {
@@ -497,6 +502,12 @@
         section: {
           hero: 'Hero Content',
           mission: 'Mission',
+          contact: 'Footer / Contact',
+          partners: 'Partners',
+          presidium: 'Presidium',
+          dealers: 'Dealers Map',
+          news: 'News Manager',
+          media: 'Media Library',
           account: 'Account Settings'
         },
         action: {
@@ -541,44 +552,34 @@
     function applyLanguage(lang) {
       const dict = translations[lang] || translations.pl;
       document.documentElement.lang = lang;
-      document.title = dict.title;
-      document.getElementById('cms-title').textContent = dict.title;
-      document.getElementById('cms-intro').textContent = dict.intro;
+
+      // Generic Walker
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const keys = key.split('.');
+        let val = dict;
+        for (const k of keys) {
+          val = val?.[k];
+        }
+        if (val) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = val;
+          } else {
+            el.textContent = val;
+          }
+        }
+      });
+
+      // Custom Updates if needed (e.g. non-i18n elements)
       document.querySelector('label[for="password"]').textContent = dict.passwordLabel;
-      document.getElementById('login-button').textContent = dict.login;
-      document.getElementById('forgot-password').textContent = dict.forgot;
-      document.querySelector('[data-i18n="section.hero"]').textContent = dict.heroSection;
+      document.getElementById('login-button').textContent = dict.login; // Has textContent
 
-      updateNewsFormTitle();
-
-      document.querySelector('[for="hero-title"]').textContent = dict.titleLabel;
-      document.querySelector('[for="hero-subtitle"]').textContent = dict.subtitleLabel;
-
-      // Update new section labels
-      const missionTitle = document.querySelector('[data-i18n="section.mission"]');
-      if (missionTitle) missionTitle.textContent = dict.section?.mission || 'Mission';
-
-      const missionLeadLbl = document.querySelector('[for="mission-lead"]');
-      if (missionLeadLbl) missionLeadLbl.textContent = dict.label?.lead || 'Lead';
-
-      document.querySelectorAll('[data-i18n="action.save"]').forEach(btn => btn.textContent = dict.save);
-
-      document.querySelector('[for="news-title"]').textContent = dict.newsTitle;
-      document.querySelector('[for="news-date"]').textContent = dict.date;
-      document.querySelector('[for="news-summary"]').textContent = dict.summary;
-      document.querySelector('[for="news-alt"]').textContent = dict.alt;
-      document.querySelector('[for="news-image"]').textContent = dict.mainImage;
-      document.getElementById('upload-hint').textContent = dict.uploadHint;
-      document.querySelector('[for="news-gallery"]').textContent = dict.gallery;
-      document.querySelector('[data-i18n="label.preview"]').textContent = dict.preview;
-      document.querySelector('[data-i18n="action.saveHero"]').textContent = dict.saveHero;
-
-      // Dynamic buttons
+      // Buttons dynamic update
       updateNewsFormButtons();
 
       document.querySelectorAll('input[name="lang"]').forEach(input => input.value = lang);
       currentLang = lang;
-      renderNewsList(); // Re-render list to update button labels
+      renderNewsList();
     }
 
     function updateNewsFormTitle() {

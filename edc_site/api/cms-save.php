@@ -475,7 +475,7 @@ if ($action === 'listMedia') {
     $debug = [];
     // 1. Fetch from Blob
     if ($token) {
-        $ch = curl_init('https://blob.vercel-storage.com?limit=500');
+        $ch = curl_init('https://blob.vercel-storage.com');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $token]);
         $res = curl_exec($ch);

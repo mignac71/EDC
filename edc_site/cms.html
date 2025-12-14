@@ -1145,7 +1145,7 @@
               document.getElementById('news-image-url').value = blob.url;
               document.getElementById('news-image').value = '';
               setStatus('news-status', 'Wybrano zdjęcie!', true);
-              document.getElementById('media-library').style.display = 'none';
+              // document.getElementById('media-library').style.display = 'none'; // Keep open?
             };
 
             container.appendChild(img);
@@ -1183,6 +1183,11 @@
           });
         } else {
           grid.innerHTML = 'Brak zdjęć.';
+          if (data.debug) {
+            console.error('Blob Debug:', data.debug);
+            const debugStr = JSON.stringify(data.debug, null, 2);
+            grid.innerHTML += `<pre style="font-size:10px; color:red; overflow:auto;">Debug: ${debugStr}</pre>`;
+          }
         }
       } catch (e) {
         grid.innerHTML = 'Błąd ładowania.';

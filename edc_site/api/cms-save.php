@@ -13,27 +13,54 @@ function vercelBlobPut(array $file): ?string
     }
 
     $filename = basename($file['name']);
-    // API v1: PUT https://blob.vercel-storage.com/<filename>
-    // Requires x-api-version: 1
-    $apiUrl = 'https://blob.vercel-storage.com/' . uniqid() . '-' . $filename;
+    $filePath = $file['tmp_name'];
+    $mime = mime_content_type($filePath) ?: 'application/octet-stream';
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $apiUrl);
-    curl_setopt($ch, CURLOPT_PUT, true);
-    curl_setopt($ch, CURLOPT_INFILE, fopen($file['tmp_name'], 'r'));
-    curl_setopt($ch, CURLOPT_INFILESIZE, filesize($file['tmp_name']));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    // Prefer the current API (POST to the root endpoint) and fall back to legacy PUT
+    $postHeaders = [
         'Authorization: Bearer ' . $token,
-        'x-api-version: 1'
+        'x-api-version: 1',
+        'Content-Type: ' . $mime,
+        'x-vercel-filename: ' . $filename,
+    ];
+
+    $postCh = curl_init('https://blob.vercel-storage.com');
+    curl_setopt($postCh, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($postCh, CURLOPT_POST, true);
+    curl_setopt($postCh, CURLOPT_POSTFIELDS, file_get_contents($filePath));
+    curl_setopt($postCh, CURLOPT_HTTPHEADER, $postHeaders);
+
+    $postResponse = curl_exec($postCh);
+    $postCode = curl_getinfo($postCh, CURLINFO_HTTP_CODE);
+    curl_close($postCh);
+
+    if ($postCode === 200) {
+        $json = json_decode($postResponse, true);
+        if (isset($json['url'])) {
+            return $json['url'];
+        }
+    }
+
+    // Legacy fallback: PUT with generated path
+    $apiUrl = 'https://blob.vercel-storage.com/' . uniqid() . '-' . $filename;
+    $putCh = curl_init();
+    curl_setopt($putCh, CURLOPT_URL, $apiUrl);
+    curl_setopt($putCh, CURLOPT_PUT, true);
+    curl_setopt($putCh, CURLOPT_INFILE, fopen($filePath, 'r'));
+    curl_setopt($putCh, CURLOPT_INFILESIZE, filesize($filePath));
+    curl_setopt($putCh, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($putCh, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $token,
+        'x-api-version: 1',
+        'Content-Type: ' . $mime,
     ]);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $putResponse = curl_exec($putCh);
+    $putCode = curl_getinfo($putCh, CURLINFO_HTTP_CODE);
+    curl_close($putCh);
 
-    if ($httpCode === 200) {
-        $json = json_decode($response, true);
+    if ($putCode === 200) {
+        $json = json_decode($putResponse, true);
         return $json['url'] ?? null;
     }
 

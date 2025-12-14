@@ -1122,6 +1122,8 @@
       const formData = new FormData();
       formData.append('action', 'listMedia');
       formData.append('password', currentPassword);
+      formData.append('username', currentUsername);
+      formData.append('lang', currentLang);
 
       try {
         const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
@@ -1202,6 +1204,7 @@
       formData.append('action', 'deleteMedia');
       formData.append('url', url);
       formData.append('password', currentPassword);
+      formData.append('username', currentUsername);
       formData.append('lang', currentLang);
 
       try {

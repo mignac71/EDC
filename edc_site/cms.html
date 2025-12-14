@@ -542,7 +542,7 @@
     let currentPresidium = [];
     let currentPartners = [];
     let currentDealers = {};
-    let currentMissionCards = {}; // For mission cards editor
+    let currentMissionCards = []; // Dynamic Array
     let editIndex = -1;
 
     function t(key) {
@@ -1044,15 +1044,17 @@
       const container = document.getElementById('mission-cards-list');
       if (!container) return;
       container.innerHTML = '';
-      const keys = ['founding', 'members', 'organization', 'body', 'community', 'tasks'];
 
-      // Ensure defaults
-      keys.forEach(key => {
-        if (!currentMissionCards[key]) currentMissionCards[key] = { title: '', text: '' };
-      });
+      // Ensure array
+      if (!Array.isArray(currentMissionCards)) {
+        if (currentMissionCards && typeof currentMissionCards === 'object') {
+          currentMissionCards = Object.values(currentMissionCards);
+        } else {
+          currentMissionCards = [];
+        }
+      }
 
-      keys.forEach(key => {
-        const data = currentMissionCards[key];
+      currentMissionCards.forEach((card, index) => {
         const div = document.createElement('div');
         div.style.marginBottom = '10px';
         div.style.padding = '10px';
@@ -1061,19 +1063,42 @@
         div.style.borderRadius = '4px';
 
         div.innerHTML = `
-            <div style="font-weight:600; margin-bottom:5px; text-transform:uppercase; font-size:0.8rem; color:#666;">${key}</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <span style="font-weight:600; color:#666;">Card #${index + 1}</span>
+                <button type="button" onclick="removeMissionCard(${index})" style="color:red; background:none; border:none; padding:0; cursor:pointer; font-weight:bold;">X</button>
+            </div>
             <div style="display:grid; grid-template-columns: 1fr; gap:5px;">
-               <input type="text" placeholder="Tytuł karty" value="${data.title || ''}" onchange="updateMissionCard('${key}', 'title', this.value)">
-               <textarea placeholder="Treść karty" onchange="updateMissionCard('${key}', 'text', this.value)" style="min-height:50px;">${data.text || ''}</textarea>
+               <input type="text" placeholder="Title" value="${card.title || ''}" onchange="updateMissionCard(${index}, 'title', this.value)">
+               <textarea placeholder="Text" onchange="updateMissionCard(${index}, 'text', this.value)" style="min-height:50px;">${card.text || ''}</textarea>
             </div>
           `;
         container.appendChild(div);
       });
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.textContent = '+ Add Card';
+      addBtn.onclick = addMissionCard;
+      addBtn.style.marginTop = '5px';
+      container.appendChild(addBtn);
     }
-    window.updateMissionCard = (key, field, val) => {
-      if (!currentMissionCards[key]) currentMissionCards[key] = {};
-      currentMissionCards[key][field] = val;
+
+    window.updateMissionCard = (index, field, val) => {
+      if (currentMissionCards[index]) {
+        currentMissionCards[index][field] = val;
+      }
     };
+    window.addMissionCard = () => {
+      currentMissionCards.push({ title: '', text: '' });
+      renderMissionCardsEditor();
+    };
+    window.removeMissionCard = (index) => {
+      if (confirm('Delete card?')) {
+        currentMissionCards.splice(index, 1);
+        renderMissionCardsEditor();
+      }
+    };
+
     window.prepareMissionData = () => {
       const jsonInput = document.getElementById('mission-cards-json');
       if (jsonInput) jsonInput.value = JSON.stringify(currentMissionCards);

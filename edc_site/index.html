@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="European Dealer Council – connecting Volkswagen and Audi dealers across Europe with news, leadership, and dealer resources.">
+  <meta name="description"
+    content="European Dealer Council – connecting Volkswagen and Audi dealers across Europe with news, leadership, and dealer resources.">
   <title data-i18n="title.main">European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
+
 <body>
   <!-- Navigation Bar -->
   <header class="navbar">
@@ -19,12 +22,12 @@
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav>
         <ul>
-            <li><a href="#home" data-i18n="nav.home">Home</a></li>
-            <li><a href="#mission" data-i18n="nav.mission">Mission</a></li>
-            <li><a href="#presidium" data-i18n="nav.presidium">Presidium</a></li>
-            <li><a href="#news" data-i18n="nav.news">News</a></li>
-            <li><a href="#map-section" data-i18n="nav.map">Map</a></li>
-            <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="#home" data-i18n="nav.home">Home</a></li>
+          <li><a href="#mission" data-i18n="nav.mission">Mission</a></li>
+          <li><a href="#presidium" data-i18n="nav.presidium">Presidium</a></li>
+          <li><a href="#news" data-i18n="nav.news">News</a></li>
+          <li><a href="#map-section" data-i18n="nav.map">Map</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
           <li class="language-selector">
             <select id="language-select" aria-label="Select language">
               <option value="en">🇬🇧 English</option>
@@ -48,41 +51,21 @@
   <!-- Hero Section -->
   <section class="hero" id="home">
     <div class="hero-overlay">
-        <h1 data-i18n="hero.title">We connect European people and business</h1>
-        <p data-i18n="hero.subtitle">We bring European professionals together</p>
+      <h1 data-i18n="hero.title">We connect European people and business</h1>
+      <p data-i18n="hero.subtitle">We bring European professionals together</p>
     </div>
   </section>
 
   <!-- Mission and Overview -->
   <section class="mission" id="mission">
     <div class="container">
-        <h2 data-i18n="mission.title">Our Mission</h2>
-        <p class="lead" data-i18n="mission.lead">We are the voice of the European VW/Audi dealers and service partners</p>
-      <div class="cards">
-          <div class="card">
-            <h3 data-i18n="mission.card.founding.title">Founding</h3>
-            <p data-i18n="mission.card.founding.text">Founded on March 21st, 1991, in Hanover/Germany. Open for each national Volkswagen and/or Audi Dealer Association from European countries.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="mission.card.members.title">Members</h3>
-            <p data-i18n="mission.card.members.text">The association is a community of national Dealer Councils, which represent 21 European countries.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="mission.card.organization.title">Organization</h3>
-            <p data-i18n="mission.card.organization.text">The highest authority of the association is the partner assembly, which consists of the delegates of the partner countries.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="mission.card.body.title">Political Body</h3>
-            <p data-i18n="mission.card.body.text">Bodies are the presidium consisting of the president and four vice‑presidents, as well as the managing director.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="mission.card.community.title">Community</h3>
-            <p data-i18n="mission.card.community.text">The association is the official representative body of the trade organizations of the Group.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="mission.card.tasks.title">Tasks</h3>
-            <p data-i18n="mission.card.tasks.text">First and foremost, we see ourselves as a platform for the exchange between retailers, manufacturers, brands and national group distributors and importers.</p>
-          </div>
+      <h2 data-i18n="mission.title">Our Mission</h2>
+      <p class="lead" data-i18n="mission.lead">We are the voice of the European VW/Audi dealers and service partners</p>
+      <div class="cards" id="mission-cards-container">
+        <!-- Cards loaded dynamically from CMS -->
+        <div class="card">
+          <p>Loading mission...</p>
+        </div>
       </div>
     </div>
   </section>
@@ -90,36 +73,36 @@
   <!-- Presidium Section -->
   <section class="presidium" id="presidium">
     <div class="container">
-        <h2 data-i18n="presidium.title">Our Presidium</h2>
+      <h2 data-i18n="presidium.title">Our Presidium</h2>
       <div class="team-grid">
         <div class="team-member">
           <img src="images/michal_ignaszak.jpeg" alt="Michal Ignaszak">
           <h3>Michal Ignaszak</h3>
-            <p class="role" data-i18n="role.president">President</p>
+          <p class="role" data-i18n="role.president">President</p>
           <p class="country">Poland</p>
         </div>
         <div class="team-member">
           <img src="images/peter_picca.jpeg" alt="Peter Picca">
           <h3>Peter Picca</h3>
-            <p class="role" data-i18n="role.vicePresident">Vice President</p>
+          <p class="role" data-i18n="role.vicePresident">Vice President</p>
           <p class="country">Switzerland</p>
         </div>
         <div class="team-member">
           <img src="images/manfred_dalceggio.jpeg" alt="Manfred Dalceggio">
           <h3>Manfred Dalceggio</h3>
-            <p class="role" data-i18n="role.vicePresident">Vice President</p>
+          <p class="role" data-i18n="role.vicePresident">Vice President</p>
           <p class="country">Italy</p>
         </div>
         <div class="team-member">
           <img src="images/stefan_hutschinski.jpeg" alt="Stefan Hutschinski">
           <h3>Stefan Hutschinski</h3>
-            <p class="role" data-i18n="role.vicePresident">Vice President</p>
+          <p class="role" data-i18n="role.vicePresident">Vice President</p>
           <p class="country">Austria</p>
         </div>
         <div class="team-member">
           <img src="images/martin_kuhn.jpeg" alt="Martin Kuhn">
           <h3>Martin Kuhn</h3>
-            <p class="role" data-i18n="role.managingDirector">Managing Director</p>
+          <p class="role" data-i18n="role.managingDirector">Managing Director</p>
           <p class="country">Germany</p>
         </div>
       </div>
@@ -129,7 +112,7 @@
   <!-- News Section -->
   <section class="news" id="news">
     <div class="container">
-        <h2 data-i18n="news.title">Latest News</h2>
+      <h2 data-i18n="news.title">Latest News</h2>
       <div class="news-grid" id="news-grid">
         <p class="news-placeholder">Loading the latest updates...</p>
       </div>
@@ -138,9 +121,9 @@
 
   <!-- Map Section -->
   <section class="map-section" id="map-section">
-      <h2 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h2>
-      <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
-      <p id="map-status" class="map-status" aria-live="polite"></p>
+    <h2 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h2>
+    <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
+    <p id="map-status" class="map-status" aria-live="polite"></p>
     <div id="map"></div>
   </section>
 
@@ -158,25 +141,27 @@
   <!-- Footer / Contact Section -->
   <footer id="contact">
     <div class="container">
-        <p><strong>European Dealer Council Volkswagen Group e.V.</strong></p>
-        <p>Kollberg 9 | 30916 Isernhagen | Germany</p>
-        <p><span data-i18n="footer.phone">Phone</span>: <a href="tel:+4951368986635">+49 (0)5136 898 6635</a></p>
-        <p><span data-i18n="footer.email">Email</span>: <a href="mailto:info@dealercouncil.eu">info@dealercouncil.eu</a></p>
-        <ul class="footer-links">
-          <li><a href="dataprotection.html" data-i18n="footer.dataProtection">Data protection</a></li>
-          <li><a href="terms.html" data-i18n="footer.terms">Terms of use</a></li>
-          <li><a href="imprint.html" data-i18n="footer.imprint">Imprint</a></li>
-          <li><a href="cms.html">CMS</a></li>
-        </ul>
+      <p><strong>European Dealer Council Volkswagen Group e.V.</strong></p>
+      <p>Kollberg 9 | 30916 Isernhagen | Germany</p>
+      <p><span data-i18n="footer.phone">Phone</span>: <a href="tel:+4951368986635">+49 (0)5136 898 6635</a></p>
+      <p><span data-i18n="footer.email">Email</span>: <a href="mailto:info@dealercouncil.eu">info@dealercouncil.eu</a>
+      </p>
+      <ul class="footer-links">
+        <li><a href="dataprotection.html" data-i18n="footer.dataProtection">Data protection</a></li>
+        <li><a href="terms.html" data-i18n="footer.terms">Terms of use</a></li>
+        <li><a href="imprint.html" data-i18n="footer.imprint">Imprint</a></li>
+        <li><a href="cms.html">CMS</a></li>
+      </ul>
     </div>
   </footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="cms-content.js"></script>
-<script src="map.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="cms-content.js"></script>
+  <script src="map.js"></script>
   <script src="hero-banner.js"></script>
   <script src="slideshow.js"></script>
   <script src="translations.js"></script>
   <script src="navbar.js"></script>
-  </body>
-  </html>
+</body>
+
+</html>

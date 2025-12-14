@@ -120,21 +120,23 @@
   }
 
   function applyMissionCards(cards) {
-    if (!cards) return;
-    const keys = ['founding', 'members', 'organization', 'body', 'community', 'tasks'];
-    keys.forEach(key => {
-      if (!cards[key]) return;
-      const titleEl = document.querySelector(`[data-i18n="mission.card.${key}.title"]`);
-      const textEl = document.querySelector(`[data-i18n="mission.card.${key}.text"]`);
+    const container = document.getElementById('mission-cards-container');
+    if (!container) return;
 
-      if (titleEl && cards[key].title) {
-        titleEl.textContent = cards[key].title;
-        titleEl.removeAttribute('data-i18n');
-      }
-      if (textEl && cards[key].text) {
-        textEl.textContent = cards[key].text;
-        textEl.removeAttribute('data-i18n');
-      }
+    // Support both Array (New) and Object (Legacy)
+    let cardsArray = [];
+    if (Array.isArray(cards)) {
+      cardsArray = cards;
+    } else if (cards && typeof cards === 'object') {
+      Object.keys(cards).forEach(key => cardsArray.push(cards[key]));
+    }
+
+    container.innerHTML = '';
+    cardsArray.forEach(card => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `<h3>${card.title || ''}</h3><p>${card.text || ''}</p>`;
+      container.appendChild(div);
     });
   }
 

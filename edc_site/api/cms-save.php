@@ -193,12 +193,31 @@ function storeImage(array $file, string $lang): ?string
         return null;
     }
 
+    // 1. Try Vercel Blob
     $url = vercelBlobPut($file);
-    if ($url)
+    if ($url) {
         return $url;
+    }
+
+    // 2. Fallback: Local Uploads
+    $uploadDir = __DIR__ . '/../images/uploads/';
+    if (!is_dir($uploadDir)) {
+        if (!mkdir($uploadDir, 0755, true)) {
+            http_response_code(500);
+            exit(t('Nie udało się utworzyć lokalnego katalogu uploads.', 'Failed to create local uploads dir.', $lang));
+        }
+    }
+
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = uniqid('upload_') . '.' . $ext;
+    $destination = $uploadDir . $filename;
+
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
+        return 'images/uploads/' . $filename;
+    }
 
     http_response_code(500);
-    exit(t('Nie udało się zapisać pliku (Blob Storage Error).', 'Failed to save file (Blob Storage Error).', $lang));
+    exit(t('Nie udało się zapisać pliku (Blob Storage Error i Local Error).', 'Failed to save file (Blob Storage Error & Local Error).', $lang));
 }
 
 

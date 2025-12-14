@@ -4,10 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const mapContainer = document.getElementById('map');
   if (!mapContainer || typeof L === 'undefined') return;
 
-  const map = L.map(mapContainer).setView([54, 15], 4);
+  // Europe bounds approx
+  const europeBounds = [
+    [30, -30], // Southwest
+    [75, 50]   // Northeast
+  ];
+
+  const map = L.map(mapContainer, {
+    maxBounds: europeBounds,
+    maxBoundsViscosity: 1.0,
+    minZoom: 3
+  }).setView([54, 15], 4);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: '&copy; OpenStreetMap contributors',
+    bounds: europeBounds
   }).addTo(map);
 
   Promise.all([
@@ -30,7 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
           const iso = feature.properties.iso_a2;
           const info = dealers[iso];
           if (info) {
-            const content = `<strong>${info.country}</strong><br>Audi: ${info.audi}<br>VW: ${info.vw}`;
+            const content = `
+              <div class="dealer-popup-content">
+                <strong>${info.country}</strong>
+                <div class="dealer-row">
+                  <span><img src="images/logo_audi.svg" alt="Audi" class="dealer-logo"></span>
+                  <span class="dealer-count">${info.audi}</span>
+                </div>
+                <div class="dealer-row">
+                  <span><img src="images/logo_vw.svg" alt="VW" class="dealer-logo"></span>
+                  <span class="dealer-count">${info.vw}</span>
+                </div>
+              </div>
+            `;
             layer.bindPopup(content, { className: 'dealer-popup', maxWidth: 400 });
             layer.on('mouseover', function handleMouseOver() {
               this.openPopup();

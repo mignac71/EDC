@@ -121,6 +121,14 @@ function t(string $pl, string $en, string $lang): string
 {
     return $lang === 'en' ? $en : $pl;
 }
+// Public GET access
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $content = loadContent();
+    header('Content-Type: application/json');
+    echo json_encode($content);
+    exit;
+}
+
 // Auth
 // Auth Logic
 $username = $_POST['username'] ?? '';

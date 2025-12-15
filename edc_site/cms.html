@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel CMS</title>
+  <title>CMS Panel</title>
   <link rel="stylesheet" href="styles.css">
   <style>
     :root {
@@ -198,37 +198,31 @@
   <div class="cms-container">
     <header>
       <div>
-        <h1 id="cms-title" style="margin:0; font-size:1.5rem;">Panel CMS</h1>
-        <p id="cms-intro" style="margin:0; color:#666;">Zarządzanie treścią EDC.</p>
+        <h1 id="cms-title" style="margin:0; font-size:1.5rem;">CMS Panel</h1>
+        <p id="cms-intro" style="margin:0; color:#666;">Manage EDC content.</p>
       </div>
       <div>
-        <label class="muted" style="margin: 0; display:inline-block; margin-right:10px;">Language:</label>
-        <select id="language-select" style="width:auto; display:inline-block;">
-          <option value="pl">Polski</option>
-          <option value="en" selected>English</option>
-        </select>
         <a href="/" class="button"
-          style="margin-left:10px; text-decoration:none; display:inline-block; font-size:0.9rem;"
-          data-i18n="backToSite">Back to Site</a>
+          style="margin-left:10px; text-decoration:none; display:inline-block; font-size:0.9rem;">Back to Site</a>
       </div>
     </header>
 
     <!-- Login Panel -->
     <div id="login-panel" class="login-panel">
-      <h2 style="margin-top:0;">Logowanie</h2>
+      <h2 style="margin-top:0;">Login</h2>
       <div class="form-group">
-        <label for="username">Użytkownik</label>
+        <label for="username">Username</label>
         <input type="text" id="username" placeholder="admin">
       </div>
       <div class="form-group">
-        <label for="password">Hasło</label>
-        <input type="password" id="password" placeholder="Hasło">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Password">
       </div>
       <div class="form-group">
-        <button id="login-button">Zaloguj się</button>
+        <button id="login-button">Log In</button>
         <span class="status" id="login-status"></span>
       </div>
-      <p id="forgot-password" class="muted" style="text-align: center; margin-top: 1rem;">Zapomniałem hasła</p>
+      <p id="forgot-password" class="muted" style="text-align: center; margin-top: 1rem;">Forgot Password</p>
     </div>
 
     <!-- Main CMS Panel -->
@@ -236,42 +230,42 @@
       <div class="cms-grid">
         <details class="card" open>
           <summary>
-            <h2 data-i18n="section.hero">Nagłówek strony</h2>
+            <h2>Hero Content</h2>
           </summary>
           <div class="card-content">
             <form id="hero-form">
-              <div class="form-group"><label for="hero-title">Tytuł</label><input type="text" id="hero-title"
+              <div class="form-group"><label for="hero-title">Title</label><input type="text" id="hero-title"
                   name="heroTitle"></div>
-              <div class="form-group"><label for="hero-subtitle" data-i18n="label.subtitle">Podtytuł</label><input
-                  type="text" id="hero-subtitle" name="heroSubtitle"></div>
+              <div class="form-group"><label for="hero-subtitle">Subtitle</label><input type="text" id="hero-subtitle"
+                  name="heroSubtitle"></div>
               <div class="form-group">
-                <label>Zdjęcia w tle (Slideshow)</label>
+                <label>Background Images (Slideshow)</label>
                 <div id="hero-images-list" style="margin-bottom:10px;"></div>
-                <button type="button" onclick="addHeroImageRow()">+ Dodaj zdjęcie</button>
+                <button type="button" onclick="addHeroImageRow()">+ Add Image</button>
                 <input type="hidden" name="heroImages" id="hero-images-json">
               </div>
               <input type="hidden" name="action" value="updateHero">
               <input type="hidden" name="password">
               <input type="hidden" name="username">
-              <input type="hidden" name="lang" value="pl">
-              <div class="form-actions"><button type="submit" data-i18n="action.save">Zapisz</button><span
-                  class="status" id="hero-status"></span></div>
+              <input type="hidden" name="lang" value="en">
+              <div class="form-actions"><button type="submit">Save</button><span class="status" id="hero-status"></span>
+              </div>
             </form>
           </div>
         </details>
 
         <details class="card">
           <summary>
-            <h2 data-i18n="section.mission">Misja</h2>
+            <h2>Mission</h2>
           </summary>
           <div class="card-content">
             <form id="mission-form">
-              <div class="form-group"><label for="mission-title">Tytuł sekcji</label><input type="text"
+              <div class="form-group"><label for="mission-title">Section Title</label><input type="text"
                   id="mission-title" name="title"></div>
-              <div class="form-group"><label for="mission-lead" data-i18n="label.lead">Tekst
-                  wprowadzający</label><textarea id="mission-lead" name="lead"></textarea></div>
+              <div class="form-group"><label for="mission-lead">Intro Text</label><textarea id="mission-lead"
+                  name="lead"></textarea></div>
 
-              <h3>Karty Misji</h3>
+              <h3>Mission Cards</h3>
               <div id="mission-cards-list" style="margin-bottom:10px;"></div>
               <!-- Hidden input to store JSON of cards -->
               <input type="hidden" id="mission-cards-json" name="cards">
@@ -280,32 +274,33 @@
               <input type="hidden" name="section" value="mission">
               <input type="hidden" name="password">
               <input type="hidden" name="username">
-              <input type="hidden" name="lang" value="pl">
-              <div class="form-actions"><button type="submit" onclick="prepareMissionData()"
-                  data-i18n="action.save">Zapisz Misję</button><span class="status" id="mission-status"></span></div>
+              <input type="hidden" name="lang" value="en">
+              <div class="form-actions"><button type="submit" onclick="prepareMissionData()">Save Mission</button><span
+                  class="status" id="mission-status"></span></div>
             </form>
           </div>
         </details>
 
         <details class="card">
           <summary>
-            <h2 data-i18n="section.contact">Stopka / Kontakt</h2>
+            <h2>Footer / Contact</h2>
           </summary>
           <div class="card-content">
             <form id="contact-form">
-              <div class="form-group"><label>Nazwa organizacji</label><input type="text" id="contact-name"
+              <div class="form-group"><label>Organization Name</label><input type="text" id="contact-name"
                   name="contactName"></div>
-              <div class="form-group"><label>Adres</label><input type="text" id="contact-address" name="contactAddress">
+              <div class="form-group"><label>Address</label><input type="text" id="contact-address"
+                  name="contactAddress">
               </div>
-              <div class="form-group"><label>Telefon</label><input type="text" id="contact-phone" name="contactPhone">
+              <div class="form-group"><label>Phone</label><input type="text" id="contact-phone" name="contactPhone">
               </div>
               <div class="form-group"><label>Email</label><input type="text" id="contact-email" name="contactEmail">
               </div>
               <input type="hidden" name="action" value="updateContact">
               <input type="hidden" name="password">
               <input type="hidden" name="username">
-              <input type="hidden" name="lang" value="pl">
-              <div class="form-actions"><button type="submit">Zapisz Kontakt</button><span class="status"
+              <input type="hidden" name="lang" value="en">
+              <div class="form-actions"><button type="submit">Save Contact</button><span class="status"
                   id="contact-status"></span></div>
             </form>
           </div>
@@ -313,47 +308,47 @@
 
         <details class="card">
           <summary>
-            <h2 data-i18n="section.partners">Partnerzy (Logo URL)</h2>
+            <h2>Partners (Logo URL)</h2>
           </summary>
           <div class="card-content">
             <div id="partners-list" style="margin-bottom:10px;"></div>
-            <button onclick="addPartnerRow()">+ Dodaj Partnera</button>
-            <button onclick="savePartners()">Zapisz Partnerów</button>
+            <button onclick="addPartnerRow()">+ Add Partner</button>
+            <button onclick="savePartners()">Save Partners</button>
             <span class="status" id="partners-status"></span>
           </div>
         </details>
 
         <details class="card">
           <summary>
-            <h2 data-i18n="section.presidium">Prezydium (Zarząd)</h2>
+            <h2>Presidium (Board)</h2>
           </summary>
           <div class="card-content">
             <div id="presidium-list" style="margin-bottom:10px;"></div>
-            <button onclick="addPresidiumRow()">+ Dodaj Osobę</button>
-            <button onclick="savePresidium()">Zapisz Prezydium</button>
+            <button onclick="addPresidiumRow()">+ Add Person</button>
+            <button onclick="savePresidium()">Save Presidium</button>
             <span class="status" id="presidium-status"></span>
           </div>
         </details>
 
         <details class="card">
           <summary>
-            <h2 data-i18n="section.dealers">Dealerzy (Mapa)</h2>
+            <h2>Dealers (Map)</h2>
           </summary>
           <div class="card-content">
-            <p style="font-size:0.8rem; color:#666;">Edytuj liczby dealerów dla poszczególnych krajów (kod ISO).</p>
+            <p style="font-size:0.8rem; color:#666;">Edit dealer numbers for countries (ISO code).</p>
             <div
               style="display:grid; grid-template-columns: 50px 1fr 60px 60px 60px 50px; gap:5px; font-weight:bold; font-size:0.8rem; margin-bottom:5px;">
-              <span>Kod</span>
-              <span>Kraj</span>
+              <span>Code</span>
+              <span>Country</span>
               <span title="Audi">Audi</span>
               <span title="Volkswagen">VW</span>
               <span title="VW Samochody Użytkowe">VWC</span>
-              <span>Usuń</span>
+              <span>Remove</span>
             </div>
             <div id="dealers-list"
               style="margin-bottom:10px; max-height:300px; overflow-y:auto; border:1px solid #ddd; padding:5px;"></div>
-            <button onclick="addDealerRow()">+ Dodaj Kraj</button>
-            <button onclick="saveDealers()">Zapisz Mapę</button>
+            <button onclick="addDealerRow()">+ Add Country</button>
+            <button onclick="saveDealers()">Save Map</button>
             <span class="status" id="dealers-status"></span>
           </div>
         </details>
@@ -361,88 +356,88 @@
 
         <details class="card full-width" open>
           <summary>
-            <h2 data-i18n="section.news">Zarządzanie Aktualnościami</h2>
+            <h2>News Management</h2>
           </summary>
           <div class="card-content">
             <form id="news-form" enctype="multipart/form-data">
-              <h3>Dodaj / Edytuj</h3>
-              <div class="form-group"><label for="news-title">Tytuł</label><input type="text" id="news-title"
+              <h3>Add / Edit</h3>
+              <div class="form-group"><label for="news-title">Title</label><input type="text" id="news-title"
                   name="title" required></div>
-              <div class="form-group"><label for="news-date">Data</label><input type="date" id="news-date" name="date"
+              <div class="form-group"><label for="news-date">Date</label><input type="date" id="news-date" name="date"
                   required></div>
-              <div class="form-group"><label for="news-summary">Opis</label><textarea id="news-summary"
+              <div class="form-group"><label for="news-summary">Summary</label><textarea id="news-summary"
                   name="summary"></textarea></div>
-              <div class="form-group"><label for="news-alt">Tekst alt</label><input type="text" id="news-alt"
-                  name="alt"></div>
+              <div class="form-group"><label for="news-alt">Alt Text</label><input type="text" id="news-alt" name="alt">
+              </div>
 
               <div class="form-group">
-                <label>Główna grafika</label>
+                <label>Main Image</label>
                 <input type="file" id="news-image" name="mainImage" accept="image/*">
-                <p class="muted" style="margin:5px 0;">LUB URL (np. z biblioteki poniżej):</p>
+                <p class="muted" style="margin:5px 0;">OR URL (e.g. from library below):</p>
                 <input type="text" id="news-image-url" name="image_url" placeholder="https://...">
               </div>
               <div class="form-group">
-                <label for="news-gallery">Galeria (opcjonalnie)</label>
+                <label for="news-gallery">Gallery (Optional)</label>
                 <input type="file" id="news-gallery" name="gallery[]" accept="image/*" multiple>
               </div>
 
               <input type="hidden" name="action" value="addNews">
               <input type="hidden" name="password">
               <input type="hidden" name="username">
-              <input type="hidden" name="lang" value="pl">
+              <input type="hidden" name="lang" value="en">
               <div class="form-actions">
-                <button type="submit" data-i18n="action.addNews">Dodaj</button>
-                <button type="button" id="cancel-edit" style="display:none;">Anuluj Edycję</button>
+                <button type="submit">Add News</button>
+                <button type="button" id="cancel-edit" style="display:none;">Cancel Edit</button>
                 <span class="status" id="news-status"></span>
               </div>
             </form>
 
             <hr style="margin: 2rem 0; border-top:1px solid #eee;">
 
-            <h3 data-i18n="label.preview">Lista Aktualności</h3>
+            <h3>News List</h3>
             <ul class="news-preview" id="news-preview"></ul>
           </div>
         </details>
 
         <details class="card full-width">
           <summary>
-            <h2 data-i18n="section.media">Biblioteka Mediów</h2>
+            <h2>Media Library</h2>
           </summary>
           <div class="card-content">
             <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-              <h4>Dodaj nowe zdjęcie</h4>
+              <h4>Upload new image</h4>
               <form id="media-upload-form" style="display: flex; gap: 10px; align-items: center;">
                 <input type="file" name="file" accept="image/*" required>
-                <button type="submit">Prześlij</button>
+                <button type="submit">Upload</button>
               </form>
               <div id="media-upload-status" class="status"></div>
             </div>
-            <p class="muted">Kliknij na zdjęcie, aby skopiować URL.</p>
+            <p class="muted">Click image to copy URL.</p>
             <div id="media-list" class="media-grid">
-              <p>Ładowanie...</p>
+              <p>Loading...</p>
             </div>
           </div>
         </details>
         <details class="card full-width">
           <summary>
-            <h2 data-i18n="section.account">Account Settings</h2>
+            <h2>Account Settings</h2>
           </summary>
           <div class="card-content">
             <form id="password-form">
-              <h3 data-i18n="changePassword">Change Password</h3>
+              <h3>Change Password</h3>
               <div class="form-group">
-                <label data-i18n="oldPassword">Old Password</label>
+                <label>Old Password</label>
                 <input type="password" name="old_password" required>
               </div>
               <div class="form-group">
-                <label data-i18n="newPassword">New Password</label>
+                <label>New Password</label>
                 <input type="password" name="new_password" required>
               </div>
               <p class="muted" style="font-size:0.8rem">Applies to currently logged in user.</p>
               <input type="hidden" name="action" value="changePassword">
               <input type="hidden" name="password"> <!-- Will be populated with currentPassword -->
               <div class="form-actions">
-                <button type="submit" data-i18n="action.changePassword">Update Password</button>
+                <button type="submit">Update Password</button>
                 <span class="status" id="password-status"></span>
               </div>
             </form>
@@ -453,135 +448,8 @@
   </div>
 
   <script>
-    const translations = {
-      pl: {
-        title: 'Panel CMS',
-        intro: 'Zaloguj się, aby aktualizować treści strony i dodawać nowe grafiki.',
-        passwordLabel: 'Hasło administratora',
-        login: 'Zaloguj',
-        forgot: 'Zapomniałem hasła',
-        heroSection: 'Nagłówek strony',
-        newsSection: 'Dodaj aktualność',
-        editNewsSection: 'Edytuj aktualność',
-        titleLabel: 'Tytuł',
-        subtitleLabel: 'Podtytuł',
-        newsTitle: 'Tytuł',
-        date: 'Data',
-        summary: 'Opis (opcjonalny)',
-        alt: 'Tekst alternatywny dla grafiki',
-        mainImage: 'Główna grafika',
-        uploadHint: 'Plik zostanie zapisany w katalogu images/uploads.',
-        gallery: 'Dodatkowe grafiki (opcjonalnie, wiele plików)',
-        preview: 'Obecne aktualności',
-        preview: 'Obecne aktualności',
-        saveHero: 'Zapisz nagłówek',
-        save: 'Zapisz',
-        addNews: 'Dodaj aktualność',
-        updateNews: 'Zapisz zmiany',
-        cancelEdit: 'Anuluj edycję',
-        confirmDelete: 'Czy na pewno chcesz usunąć tę aktualność?',
-        actions: 'Akcje',
-        edit: 'Edytuj',
-        delete: 'Usuń',
-        section: {
-          hero: 'Nagłówek strony',
-          mission: 'Misja',
-          contact: 'Kontakt / Stopka',
-          partners: 'Partnerzy',
-          presidium: 'Prezydium',
-          dealers: 'Dealerzy (Mapa)',
-          news: 'Dodaj aktualność',
-          media: 'Biblioteka Mediów',
-          account: 'Ustawienia Konta'
-        },
-        action: {
-          save: 'Zapisz',
-          addNews: 'Dodaj aktualność',
-          changePassword: 'Zmień hasło'
-        },
-        changePassword: 'Zmiana hasła',
-        oldPassword: 'Stare hasło',
-        newPassword: 'Nowe hasło',
-        backToSite: 'Powrót do strony',
-        label: {
-          title: 'Tytuł',
-          lead: 'Wprowadzenie'
-        },
-        errors: {
-          wrongPassword: 'Błędne hasło',
-          fetchFailed: 'Nie udało się pobrać danych',
-          saveFailed: 'Nie udało się zapisać zmian'
-        }
-      },
-      en: {
-        title: 'CMS Panel',
-        intro: 'Sign in to update site content and upload new media.',
-        passwordLabel: 'Administrator password',
-        login: 'Log in',
-        forgot: 'I forgot my password',
-        heroSection: 'Hero content',
-        newsSection: 'Add news item',
-        editNewsSection: 'Edit news item',
-        titleLabel: 'Title',
-        subtitleLabel: 'Subtitle',
-        newsTitle: 'Title',
-        date: 'Date',
-        summary: 'Summary (optional)',
-        alt: 'Alternative text for image',
-        mainImage: 'Main image',
-        uploadHint: 'File will be saved to images/uploads.',
-        gallery: 'Additional images (optional, multiple files)',
-        preview: 'Current news items',
-        saveHero: 'Save hero content',
-        save: 'Save',
-        addNews: 'Add news item',
-        editNewsSection: 'Edit news item',
-        titleLabel: 'Title',
-        subtitleLabel: 'Subtitle',
-        newsTitle: 'Title',
-        date: 'Date',
-        summary: 'Summary (optional)',
-        changePassword: 'Change Password',
-        oldPassword: 'Old Password',
-        newPassword: 'New Password',
-        backToSite: 'Back to Website',
-        section: {
-          hero: 'Hero Content',
-          mission: 'Mission',
-          contact: 'Footer / Contact',
-          partners: 'Partners',
-          presidium: 'Presidium',
-          dealers: 'Dealers Map',
-          news: 'News Manager',
-          media: 'Media Library',
-          account: 'Account Settings'
-        },
-        action: {
-          changePassword: 'Change Password',
-          addNews: 'Add News'
-        },
-        alt: 'Alternative text for image',
-        mainImage: 'Main image',
-        uploadHint: 'File will be saved to images/uploads.',
-        gallery: 'Additional images (optional, multiple files)',
-        preview: 'Current news items',
-        saveHero: 'Save hero content',
-        addNews: 'Add news item',
-        updateNews: 'Save changes',
-        cancelEdit: 'Cancel edit',
-        confirmDelete: 'Are you sure you want to delete this news item?',
-        actions: 'Actions',
-        edit: 'Edit',
-        delete: 'Delete',
-        errors: {
-          wrongPassword: 'Incorrect password',
-          fetchFailed: 'Unable to load data',
-          saveFailed: 'Unable to save changes'
-        }
-      }
-    };
+    // Removed legacy translation object
 
-    let currentLang = 'en';
     let currentPassword = '';
     let currentUsername = '';
     let currentNewsData = [];
@@ -593,75 +461,36 @@
     let activeHeroInput = null; // Track focused input for Media Library interaction
     let editIndex = -1;
 
-    function t(key) {
-      return translations[currentLang][key] || key;
-    }
-
-    function applyLanguage(lang) {
-      const dict = translations[lang] || translations.pl;
-      document.documentElement.lang = lang;
-
-      // Generic Walker
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        const keys = key.split('.');
-        let val = dict;
-        for (const k of keys) {
-          val = val?.[k];
-        }
-        if (val) {
-          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            el.placeholder = val;
-          } else {
-            el.textContent = val;
-          }
-        }
-      });
-
-      // Custom Updates if needed (e.g. non-i18n elements)
-      document.querySelector('label[for="password"]').textContent = dict.passwordLabel;
-      document.getElementById('login-button').textContent = dict.login; // Has textContent
-
-      // Buttons dynamic update
-      updateNewsFormButtons();
-
-      document.querySelectorAll('input[name="lang"]').forEach(input => input.value = lang);
-      currentLang = lang;
-      renderNewsList();
-    }
+    // Removed applyLanguage() as we are now English-only
 
     function updateNewsFormTitle() {
-      const dict = translations[currentLang];
-      const titleEl = document.querySelector('[data-i18n="section.news"]');
-      if (editIndex >= 0) {
-        titleEl.textContent = dict.editNewsSection;
-      } else {
-        titleEl.textContent = dict.newsSection;
+      const formTitle = document.querySelector('#news-form h3');
+      if (formTitle) {
+        formTitle.textContent = (editIndex >= 0) ? "Edit News" : "Add News";
       }
     }
 
     function updateNewsFormButtons() {
-      const dict = translations[currentLang];
       const submitBtn = document.querySelector('#news-form button[type="submit"]');
       const cancelBtn = document.getElementById('cancel-edit-btn');
 
       if (editIndex >= 0) {
-        submitBtn.textContent = dict.updateNews;
+        submitBtn.textContent = "Save Changes";
         if (!cancelBtn) {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.id = 'cancel-edit-btn';
-          btn.textContent = dict.cancelEdit;
+          btn.textContent = "Cancel Edit";
           btn.onclick = resetNewsForm;
           btn.style.marginLeft = '10px';
           btn.style.backgroundColor = '#666';
           document.querySelector('#news-form .form-actions').appendChild(btn);
         } else {
-          cancelBtn.textContent = dict.cancelEdit;
+          cancelBtn.textContent = "Cancel Edit";
           cancelBtn.style.display = 'inline-block';
         }
       } else {
-        submitBtn.textContent = dict.addNews;
+        submitBtn.textContent = "Add News";
         if (cancelBtn) cancelBtn.style.display = 'none';
       }
     }
@@ -681,17 +510,14 @@
 
     async function fetchContent() {
       try {
-        const response = await fetch('api/cms-save.php'); // default GET
+        const response = await fetch('api/cms-save.php'); // default GET returns JSON
         if (!response.ok) throw new Error('Fetch failed');
         const data = await response.json();
 
         // 1. Hero
         if (data.hero) {
           document.getElementById('hero-title').value = data.hero.title || '';
-          document.getElementById('hero-title').value = data.hero.title || '';
           document.getElementById('hero-subtitle').value = data.hero.subtitle || '';
-          // document.getElementById('hero-image').value = data.hero.image || ''; // Legacy
-
           currentHeroImages = data.hero.images || (data.hero.image ? [data.hero.image] : []);
           renderHeroImagesEditor();
         }
@@ -733,14 +559,13 @@
 
       } catch (err) {
         console.error(err);
-        setStatus('hero-status', translations[currentLang].errors.fetchFailed, false);
+        setStatus('hero-status', "Unable to load data", false);
       }
     }
 
     function renderNewsList() {
       const preview = document.getElementById('news-preview');
       preview.innerHTML = '';
-      const dict = translations[currentLang];
 
       currentNewsData.forEach((item, index) => {
         const li = document.createElement('li');
@@ -758,32 +583,30 @@
 
         const span = document.createElement('span');
         const date = new Date(item.date).toLocaleDateString();
-        // const statusIcon = item.visible === false ? '👁️‍🗨️ (Ukryty)' : '👁️ (Widoczny)'; // Removed duplicate
-        span.textContent = `${date} – ${item.title} ${item.visible === false ? '[UKRYTY]' : ''}`;
+        span.textContent = `${date} – ${item.title} ${item.visible === false ? '[HIDDEN]' : ''}`;
 
         const actionsDiv = document.createElement('div');
         actionsDiv.style.display = 'flex';
         actionsDiv.style.gap = '5px';
 
         const toggleBtn = document.createElement('button');
-        toggleBtn.textContent = item.visible === false ? 'Pokaż' : 'Ukryj';
+        toggleBtn.textContent = item.visible === false ? 'Show' : 'Hide';
         toggleBtn.style.fontSize = '0.8rem';
         toggleBtn.onclick = () => toggleVisibility(item.id);
 
         const editBtn = document.createElement('button');
-        editBtn.textContent = dict.edit;
+        editBtn.textContent = "Edit";
         editBtn.style.fontSize = '0.8rem';
-        editBtn.onclick = () => loadNewsForEdit(index); // Still index for memory load
+        editBtn.onclick = () => loadNewsForEdit(index);
 
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = dict.delete;
+        deleteBtn.textContent = "Delete";
         deleteBtn.style.fontSize = '0.8rem';
         deleteBtn.style.backgroundColor = '#b00020';
         deleteBtn.style.color = '#fff';
         deleteBtn.style.border = 'none';
         deleteBtn.style.padding = '2px 8px';
         deleteBtn.style.borderRadius = '3px';
-        // Pass both ID and Index
         deleteBtn.onclick = () => deleteNewsItem(item.id, index);
 
         actionsDiv.appendChild(toggleBtn);
@@ -799,37 +622,348 @@
     async function toggleVisibility(id) {
       if (!id) return;
       const formData = new FormData();
-      formData.append('action', 'toggleVisibility');
+      formData.append('action', 'toggleNewsVisibility');
       formData.append('id', id);
       formData.append('password', currentPassword);
       formData.append('username', currentUsername);
-      formData.append('lang', currentLang);
+      formData.append('lang', 'en');
 
       try {
-        const response = await fetch('api/cms-save.php', { method: 'POST', body: formData });
+        const response = await fetch('api/cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await response.text();
         if (response.ok) {
           fetchContent();
         } else {
-          alert(translations[currentLang].errors.saveFailed);
+          alert('Error: ' + text);
         }
       } catch (e) {
         console.error(e);
       }
     }
 
+    // --- Dynamic Hero Logic ---
+    function renderHeroImagesEditor() {
+      const list = document.getElementById('hero-images-list');
+      list.innerHTML = '';
+      currentHeroImages.forEach((url, idx) => {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '5px';
+        div.style.marginBottom = '5px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = url;
+        input.placeholder = "Image URL";
+        input.onchange = (e) => {
+          currentHeroImages[idx] = e.target.value;
+          updateHiddenHeroInput();
+        };
+        input.onfocus = (e) => activeHeroInput = e.target; // Track focus
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Remove';
+        delBtn.type = 'button';
+        delBtn.onclick = () => {
+          currentHeroImages.splice(idx, 1);
+          renderHeroImagesEditor();
+          updateHiddenHeroInput();
+        };
+
+        div.appendChild(input);
+        div.appendChild(delBtn);
+        list.appendChild(div);
+      });
+      updateHiddenHeroInput();
+    }
+
+    function addHeroImageRow() {
+      currentHeroImages.push('');
+      renderHeroImagesEditor();
+    }
+
+    function updateHiddenHeroInput() {
+      document.getElementById('hero-images-json').value = JSON.stringify(currentHeroImages);
+    }
+
+    // --- Dynamic Mission Cards Logic ---
+    function renderMissionCardsEditor() {
+      const list = document.getElementById('mission-cards-list');
+      list.innerHTML = '';
+
+      // Convert Object to Array if needed (legacy support)
+      let cards = [];
+      if (Array.isArray(currentMissionCards)) {
+        cards = currentMissionCards;
+      } else {
+        cards = Object.values(currentMissionCards);
+      }
+      currentMissionCards = cards;
+
+      currentMissionCards.forEach((card, idx) => {
+        const div = document.createElement('div');
+        div.className = 'media-item';
+        div.style.alignItems = 'flex-start';
+        div.style.marginBottom = '10px';
+        div.style.padding = '10px';
+        div.style.display = 'block';
+
+        div.innerHTML = `
+          <div style="margin-bottom:5px;">
+             <label style="font-size:0.8rem;">Title</label>
+             <input type="text" value="${(card.title || '').replace(/"/g, '&quot;')}" onchange="updateMissionCard(${idx}, 'title', this.value)">
+          </div>
+          <div style="margin-bottom:5px;">
+             <label style="font-size:0.8rem;">Text</label>
+             <textarea onchange="updateMissionCard(${idx}, 'text', this.value)">${(card.text || '')}</textarea>
+          </div>
+          <button type="button" onclick="removeMissionCard(${idx})" style="font-size:0.8rem; background:#b00020; color:white;">Remove Card</button>
+        `;
+        list.appendChild(div);
+      });
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.textContent = '+ Add Card';
+      addBtn.onclick = addMissionCard;
+      list.appendChild(addBtn);
+    }
+
+    function addMissionCard() {
+      if (!Array.isArray(currentMissionCards)) currentMissionCards = [];
+      currentMissionCards.push({
+        title: '',
+        text: ''
+      });
+      renderMissionCardsEditor();
+    }
+
+    function removeMissionCard(idx) {
+      currentMissionCards.splice(idx, 1);
+      renderMissionCardsEditor();
+    }
+
+    function updateMissionCard(idx, field, value) {
+      if (currentMissionCards[idx]) {
+        currentMissionCards[idx][field] = value;
+      }
+    }
+
+    function prepareMissionData() {
+      document.getElementById('mission-cards-json').value = JSON.stringify(currentMissionCards);
+    }
+
+
+    // --- Partners Logic ---
+    function renderPartnersEditor() {
+      const list = document.getElementById('partners-list');
+      list.innerHTML = '';
+      currentPartners.forEach((url, idx) => {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.gap = '5px';
+        div.style.marginBottom = '5px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = url;
+        input.placeholder = 'https://...';
+        input.onchange = (e) => currentPartners[idx] = e.target.value;
+
+        const del = document.createElement('button');
+        del.textContent = 'Remove';
+        del.onclick = () => {
+          currentPartners.splice(idx, 1);
+          renderPartnersEditor();
+        };
+
+        div.appendChild(input);
+        div.appendChild(del);
+        list.appendChild(div);
+      });
+    }
+
+    function addPartnerRow() {
+      currentPartners.push('');
+      renderPartnersEditor();
+    }
+
+    async function savePartners() {
+      const formData = new FormData();
+      formData.append('action', 'updatePartners');
+      formData.append('partners', JSON.stringify(currentPartners));
+      formData.append('password', currentPassword);
+      formData.append('username', currentUsername);
+      formData.append('lang', 'en');
+
+      try {
+        const res = await fetch('api/cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await res.text();
+        setStatus('partners-status', text, res.ok);
+      } catch (e) {
+        setStatus('partners-status', "Error saving", false);
+      }
+    }
+
+    // --- Presidium Logic ---
+    function renderPresidiumEditor() {
+      const list = document.getElementById('presidium-list');
+      list.innerHTML = '';
+      currentPresidium.forEach((p, idx) => {
+        const div = document.createElement('div');
+        div.style.border = '1px solid #eee';
+        div.style.padding = '5px';
+        div.style.marginBottom = '5px';
+        div.innerHTML = `
+            <div class="form-group" style="margin-bottom:5px;">
+              <input placeholder="Name" value="${(p.name || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'name', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:5px;">
+              <input placeholder="Role" value="${(p.role || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'role', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:5px;">
+              <input placeholder="Country" value="${(p.country || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'country', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:5px;">
+              <input placeholder="Image URL" value="${(p.image || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'image', this.value)">
+            </div>
+            <button onclick="removePresidium(${idx})" style="font-size:0.8rem; background:#b00020; color:white;">Remove</button>
+          `;
+        list.appendChild(div);
+      });
+    }
+
+    function updatePresidium(idx, field, val) {
+      if (!currentPresidium[idx]) currentPresidium[idx] = {};
+      currentPresidium[idx][field] = val;
+    }
+
+    function addPresidiumRow() {
+      currentPresidium.push({
+        name: '',
+        role: '',
+        country: '',
+        image: ''
+      });
+      renderPresidiumEditor();
+    }
+
+    function removePresidium(idx) {
+      currentPresidium.splice(idx, 1);
+      renderPresidiumEditor();
+    }
+
+    async function savePresidium() {
+      const formData = new FormData();
+      formData.append('action', 'updatePresidium');
+      formData.append('presidium', JSON.stringify(currentPresidium));
+      formData.append('password', currentPassword);
+      formData.append('username', currentUsername);
+      formData.append('lang', 'en');
+      try {
+        const res = await fetch('api/cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await res.text();
+        setStatus('presidium-status', text, res.ok);
+      } catch (e) {
+        setStatus('presidium-status', "Error saving", false);
+      }
+    }
+
+    // --- Dealers Logic ---
+    function renderDealersEditor() {
+      const list = document.getElementById('dealers-list');
+      list.innerHTML = '';
+      Object.keys(currentDealers).forEach(code => {
+        const d = currentDealers[code];
+        const row = document.createElement('div');
+        row.style.display = 'grid';
+        row.style.gridTemplateColumns = '50px 1fr 60px 60px 60px 50px';
+        row.style.gap = '5px';
+        row.style.marginBottom = '5px';
+
+        row.innerHTML = `
+            <input value="${code}" disabled style="background:#f0f0f0;">
+            <input value="${(d.country || '').replace(/"/g, '&quot;')}" onchange="updateDealer('${code}', 'country', this.value)">
+            <input type="number" value="${d.audi || 0}" onchange="updateDealer('${code}', 'audi', this.value)">
+            <input type="number" value="${d.vw || 0}" onchange="updateDealer('${code}', 'vw', this.value)">
+            <input type="number" value="${d.vwc || 0}" onchange="updateDealer('${code}', 'vwc', this.value)">
+            <button onclick="removeDealer('${code}')" style="color:red;">X</button>
+          `;
+        list.appendChild(row);
+      });
+    }
+
+    function updateDealer(code, field, val) {
+      if (!currentDealers[code]) return;
+      if (field === 'country') currentDealers[code][field] = val;
+      else currentDealers[code][field] = parseInt(val) || 0;
+    }
+
+    function removeDealer(code) {
+      delete currentDealers[code];
+      renderDealersEditor();
+    }
+
+    function addDealerRow() {
+      const code = prompt("Enter Country Code (ISO 2 char), e.g. DE");
+      if (!code || code.length !== 2) return;
+      if (currentDealers[code.toUpperCase()]) {
+        alert("Country already exists!");
+        return;
+      }
+      currentDealers[code.toUpperCase()] = {
+        country: '',
+        audi: 0,
+        vw: 0,
+        vwc: 0
+      };
+      renderDealersEditor();
+    }
+
+    async function saveDealers() {
+      const formData = new FormData();
+      formData.append('action', 'updateDealers');
+      formData.append('dealers', JSON.stringify(currentDealers));
+      formData.append('password', currentPassword);
+      formData.append('username', currentUsername);
+      formData.append('lang', 'en');
+      try {
+        const res = await fetch('api/cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await res.text();
+        setStatus('dealers-status', text, res.ok);
+      } catch (e) {
+        setStatus('dealers-status', "Error saving", false);
+      }
+    }
+
+
+    // --- News Edit/Delete ---
     function loadNewsForEdit(index) {
-      editIndex = index;
       const item = currentNewsData[index];
+      if (!item) return;
+
+      editIndex = index;
+      document.getElementById('news-title').value = item.title;
+      document.getElementById('news-date').value = item.date;
+      document.getElementById('news-summary').value = item.summary || '';
+      document.getElementById('news-alt').value = item.alt || '';
+      document.getElementById('news-image-url').value = item.image || ''; // legacy main image
+
       const form = document.getElementById('news-form');
 
-      form.querySelector('[name="title"]').value = item.title;
-      form.querySelector('[name="date"]').value = item.date;
-      form.querySelector('[name="summary"]').value = item.summary;
-      form.querySelector('[name="alt"]').value = item.alt;
-      form.querySelector('[name="action"]').value = 'updateNews';
-      form.querySelector('[name="mainImage"]').required = false; // Not required on edit
-
-      // Add hidden ID field
+      // Update hidden fields if we had them for ID
       let idInput = form.querySelector('input[name="id"]');
       if (!idInput) {
         idInput = document.createElement('input');
@@ -837,39 +971,38 @@
         idInput.name = 'id';
         form.appendChild(idInput);
       }
-      idInput.value = item.id || ''; // Fallback to empty if missing
+      idInput.value = item.id;
+
+      form.querySelector('input[name="action"]').value = 'updateNews';
 
       updateNewsFormTitle();
       updateNewsFormButtons();
 
-      // Scroll to form
-      form.scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('details[open] h2:contains("News")')?.scrollIntoView();
+      // Or just open the details if closed
+      const details = document.getElementById('news-form').closest('details');
+      if (details) details.open = true;
     }
 
     function resetNewsForm() {
       editIndex = -1;
-      const form = document.getElementById('news-form');
-      form.reset();
-      form.querySelector('[name="action"]').value = 'addNews';
-      form.querySelector('[name="mainImage"]').required = false; // Allow URL instead or file
-
-      const idInput = form.querySelector('input[name="id"]');
+      document.getElementById('news-form').reset();
+      document.querySelector('#news-form input[name="action"]').value = 'addNews';
+      const idInput = document.querySelector('#news-form input[name="id"]');
       if (idInput) idInput.remove();
-
       updateNewsFormTitle();
       updateNewsFormButtons();
     }
 
     async function deleteNewsItem(id, index) {
-      if (!confirm(translations[currentLang].confirmDelete)) return;
+      if (!confirm("Are you sure you want to delete this news item?")) return;
 
       const formData = new FormData();
       formData.append('action', 'deleteNews');
-      if (id) formData.append('id', id);
-      if (index !== undefined) formData.append('index', index);
+      formData.append('id', id);
       formData.append('password', currentPassword);
       formData.append('username', currentUsername);
-      formData.append('lang', currentLang);
+      formData.append('lang', 'en');
 
       try {
         const response = await fetch('api/cms-save.php', {
@@ -877,485 +1010,148 @@
           body: formData
         });
         const text = await response.text();
-
         if (response.ok) {
-          setStatus('news-status', text, true);
           fetchContent();
-          if (editIndex === index) resetNewsForm();
         } else {
-          setStatus('news-status', text, false);
+          alert('Error: ' + text);
         }
-      } catch (err) {
-        setStatus('news-status', translations[currentLang].errors.saveFailed, false);
+      } catch (e) {
+        alert('Delete failed');
       }
     }
 
-    async function handleLogin(event) {
-      event.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
 
-      if (!username || !password) {
-        setStatus('login-status', translations[currentLang].errors.wrongPassword, false);
-        return;
-      }
+    // Login & Generic Form Handling
+    document.getElementById('login-button').addEventListener('click', async () => {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const btn = document.getElementById('login-button');
+      const status = document.getElementById('login-status');
 
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
-      formData.append('lang', currentLang);
-      formData.append('action', 'validate');
+      btn.disabled = true;
+      status.textContent = "Logging in...";
 
-      try {
-        const response = await fetch('api/cms-save.php', {
-          method: 'POST',
-          body: formData
-        });
-        const text = await response.text();
-        if (!response.ok) {
-          setStatus('login-status', text || translations[currentLang].errors.wrongPassword, false);
-          return;
-        }
+      currentUsername = user;
+      currentPassword = pass;
 
-        currentUsername = username;
-        currentPassword = password;
-        setStatus('login-status', text, true);
+      // Update all hidden inputs
+      document.querySelectorAll('input[name="username"]').forEach(el => el.value = user);
+      document.querySelectorAll('input[name="password"]').forEach(el => el.value = pass);
 
-        // Populate hidden username/password fields
-        document.querySelectorAll('input[name="password"]').forEach(input => input.value = currentPassword);
-        document.querySelectorAll('input[name="username"]').forEach(input => input.value = currentUsername);
+      document.getElementById('login-panel').style.display = 'none';
+      document.getElementById('cms-panel').style.display = 'block';
+      fetchContent();
+    });
 
-        document.getElementById('login-panel').style.display = 'none';
-        document.getElementById('cms-panel').style.display = 'block';
-        fetchContent();
+    // Handle Forms Submit
+    document.querySelectorAll('form').forEach(form => {
+      if (form.id === 'media-upload-form') return; // Handled separately
 
-        // Auto-load media?
-        // loadMedia(); 
-      } catch (err) {
-        setStatus('login-status', translations[currentLang].errors.fetchFailed, false);
-      }
-    }
-
-    async function submitForm(formId, statusId) {
-      const form = document.getElementById(formId);
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        // Mission Fix
-        if (formId === 'mission-form') {
-          if (window.prepareMissionData) window.prepareMissionData();
-        }
-
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const formData = new FormData(form);
+        const statusId = form.querySelector('.status')?.id;
 
-        // Ensure password/username is set from memory
-        formData.set('password', currentPassword);
+        // Ensure auth is updated
         formData.set('username', currentUsername);
+        formData.set('password', currentPassword);
 
         try {
-          const response = await fetch('api/cms-save.php', {
+          const res = await fetch('api/cms-save.php', {
             method: 'POST',
             body: formData
           });
-          const text = await response.text();
-          const ok = response.ok;
-          setStatus(statusId, text, ok);
-          if (ok && formId === 'news-form') {
-            // Only reset if it was an add action, or just reset to clear/reload
-            resetNewsForm();
-            fetchContent();
-          }
-        } catch (err) {
-          setStatus(statusId, translations[currentLang].errors.saveFailed, false);
-        }
-      });
-    }
-
-    document.getElementById('login-button').addEventListener('click', handleLogin);
-    submitForm('hero-form', 'hero-status');
-    submitForm('mission-form', 'mission-status');
-    submitForm('contact-form', 'contact-status');
-    submitForm('news-form', 'news-status');
-    submitForm('password-form', 'password-status');
-
-    // Partners Editor
-    function renderPartnersEditor() {
-      const div = document.getElementById('partners-list');
-      div.innerHTML = '';
-      currentPartners.forEach((url, i) => {
-        const row = document.createElement('div');
-        row.style.marginBottom = '5px';
-        row.style.display = 'flex';
-        row.style.gap = '5px';
-        row.innerHTML = `<input type="text" value="${url}" onchange="currentPartners[${i}] = this.value" placeholder="URL logo" style="flex:1">
-            <button onclick="removePartner(${i})" style="background:#b00020; color:fff; border:none; padding:5px;">X</button>`;
-        div.appendChild(row);
-      });
-    }
-    window.addPartnerRow = () => { currentPartners.push(''); renderPartnersEditor(); };
-    window.removePartner = (i) => { currentPartners.splice(i, 1); renderPartnersEditor(); };
-    window.savePartners = async () => {
-      const formData = new FormData();
-      formData.append('action', 'updatePartners');
-      formData.append('partners', JSON.stringify(currentPartners));
-      formData.append('password', currentPassword);
-      formData.append('lang', currentLang);
-      try {
-        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        setStatus('partners-status', await res.text(), res.ok);
-      } catch (e) { setStatus('partners-status', 'Error', false); }
-    };
-
-    // Presidium Editor
-    function renderPresidiumEditor() {
-      const div = document.getElementById('presidium-list');
-      div.innerHTML = '';
-      currentPresidium.forEach((p, i) => {
-        const row = document.createElement('div');
-        row.style.marginBottom = '10px';
-        row.style.padding = '10px';
-        row.style.border = '1px solid #ddd';
-        row.style.background = '#f9f9f9';
-        row.innerHTML = `
-            <div style="display:flex; justify-content:space-between;"><strong>Osoba #${i + 1}</strong> <button onclick="removePresidium(${i})" style="color:red;">Usuń</button></div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:5px;">
-                <input type="text" value="${p.name || ''}" onchange="currentPresidium[${i}].name=this.value" placeholder="Imię i Nazwisko">
-                <input type="text" value="${p.role || ''}" onchange="currentPresidium[${i}].role=this.value" placeholder="Rola (klucz, np. president)">
-                <input type="text" value="${p.country || ''}" onchange="currentPresidium[${i}].country=this.value" placeholder="Kraj">
-                <input type="text" value="${p.image || ''}" onchange="currentPresidium[${i}].image=this.value" placeholder="URL Zdjęcia">
-            </div>`;
-        div.appendChild(row);
-      });
-    }
-    window.addPresidiumRow = () => { currentPresidium.push({ name: '', role: '', country: '', image: '' }); renderPresidiumEditor(); };
-    window.removePresidium = (i) => { currentPresidium.splice(i, 1); renderPresidiumEditor(); };
-    window.savePresidium = async () => {
-      const formData = new FormData();
-      formData.append('action', 'updatePresidium');
-      formData.append('members', JSON.stringify(currentPresidium));
-      formData.append('password', currentPassword);
-      formData.append('lang', currentLang);
-      try {
-        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        setStatus('presidium-status', await res.text(), res.ok);
-      } catch (e) { setStatus('presidium-status', 'Error', false); }
-    };
-
-    // Dealers Editor
-    function renderDealersEditor() {
-      const div = document.getElementById('dealers-list');
-      div.innerHTML = '';
-      // Sort by country code
-      const keys = Object.keys(currentDealers).sort();
-      keys.forEach(key => {
-        const d = currentDealers[key];
-        const row = document.createElement('div');
-        row.style.marginBottom = '5px';
-        row.style.display = 'grid';
-        row.style.gridTemplateColumns = '50px 1fr 60px 60px 60px 50px';
-        row.style.gap = '5px';
-        row.style.alignItems = 'center';
-        row.innerHTML = `
-             <input type="text" value="${key}" disabled style="font-weight:bold; width:40px;">
-             <input type="text" value="${d.country}" onchange="updateDealer('${key}', 'country', this.value)" placeholder="Kraj">
-             <input type="number" value="${d.audi}" onchange="updateDealer('${key}', 'audi', this.value)" title="Audi">
-             <input type="number" value="${d.vw}" onchange="updateDealer('${key}', 'vw', this.value)" title="VW">
-             <input type="number" value="${d.vw_commercial}" onchange="updateDealer('${key}', 'vw_commercial', this.value)" title="VW Comm">
-             <button onclick="removeDealer('${key}')" style="color:red; font-size:0.8rem;">X</button>
-           `;
-        div.appendChild(row);
-      });
-    }
-    window.updateDealer = (key, field, val) => {
-      if (!currentDealers[key]) return;
-      if (field !== 'country') val = parseInt(val) || 0;
-      currentDealers[key][field] = val;
-    };
-    window.removeDealer = (key) => {
-      delete currentDealers[key];
-      renderDealersEditor();
-    };
-    window.addDealerRow = () => {
-      const code = prompt("Podaj kod kraju (np. PL, DE):");
-      if (code && !currentDealers[code]) {
-        currentDealers[code.toUpperCase()] = { country: '', audi: 0, vw: 0, vw_commercial: 0 };
-        renderDealersEditor();
-      }
-    };
-    window.saveDealers = async () => {
-      const formData = new FormData();
-      formData.append('action', 'updateDealers');
-      formData.append('dealers', JSON.stringify(currentDealers));
-      formData.append('password', currentPassword);
-      formData.append('lang', currentLang);
-      try {
-        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        setStatus('dealers-status', await res.text(), res.ok);
-      } catch (e) { setStatus('dealers-status', 'Error', false); }
-    };
-
-    // Mission Cards Editor
-    function renderMissionCardsEditor() {
-      const container = document.getElementById('mission-cards-list');
-      if (!container) return;
-      container.innerHTML = '';
-
-      // Ensure array
-      if (!Array.isArray(currentMissionCards)) {
-        if (currentMissionCards && typeof currentMissionCards === 'object') {
-          currentMissionCards = Object.values(currentMissionCards);
-        } else {
-          currentMissionCards = [];
-        }
-      }
-
-      currentMissionCards.forEach((card, index) => {
-        const div = document.createElement('div');
-        div.style.marginBottom = '10px';
-        div.style.padding = '10px';
-        div.style.background = '#f9f9f9';
-        div.style.border = '1px solid #eee';
-        div.style.borderRadius = '4px';
-
-        div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                <span style="font-weight:600; color:#666;">Card #${index + 1}</span>
-                <button type="button" onclick="removeMissionCard(${index})" style="color:red; background:none; border:none; padding:0; cursor:pointer; font-weight:bold;">X</button>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr; gap:5px;">
-               <input type="text" placeholder="Title" value="${card.title || ''}" onchange="updateMissionCard(${index}, 'title', this.value)">
-               <textarea placeholder="Text" onchange="updateMissionCard(${index}, 'text', this.value)" style="min-height:50px;">${card.text || ''}</textarea>
-            </div>
-          `;
-        container.appendChild(div);
-      });
-
-      const addBtn = document.createElement('button');
-      addBtn.type = 'button';
-      addBtn.textContent = '+ Add Card';
-      addBtn.onclick = addMissionCard;
-      addBtn.style.marginTop = '5px';
-      container.appendChild(addBtn);
-    }
-
-    window.updateMissionCard = (index, field, val) => {
-      if (currentMissionCards[index]) {
-        currentMissionCards[index][field] = val;
-      }
-    };
-    window.addMissionCard = () => {
-      currentMissionCards.push({ title: '', text: '' });
-      renderMissionCardsEditor();
-    };
-    window.removeMissionCard = (index) => {
-      if (confirm('Delete card?')) {
-        currentMissionCards.splice(index, 1);
-        renderMissionCardsEditor();
-      }
-    };
-
-    window.prepareMissionData = () => {
-      const jsonInput = document.getElementById('mission-cards-json');
-      if (jsonInput) jsonInput.value = JSON.stringify(currentMissionCards);
-    };
-
-    // Hero Images Editor
-    function renderHeroImagesEditor() {
-      const container = document.getElementById('hero-images-list');
-      if (!container) return;
-      container.innerHTML = '';
-      currentHeroImages.forEach((url, index) => {
-        const row = document.createElement('div');
-        row.style.marginBottom = '10px';
-        row.style.display = 'flex';
-        row.style.alignItems = 'center';
-        row.style.gap = '10px';
-
-        // Thumbnail
-        const thumb = document.createElement('img');
-        // Better: only show if url exists.
-        if (url) {
-          thumb.src = url;
-          thumb.style.width = '60px';
-          thumb.style.height = '40px';
-          thumb.style.objectFit = 'cover';
-          thumb.style.borderRadius = '4px';
-          thumb.style.border = '1px solid #ddd';
-        } else {
-          thumb.style.display = 'none';
-        }
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = url;
-        input.placeholder = 'Kliknij tutaj, potem wybierz zdjęcie z biblioteki';
-        input.style.flex = '1';
-        input.onchange = (e) => { currentHeroImages[index] = e.target.value; renderHeroImagesEditor(); };
-        input.onfocus = (e) => { activeHeroInput = e.target; }; // Track focus!
-
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.textContent = 'Usuń';
-        removeBtn.style.background = '#ff4d4d'; // Brighter red
-        removeBtn.style.color = 'white';
-        removeBtn.style.border = 'none';
-        removeBtn.style.borderRadius = '4px';
-        removeBtn.style.padding = '5px 10px';
-        removeBtn.onclick = () => removeHeroImage(index);
-
-        row.appendChild(thumb);
-        row.appendChild(input);
-        row.appendChild(removeBtn);
-        container.appendChild(row);
-      });
-    }
-    window.addHeroImageRow = () => { currentHeroImages.push(''); renderHeroImagesEditor(); };
-    window.removeHeroImage = (i) => { currentHeroImages.splice(i, 1); renderHeroImagesEditor(); };
-
-    // Update Hero Form Submit to include JSON
-    document.getElementById('hero-form').addEventListener('submit', () => {
-      document.getElementById('hero-images-json').value = JSON.stringify(currentHeroImages);
-    });
-
-    document.getElementById('language-select').addEventListener('change', (event) => {
-      applyLanguage(event.target.value);
-    });
-
-    applyLanguage('en');
-    applyLanguage('en');
-
-    // Auto-load media logic moved to fetchContent or manual trigger
-    // toggleMediaLib removed as we use details element now
-
-
-    async function fetchMediaLibrary() {
-      const list = document.getElementById('media-list');
-      if (!list) return;
-      list.innerHTML = 'Ładowanie (może potrwać chwilę)...';
-
-      const formData = new FormData();
-      formData.append('action', 'listMedia');
-      formData.append('password', currentPassword);
-      formData.append('username', currentUsername);
-      formData.append('lang', currentLang);
-
-      try {
-        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        if (res.ok) {
-          const data = await res.json();
-
-          if (data.blobs && data.blobs.length > 0) {
-            list.innerHTML = '';
-            data.blobs.forEach(blob => {
-              const container = document.createElement('div');
-              container.className = 'media-item';
-
-              const img = document.createElement('img');
-              img.src = blob.url;
-              img.title = 'Użyj tego zdjęcia';
-              img.onclick = () => {
-                // Priority 1: Fill Active Hero Input
-                if (activeHeroInput) {
-                  activeHeroInput.value = blob.url;
-                  // Trigger change event manually to update array
-                  activeHeroInput.dispatchEvent(new Event('change'));
-                  setStatus('hero-status', 'Zdjęcie dodane do listy!', true);
-                  return;
-                }
-
-                // Priority 2: Standard Copy & News Fallback
-                navigator.clipboard.writeText(blob.url).then(() => {
-                  setStatus('news-status', 'URL skopiowany! Wybierz pole, aby wkleić.', true);
-                });
-
-                const newsInput = document.getElementById('news-image-url');
-                if (newsInput && !newsInput.value) {
-                  newsInput.value = blob.url;
-                }
-              };
-              container.appendChild(img);
-
-              const deleteBtn = document.createElement('button');
-              deleteBtn.textContent = 'Usuń';
-              deleteBtn.className = 'delete-btn';
-              deleteBtn.style.marginTop = '5px';
-              deleteBtn.style.width = '100%';
-              deleteBtn.onclick = () => deleteMediaFile(blob.url);
-              container.appendChild(deleteBtn);
-
-              list.appendChild(container);
-            });
-          } else {
-            list.innerHTML = '<p>Brak mediów w bibliotece.</p>';
-          }
-        } else {
-          list.innerHTML = '<p>Błąd pobierania mediów.</p>';
-        }
-      } catch (err) {
-        console.error(err);
-        list.textContent = translations[currentLang]?.errors?.fetchFailed || 'Błąd';
-      }
-    }
-
-    // Media Upload Handler - Critical to prevent page reload (logout)
-    const mediaUploadForm = document.getElementById('media-upload-form');
-    if (mediaUploadForm) {
-      mediaUploadForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // STOP DEFAULT SUBMISSION
-        const statusEl = document.getElementById('media-upload-status');
-        statusEl.textContent = 'Przesyłanie...';
-        statusEl.className = 'status';
-
-        const formData = new FormData(mediaUploadForm);
-        formData.append('action', 'uploadMedia');
-        formData.append('password', currentPassword);
-        formData.append('username', currentUsername);
-        formData.append('lang', currentLang);
-
-        try {
-          const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
           const text = await res.text();
           if (res.ok) {
-            statusEl.textContent = text;
-            statusEl.classList.add('success');
-            mediaUploadForm.reset();
-            fetchMediaLibrary(); // Refresh list
+            setStatus(statusId, "Saved!", true);
+            if (form.id === 'news-form') {
+              resetNewsForm();
+              fetchContent();
+            }
           } else {
-            statusEl.textContent = text;
-            statusEl.classList.add('error');
+            setStatus(statusId, "Error: " + text, false);
           }
         } catch (err) {
-          statusEl.textContent = 'Błąd połączenia.';
-          statusEl.classList.add('error');
+          setStatus(statusId, "Error submitting form", false);
         }
       });
-    }
+    });
 
-    async function deleteMediaFile(url) {
-      if (!confirm('Czy na pewno usunąć ten plik?')) return;
 
-      const formData = new FormData();
-      formData.append('action', 'deleteMedia');
-      formData.append('url', url);
-      formData.append('password', currentPassword);
-      formData.append('username', currentUsername);
-
+    // Media Library Logic
+    async function fetchMediaLibrary() {
+      const list = document.getElementById('media-list');
       try {
-        const res = await fetch('api/cms-save.php', { method: 'POST', body: formData });
-        const text = await res.text();
-        if (res.ok) {
-          alert(text);
-          fetchMediaLibrary();
-        } else {
-          alert('Błąd: ' + text);
+        const res = await fetch('api/cms-save.php?action=listMedia');
+        const json = await res.json();
+        if (json.blobs) {
+          list.innerHTML = '';
+          json.blobs.forEach(file => {
+            const item = document.createElement('div');
+            item.className = 'media-item';
+
+            const img = document.createElement('img');
+            img.src = file.url;
+            img.title = file.pathname;
+            img.onclick = () => {
+              // Copy to active input if any (e.g. Hero Image input)
+              if (activeHeroInput) {
+                activeHeroInput.value = file.url;
+                // Trigger change
+                activeHeroInput.dispatchEvent(new Event('change'));
+                activeHeroInput.focus();
+                setStatus('media-upload-status', "Copied to active input!");
+              } else {
+                navigator.clipboard.writeText(file.url);
+                setStatus('media-upload-status', "Copied URL to clipboard!");
+              }
+            };
+
+            const name = document.createElement('span');
+            // Show filename only
+            name.textContent = file.pathname.split('/').pop();
+            name.style.fontSize = '10px';
+            name.style.overflow = 'hidden';
+            name.style.textOverflow = 'ellipsis';
+            name.style.whiteSpace = 'nowrap';
+            name.style.width = '100%';
+            name.style.textAlign = 'center';
+
+            item.appendChild(img);
+            item.appendChild(name);
+            list.appendChild(item);
+          });
         }
       } catch (e) {
-        console.error(e);
-        alert('Błąd połączenia');
+        list.textContent = "Error loading media.";
       }
     }
 
+    document.getElementById('media-upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      formData.append('username', currentUsername);
+      formData.append('password', currentPassword);
+      formData.append('action', 'uploadMedia');
+      formData.append('lang', 'en');
 
+      try {
+        const res = await fetch('api/cms-save.php', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await res.text();
+        if (res.ok) {
+          setStatus('media-upload-status', "File uploaded!");
+          fetchMediaLibrary();
+          e.target.reset();
+        } else {
+          setStatus('media-upload-status', "Upload failed: " + text, false);
+        }
+      } catch (err) {
+        setStatus('media-upload-status', "Upload error", false);
+      }
+    });
   </script>
 </body>
 

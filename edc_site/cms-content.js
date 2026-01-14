@@ -170,11 +170,16 @@
     members.forEach(m => {
       const div = document.createElement('div');
       div.className = 'team-member';
+      const imgSrc = m.image || 'images/placeholder.png';
+      const name = (m.name || '').replace(/"/g, '&quot;');
+      const role = (m.role || '').replace(/"/g, '&quot;');
+      const country = (m.country || '').replace(/"/g, '&quot;');
+
       div.innerHTML = `
-          <img src="${m.image}" alt="${m.name}">
-          <h3>${m.name}</h3>
-          <p class="role">${m.role}</p>
-          <p class="country">${m.country}</p>
+          <img src="${imgSrc}" alt="${name}" onerror="this.src='images/placeholder.png'">
+          <h3>${name}</h3>
+          <p class="role">${role}</p>
+          <p class="country">${country}</p>
         `;
       grid.appendChild(div);
     });

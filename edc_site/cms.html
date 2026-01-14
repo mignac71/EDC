@@ -470,7 +470,7 @@
     let currentDealers = {};
     let currentMissionCards = []; // Dynamic Array
     let currentHeroImages = []; // Dynamic Array for Hero
-    let activeHeroInput = null; // Track focused input for Media Library interaction
+    let activeMediaInput = null; // Track which input is being filled from gallery
     let editIndex = -1;
 
     // Removed applyLanguage() as we are now English-only
@@ -630,6 +630,15 @@
         preview.appendChild(li);
       });
     }
+    function scrollToGallery(input) {
+      activeMediaInput = input;
+      const gallery = document.getElementById('media-library').closest('details');
+      if (gallery) {
+        gallery.open = true;
+        document.getElementById('media-library').scrollIntoView({ behavior: 'smooth' });
+        setStatus('media-upload-status', "Select an image from the library below.");
+      }
+    }
 
     async function toggleVisibility(id) {
       if (!id) return;
@@ -671,6 +680,39 @@
         div.style.borderRadius = '4px';
         div.style.background = '#f9f9f9';
 
+        // Reordering Arrows
+        const reorderDiv = document.createElement('div');
+        reorderDiv.style.display = 'flex';
+        reorderDiv.style.flexDirection = 'column';
+        reorderDiv.style.gap = '2px';
+
+        const upBtn = document.createElement('button');
+        upBtn.textContent = '▲';
+        upBtn.type = 'button';
+        upBtn.style.padding = '2px 5px';
+        upBtn.style.fontSize = '10px';
+        upBtn.disabled = idx === 0;
+        upBtn.onclick = () => {
+          [currentHeroImages[idx], currentHeroImages[idx - 1]] = [currentHeroImages[idx - 1], currentHeroImages[idx]];
+          renderHeroImagesEditor();
+          updateHiddenHeroInput();
+        };
+
+        const downBtn = document.createElement('button');
+        downBtn.textContent = '▼';
+        downBtn.type = 'button';
+        downBtn.style.padding = '2px 5px';
+        downBtn.style.fontSize = '10px';
+        downBtn.disabled = idx === currentHeroImages.length - 1;
+        downBtn.onclick = () => {
+          [currentHeroImages[idx], currentHeroImages[idx + 1]] = [currentHeroImages[idx + 1], currentHeroImages[idx]];
+          renderHeroImagesEditor();
+          updateHiddenHeroInput();
+        };
+
+        reorderDiv.appendChild(upBtn);
+        reorderDiv.appendChild(downBtn);
+
         // Thumbnail preview
         const thumb = document.createElement('img');
         thumb.src = url || 'images/placeholder.png';
@@ -691,7 +733,12 @@
           thumb.src = e.target.value || 'images/placeholder.png';
           updateHiddenHeroInput();
         };
-        input.onfocus = (e) => activeHeroInput = e.target; // Track focus
+
+        const galleryBtn = document.createElement('button');
+        galleryBtn.textContent = 'Gallery';
+        galleryBtn.type = 'button';
+        galleryBtn.style.padding = '5px 10px';
+        galleryBtn.onclick = () => scrollToGallery(input);
 
         const delBtn = document.createElement('button');
         delBtn.textContent = 'Remove';
@@ -704,8 +751,10 @@
           updateHiddenHeroInput();
         };
 
+        div.appendChild(reorderDiv);
         div.appendChild(thumb);
         div.appendChild(input);
+        div.appendChild(galleryBtn);
         div.appendChild(delBtn);
         list.appendChild(div);
       });
@@ -799,18 +848,39 @@
 
         const div = document.createElement('div');
         div.style.display = 'flex';
-        div.style.gap = '5px';
-        div.style.marginBottom = '5px';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+        div.style.marginBottom = '10px';
+        div.style.padding = '10px';
+        div.style.border = '1px solid #eee';
+        div.style.borderRadius = '4px';
+
+        // Thumbnail
+        const thumb = document.createElement('img');
+        thumb.src = url || 'images/placeholder.png';
+        thumb.style.width = '50px';
+        thumb.style.height = '30px';
+        thumb.style.objectFit = 'contain';
+        thumb.style.background = '#fff';
+        thumb.style.border = '1px solid #ddd';
+        thumb.onerror = () => { thumb.src = 'images/placeholder.png'; };
 
         const urlInput = document.createElement('input');
         urlInput.type = 'text';
         urlInput.value = url;
-        urlInput.placeholder = 'Logo Image URL';
+        urlInput.placeholder = 'Logo URL';
         urlInput.style.flex = '1';
         urlInput.onchange = (e) => {
           if (typeof currentPartners[idx] === 'string') currentPartners[idx] = { url: '', link: '' };
           currentPartners[idx].url = e.target.value;
+          thumb.src = e.target.value || 'images/placeholder.png';
         };
+
+        const galleryBtn = document.createElement('button');
+        galleryBtn.textContent = 'Gallery';
+        galleryBtn.type = 'button';
+        galleryBtn.style.padding = '5px 10px';
+        galleryBtn.onclick = () => scrollToGallery(urlInput);
 
         const linkInput = document.createElement('input');
         linkInput.type = 'text';
@@ -825,12 +895,15 @@
         const del = document.createElement('button');
         del.textContent = 'Remove';
         del.className = 'btn-danger';
+        del.style.padding = '5px 10px';
         del.onclick = () => {
           currentPartners.splice(idx, 1);
           renderPartnersEditor();
         };
 
+        div.appendChild(thumb);
         div.appendChild(urlInput);
+        div.appendChild(galleryBtn);
         div.appendChild(linkInput);
         div.appendChild(del);
         list.appendChild(div);
@@ -869,23 +942,86 @@
       currentPresidium.forEach((p, idx) => {
         const div = document.createElement('div');
         div.style.border = '1px solid #eee';
-        div.style.padding = '5px';
-        div.style.marginBottom = '5px';
-        div.innerHTML = `
-            <div class="form-group" style="margin-bottom:5px;">
-              <input placeholder="Name" value="${(p.name || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'name', this.value)">
-            </div>
-            <div class="form-group" style="margin-bottom:5px;">
-              <input placeholder="Role" value="${(p.role || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'role', this.value)">
-            </div>
-            <div class="form-group" style="margin-bottom:5px;">
-              <input placeholder="Country" value="${(p.country || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'country', this.value)">
-            </div>
-            <div class="form-group" style="margin-bottom:5px;">
-              <input placeholder="Image URL" value="${(p.image || '').replace(/"/g, '&quot;')}" onchange="updatePresidium(${idx}, 'image', this.value)">
-            </div>
-            <button onclick="removePresidium(${idx})" style="font-size:0.8rem; background:#b00020; color:white;">Remove</button>
-          `;
+        div.style.padding = '10px';
+        div.style.marginBottom = '10px';
+        div.style.borderRadius = '4px';
+        div.style.background = '#fcfcfc';
+
+        // Header with thumbnail
+        const header = document.createElement('div');
+        header.style.display = 'flex';
+        header.style.alignItems = 'center';
+        header.style.gap = '10px';
+        header.style.marginBottom = '10px';
+
+        const thumb = document.createElement('img');
+        thumb.src = p.image || 'images/placeholder.png';
+        thumb.style.width = '40px';
+        thumb.style.height = '40px';
+        thumb.style.borderRadius = '50%';
+        thumb.style.objectFit = 'cover';
+        thumb.style.border = '1px solid #ddd';
+        thumb.onerror = () => { thumb.src = 'images/placeholder.png'; };
+
+        const nameInput = document.createElement('input');
+        nameInput.placeholder = "Name";
+        nameInput.value = p.name || '';
+        nameInput.style.flex = '1';
+        nameInput.onchange = (e) => updatePresidium(idx, 'name', e.target.value);
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Remove';
+        delBtn.className = 'btn-danger';
+        delBtn.style.padding = '5px 10px';
+        delBtn.onclick = () => removePresidium(idx);
+
+        header.appendChild(thumb);
+        header.appendChild(nameInput);
+        header.appendChild(delBtn);
+
+        const grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = '1fr 1fr';
+        grid.style.gap = '10px';
+
+        const roleInput = document.createElement('input');
+        roleInput.placeholder = "Role";
+        roleInput.value = p.role || '';
+        roleInput.onchange = (e) => updatePresidium(idx, 'role', e.target.value);
+
+        const countryInput = document.createElement('input');
+        countryInput.placeholder = "Country";
+        countryInput.value = p.country || '';
+        countryInput.onchange = (e) => updatePresidium(idx, 'country', e.target.value);
+
+        const imgContainer = document.createElement('div');
+        imgContainer.style.gridColumn = 'span 2';
+        imgContainer.style.display = 'flex';
+        imgContainer.style.gap = '5px';
+
+        const imgInput = document.createElement('input');
+        imgInput.placeholder = "Image URL";
+        imgInput.value = p.image || '';
+        imgInput.style.flex = '1';
+        imgInput.onchange = (e) => {
+          updatePresidium(idx, 'image', e.target.value);
+          thumb.src = e.target.value || 'images/placeholder.png';
+        };
+
+        const galleryBtn = document.createElement('button');
+        galleryBtn.textContent = 'Gallery';
+        galleryBtn.type = 'button';
+        galleryBtn.onclick = () => scrollToGallery(imgInput);
+
+        imgContainer.appendChild(imgInput);
+        imgContainer.appendChild(galleryBtn);
+
+        grid.appendChild(roleInput);
+        grid.appendChild(countryInput);
+        grid.appendChild(imgContainer);
+
+        div.appendChild(header);
+        div.appendChild(grid);
         list.appendChild(div);
       });
     }
@@ -1145,13 +1281,15 @@
             img.src = file.url;
             img.title = file.pathname;
             img.onclick = () => {
-              // Copy to active input if any (e.g. Hero Image input)
-              if (activeHeroInput) {
-                activeHeroInput.value = file.url;
+              // Copy to active input if any
+              if (activeMediaInput) {
+                activeMediaInput.value = file.url;
                 // Trigger change
-                activeHeroInput.dispatchEvent(new Event('change'));
-                activeHeroInput.focus();
-                setStatus('media-upload-status', "Copied to active input!");
+                activeMediaInput.dispatchEvent(new Event('change'));
+                activeMediaInput.focus();
+                setStatus('media-upload-status', "Inserted image URL!");
+                // Clear active input to avoid accidental overwrites later
+                activeMediaInput = null;
               } else {
                 navigator.clipboard.writeText(file.url);
                 setStatus('media-upload-status', "Copied URL to clipboard!");

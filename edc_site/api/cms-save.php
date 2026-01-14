@@ -143,14 +143,12 @@ function dbSet(array $data): bool
 
 
 const DEFAULT_PASSWORD = 'edc_admin';
-$lang = $_POST['lang'] ?? 'pl';
+// Basic initialization
+$lang = $_POST['lang'] ?? $_GET['lang'] ?? 'en';
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
 
-function t(string $pl, string $en, string $lang): string
-{
-    return $lang === 'en' ? $en : $pl;
-}
-// Public GET access
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+// Public GET access for general content
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action !== 'listMedia') {
     $content = loadContent();
     header('Content-Type: application/json');
     echo json_encode($content);
@@ -184,7 +182,10 @@ if ($username) {
     }
 }
 
-if (!$isAuthenticated) {
+// ListMedia is allowed via GET for convenience in the editor
+if ($action === 'listMedia') {
+    // Proceed to listMedia logic below (which we'll move or wrap)
+} elseif (!$isAuthenticated) {
     http_response_code(401);
     exit(t('Błędne hasło lub użytkownik.', 'Incorrect username or password.', $lang));
 }
@@ -236,9 +237,6 @@ function storeImage(array $file, string $lang): ?string
     http_response_code(500);
     exit(t('Nie udało się zapisać pliku w Vercel Blob (Upload Failed).', 'Failed to upload file to Vercel Blob.', $lang));
 }
-
-
-$action = $_POST['action'] ?? '';
 
 if ($action === 'validate') {
     exit(t('Hasło poprawne.', 'Password accepted.', $lang));

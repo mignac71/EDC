@@ -26,25 +26,11 @@
 
       const container = document.createElement('div');
       container.className = 'slideshow-container slideshow'; // .slideshow trigger for slideshow.js
-      container.style.position = 'absolute';
-      container.style.top = '0';
-      container.style.left = '0';
-      container.style.width = '100%';
-      container.style.height = '100%';
-      container.style.zIndex = '-1'; // Behind content
 
       hero.images.forEach((src, index) => {
         const img = document.createElement('img');
         img.src = src;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.position = 'absolute';
-        img.style.top = '0';
-        img.style.left = '0';
-        img.style.opacity = '0';
-        img.style.transition = 'opacity 1s ease-in-out';
-        if (index === 0) img.classList.add('active'); // Pre-set active for CSS logic if needed
+        if (index === 0) img.classList.add('active');
         container.appendChild(img);
       });
 

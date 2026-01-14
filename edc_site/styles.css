@@ -175,6 +175,32 @@ main {
   display: none !important;
 }
 
+/* Slideshow Container */
+.slideshow-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  /* Changed from -1 to ensure it's visible but behind text */
+}
+
+.slideshow-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slideshow-container img.active {
+  opacity: 1;
+}
+
 /* Overlay */
 .hero-overlay {
   position: relative;

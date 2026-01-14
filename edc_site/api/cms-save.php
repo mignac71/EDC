@@ -148,7 +148,7 @@ $lang = $_POST['lang'] ?? $_GET['lang'] ?? 'en';
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // Public GET access for general content
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action !== 'listMedia') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($action) && !defined('CMS_SKIP_ROUTING')) {
     $content = loadContent();
     header('Content-Type: application/json');
     echo json_encode($content);

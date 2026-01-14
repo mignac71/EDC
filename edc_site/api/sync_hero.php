@@ -2,6 +2,7 @@
 /**
  * One-time script to sync Hero Background images to the database.
  */
+define('CMS_SKIP_ROUTING', true);
 require_once 'cms-save.php';
 
 // Default images from the old system (images/banner/)

@@ -761,33 +761,52 @@
     function renderPartnersEditor() {
       const list = document.getElementById('partners-list');
       list.innerHTML = '';
-      currentPartners.forEach((url, idx) => {
+      currentPartners.forEach((p, idx) => {
+        const url = typeof p === 'string' ? p : p.url;
+        const link = typeof p === 'string' ? '' : (p.link || '');
+
         const div = document.createElement('div');
         div.style.display = 'flex';
         div.style.gap = '5px';
         div.style.marginBottom = '5px';
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = url;
-        input.placeholder = 'https://...';
-        input.onchange = (e) => currentPartners[idx] = e.target.value;
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.value = url;
+        urlInput.placeholder = 'Logo Image URL';
+        urlInput.style.flex = '1';
+        urlInput.onchange = (e) => {
+          if (typeof currentPartners[idx] === 'string') currentPartners[idx] = { url: '', link: '' };
+          currentPartners[idx].url = e.target.value;
+        };
+
+        const linkInput = document.createElement('input');
+        linkInput.type = 'text';
+        linkInput.value = link;
+        linkInput.placeholder = 'Website URL';
+        linkInput.style.flex = '1';
+        linkInput.onchange = (e) => {
+          if (typeof currentPartners[idx] === 'string') currentPartners[idx] = { url: '', link: '' };
+          currentPartners[idx].link = e.target.value;
+        };
 
         const del = document.createElement('button');
         del.textContent = 'Remove';
+        del.className = 'btn-danger';
         del.onclick = () => {
           currentPartners.splice(idx, 1);
           renderPartnersEditor();
         };
 
-        div.appendChild(input);
+        div.appendChild(urlInput);
+        div.appendChild(linkInput);
         div.appendChild(del);
         list.appendChild(div);
       });
     }
 
     function addPartnerRow() {
-      currentPartners.push('');
+      currentPartners.push({ url: '', link: '' });
       renderPartnersEditor();
     }
 

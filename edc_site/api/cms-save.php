@@ -340,9 +340,9 @@ if ($action === 'updateSection') {
     if (!in_array($section, ['mission', 'presidium']))
         exit('Invalid section');
 
-    $data = [];
+    $data = $content[$section] ?? [];
     foreach ($_POST as $k => $v) {
-        if (!in_array($k, ['action', 'username', 'password', 'lang', 'section']))
+        if (!in_array($k, ['action', 'username', 'password', 'lang', 'section', 'cards']))
             $data[$k] = trim($v);
     }
 

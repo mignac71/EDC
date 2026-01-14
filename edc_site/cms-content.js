@@ -148,7 +148,7 @@
     }
     if (leadEl && mission.lead) {
       leadEl.textContent = mission.lead;
-      leadEl.removeAttribute('data-i18n');
+      if (leadEl.hasAttribute('data-i18n')) leadEl.removeAttribute('data-i18n');
     }
   }
 
@@ -198,10 +198,21 @@
     if (!grid) return;
 
     grid.innerHTML = '';
-    partners.forEach(url => {
+    partners.forEach(p => {
+      const url = typeof p === 'string' ? p : p.url;
+      const link = typeof p === 'string' ? '#' : (p.link || '#');
+
+      const a = document.createElement('a');
+      a.href = link;
+      if (link !== '#') {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      }
+
       const img = document.createElement('img');
       img.src = url;
-      grid.appendChild(img);
+      a.appendChild(img);
+      grid.appendChild(a);
     });
   }
 

@@ -522,7 +522,7 @@
 
     async function fetchContent() {
       try {
-        const response = await fetch('api/cms-save.php'); // default GET returns JSON
+        const response = await fetch('api/cms-save.php?t=' + Date.now()); // default GET returns JSON
         if (!response.ok) throw new Error('Fetch failed');
         const data = await response.json();
 
@@ -1253,8 +1253,8 @@
             setStatus(statusId, "Saved!", true);
             if (form.id === 'news-form') {
               resetNewsForm();
-              fetchContent();
             }
+            fetchContent();
           } else {
             setStatus(statusId, "Error: " + text, false);
           }

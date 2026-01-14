@@ -357,7 +357,7 @@ if ($action === 'updateSection') {
 }
 
 if ($action === 'updatePresidium') {
-    $members = json_decode($_POST['members'] ?? '[]', true);
+    $members = json_decode($_POST['presidium'] ?? '[]', true);
     if (!is_array($members))
         exit('Error: Invalid data');
     $content['presidium'] = $members;

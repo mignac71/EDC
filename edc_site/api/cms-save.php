@@ -143,6 +143,14 @@ function dbSet(array $data): bool
 
 
 const DEFAULT_PASSWORD = 'edc_admin';
+
+/**
+ * Translation helper for CMS responses.
+ */
+function t($pl, $en, $lang)
+{
+    return ($lang === 'pl') ? $pl : $en;
+}
 // Basic initialization
 $lang = $_POST['lang'] ?? $_GET['lang'] ?? 'en';
 $action = $_POST['action'] ?? $_GET['action'] ?? '';

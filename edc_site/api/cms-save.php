@@ -155,8 +155,13 @@ function t($pl, $en, $lang)
 $lang = $_POST['lang'] ?? $_GET['lang'] ?? 'en';
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
+// Routing Guard: If being included as a library, skip automatic routing/auth
+if (defined('CMS_SKIP_ROUTING') && CMS_SKIP_ROUTING === true) {
+    return;
+}
+
 // Public GET access for general content
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($action) && !defined('CMS_SKIP_ROUTING')) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && empty($action)) {
     $content = loadContent();
     header('Content-Type: application/json');
     echo json_encode($content);

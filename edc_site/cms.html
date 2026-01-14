@@ -191,6 +191,18 @@
     .status.error {
       color: red;
     }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
 
@@ -651,21 +663,40 @@
       currentHeroImages.forEach((url, idx) => {
         const div = document.createElement('div');
         div.style.display = 'flex';
-        div.style.gap = '5px';
-        div.style.marginBottom = '5px';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+        div.style.marginBottom = '10px';
+        div.style.padding = '10px';
+        div.style.border = '1px solid #eee';
+        div.style.borderRadius = '4px';
+        div.style.background = '#f9f9f9';
+
+        // Thumbnail preview
+        const thumb = document.createElement('img');
+        thumb.src = url || 'images/placeholder.png';
+        thumb.style.width = '60px';
+        thumb.style.height = '40px';
+        thumb.style.objectFit = 'cover';
+        thumb.style.borderRadius = '2px';
+        thumb.style.border = '1px solid #ddd';
+        thumb.onerror = () => { thumb.src = 'images/placeholder.png'; };
 
         const input = document.createElement('input');
         input.type = 'text';
         input.value = url;
         input.placeholder = "Image URL";
+        input.style.flex = '1';
         input.onchange = (e) => {
           currentHeroImages[idx] = e.target.value;
+          thumb.src = e.target.value || 'images/placeholder.png';
           updateHiddenHeroInput();
         };
         input.onfocus = (e) => activeHeroInput = e.target; // Track focus
 
         const delBtn = document.createElement('button');
         delBtn.textContent = 'Remove';
+        delBtn.className = 'btn-danger';
+        delBtn.style.padding = '5px 10px';
         delBtn.type = 'button';
         delBtn.onclick = () => {
           currentHeroImages.splice(idx, 1);
@@ -673,6 +704,7 @@
           updateHiddenHeroInput();
         };
 
+        div.appendChild(thumb);
         div.appendChild(input);
         div.appendChild(delBtn);
         list.appendChild(div);

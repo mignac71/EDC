@@ -144,7 +144,6 @@ main {
   height: 90vh;
   min-height: 600px;
   background-image: url('images/hero_bg.jpg');
-  /* Ensure you have a background image if not set elsewhere or handle fallback via CSS */
   background-size: cover;
   background-position: center;
   position: relative;
@@ -154,9 +153,10 @@ main {
   overflow: hidden;
 }
 
-/* Simulated slow zoom on background if applied to a pseudo-element or container. 
-   Simplifying here by assuming background is on .hero, but for zoom we need a child or pseudo. 
-   Let's add an animation to the background position or usage of a pseudo element for better perf. */
+.hero.has-slideshow {
+  background-image: none !important;
+}
+
 .hero::before {
   content: '';
   position: absolute;
@@ -165,16 +165,14 @@ main {
   right: 0;
   bottom: 0;
   background: inherit;
-  /* Inherits from .hero */
   background-size: cover;
   background-position: center;
   z-index: 0;
   animation: zoomInOut 30s infinite alternate;
-  /* If .hero has the image set via inline style or separate CSS, verify inheritance. 
-     If index.html doesn't set bg image, we assume it's set in CSS. 
-     Since the original CSS didn't specify an image URL (it said background-size: cover), 
-     I will assume the user handles the image or it was missing in the provided snippet. 
-     I'll leave the animation ready. */
+}
+
+.hero.has-slideshow::before {
+  display: none !important;
 }
 
 /* Overlay */

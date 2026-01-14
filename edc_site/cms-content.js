@@ -16,7 +16,9 @@
     // Handle Hero Slideshow or Single Image
     const heroSection = document.querySelector('.hero');
     if (heroSection && hero.images && Array.isArray(hero.images) && hero.images.length > 0) {
-      heroSection.style.backgroundImage = 'none'; // Clear static bg
+      // Clear static bg and any competing inline styles
+      heroSection.style.backgroundImage = 'none';
+      heroSection.classList.add('has-slideshow'); // Helper class if needed
 
       // Remove existing slideshow if any
       const existing = heroSection.querySelector('.slideshow-container');

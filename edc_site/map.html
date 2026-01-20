@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dealer map of the European Dealer Council connecting Volkswagen and Audi partners across Europe.">
+  <meta name="description"
+    content="Dealer map of the European Dealer Council connecting Volkswagen and Audi partners across Europe.">
   <title data-i18n="title.map">Dealer Map - European Dealer Council</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
+
 <body>
   <header class="navbar">
     <div class="container nav-container">
       <a href="index.html#home" class="logo">
-        <img src="images/edc_logo.jpeg" alt="European Dealer Council logo">
+        <img src="images/edc_logo_new.jpg" alt="European Dealer Council logo">
       </a>
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav>
         <ul>
-            <li><a href="index.html#home" data-i18n="nav.home">Home</a></li>
-            <li><a href="index.html#mission" data-i18n="nav.mission">Mission</a></li>
-            <li><a href="index.html#presidium" data-i18n="nav.presidium">Presidium</a></li>
-            <li><a href="index.html#news" data-i18n="nav.news">News</a></li>
-            <li><a href="map.html" data-i18n="nav.map">Map</a></li>
-            <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="index.html#home" data-i18n="nav.home">Home</a></li>
+          <li><a href="index.html#mission" data-i18n="nav.mission">Mission</a></li>
+          <li><a href="index.html#presidium" data-i18n="nav.presidium">Presidium</a></li>
+          <li><a href="index.html#news" data-i18n="nav.news">News</a></li>
+          <li><a href="map.html" data-i18n="nav.map">Map</a></li>
+          <li><a href="index.html#contact" data-i18n="nav.contact">Contact</a></li>
           <li class="language-selector">
             <select id="language-select" aria-label="Select language">
               <option value="en">🇬🇧 English</option>
@@ -44,9 +47,9 @@
   </header>
 
   <main class="map-section">
-      <h1 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h1>
-      <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
-      <p id="map-status" class="map-status" aria-live="polite"></p>
+    <h1 data-i18n="map.title">European Dealers of Audi and Volkswagen Brand</h1>
+    <p class="map-instruction" data-i18n="map.instruction">Move cursor of your mouse over country main city</p>
+    <p id="map-status" class="map-status" aria-live="polite"></p>
     <div id="map"></div>
   </main>
 
@@ -54,6 +57,6 @@
   <script src="map.js"></script>
   <script src="translations.js"></script>
   <script src="navbar.js"></script>
-  </body>
-  </html>
+</body>
 
+</html>

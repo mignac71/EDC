@@ -758,24 +758,27 @@ footer a:hover {
   }
 
   .hero {
-    height: 65vh;
-    min-height: 360px;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
     background-size: cover;
     background-position: center;
   }
 
   .hero-overlay {
-    padding: 32px 28px;
+    padding: 20px 24px;
     max-width: 90%;
+    border-radius: 12px;
   }
 
   .hero h1 {
-    font-size: 2rem;
-    line-height: 1.15;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    margin-bottom: 8px;
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   /* Removed redundant .nav-container rule */

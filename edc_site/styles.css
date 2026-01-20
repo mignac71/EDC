@@ -719,25 +719,27 @@ footer a:hover {
   }
 
   .nav-container {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
   }
 
   .logo {
-    width: 100%;
+    width: auto;
+    flex-shrink: 1;
   }
 
   .logo img {
-    width: 100%;
-    max-width: none;
+    max-height: 40px;
     height: auto;
+    width: auto;
     display: block;
   }
 
   .nav-toggle {
     display: inline-flex;
-    align-self: flex-end;
+    margin-left: auto;
   }
 
   .navbar nav {
@@ -776,9 +778,7 @@ footer a:hover {
     font-size: 1rem;
   }
 
-  .nav-container {
-    justify-content: center;
-  }
+  /* Removed redundant .nav-container rule */
 
   .navbar nav {
     display: none;

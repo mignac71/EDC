@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <filter id="grunge">
+      <feTurbulence type="fractalNoise" baseFrequency="0.15" numOctaves="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+    </filter>
+  </defs>
+  <g transform="rotate(-15 50 50)" filter="url(#grunge)">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="#cc0000" stroke-width="4" />
+    <circle cx="50" cy="50" r="38" fill="none" stroke="#cc0000" stroke-width="1" stroke-dasharray="1 1" />
+    <text x="50" y="38" text-anchor="middle" fill="#cc0000" font-family="Arial Black, sans-serif" font-weight="900" font-size="14" style="letter-spacing: 1px;">SAVE</text>
+    <text x="50" y="55" text-anchor="middle" fill="#cc0000" font-family="Arial Black, sans-serif" font-weight="900" font-size="12" style="letter-spacing: 1px;">THE</text>
+    <text x="50" y="72" text-anchor="middle" fill="#cc0000" font-family="Arial Black, sans-serif" font-weight="900" font-size="14" style="letter-spacing: 1px;">DATE</text>
+  </g>
+</svg>

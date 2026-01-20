@@ -305,7 +305,8 @@ if ($action === 'addNews') {
         'summary' => $summary,
         'alt' => $alt,
         'image' => null,
-        'gallery' => []
+        'gallery' => [],
+        'save_the_date' => (isset($_POST['save_the_date']) && $_POST['save_the_date'] === '1')
     ];
 
     if (isset($_FILES['mainImage'])) {
@@ -480,6 +481,8 @@ if ($action === 'updateNews') {
             $item['gallery'][] = $_POST['image_url'];
         }
     }
+
+    $item['save_the_date'] = (isset($_POST['save_the_date']) && $_POST['save_the_date'] === '1');
 
     // Image upload handling
     if (isset($_FILES['mainImage'])) {

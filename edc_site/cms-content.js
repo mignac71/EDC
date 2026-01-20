@@ -59,6 +59,14 @@
       article.appendChild(img);
     }
 
+    if (item.save_the_date === true) {
+      const stamp = document.createElement('img');
+      stamp.src = 'images/save_the_date_stamp.svg';
+      stamp.className = 'news-stamp';
+      stamp.alt = 'Save the Date';
+      article.appendChild(stamp);
+    }
+
     if (item.title) {
       const heading = document.createElement('h3');
       heading.textContent = item.title;

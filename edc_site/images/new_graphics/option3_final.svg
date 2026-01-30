@@ -1,0 +1,38 @@
+<svg width="700" height="180" viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="180" fill="white" />
+  
+  <g transform="translate(30, 90)" dominant-baseline="middle">
+    <!-- VW Logo (Precisely matched to official flat design from reference image) -->
+    <g transform="translate(0, -25)">
+      <!-- Outer Circle -->
+      <path d="M25 2 A23 23 0 1 1 25 48 A23 23 0 1 1 25 2" fill="none" stroke="#001E50" stroke-width="3.5" />
+      
+      <!-- The "V" -->
+      <path d="M12.5 8.5 L25 31.5 L37.5 8.5" fill="none" stroke="#001E50" stroke-width="3.2" stroke-linejoin="miter" />
+      
+      <!-- The "W" -->
+      <path d="M5.5 17.5 L17.5 45.5 L25 29 M25 29 L32.5 45.5 L44.5 17.5" fill="none" stroke="#001E50" stroke-width="3.2" stroke-linejoin="miter" />
+      
+      <!-- Horizontal Gap Spacer (Refining the gap between V and W) -->
+      <line x1="20" y1="27" x2="30" y2="27" stroke="white" stroke-width="1.5" />
+    </g>
+    
+    <!-- Audi Rings -->
+    <g transform="translate(68, -10)">
+      <circle cx="15" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="38" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="61" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="84" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+    </g>
+    
+    <!-- Vertical Divider -->
+    <rect x="185" y="-35" width="1" height="70" fill="#ddd" />
+    
+    <!-- EDC Graphic + Text -->
+    <g transform="translate(210, 0)">
+      <text x="0" y="8" font-family="Arial, sans-serif" font-weight="900" font-size="52" fill="#001E50">EDC</text>
+      <text x="145" y="-12" font-family="Arial, sans-serif" font-weight="700" font-size="24" fill="#001E50">European Dealer Council</text>
+      <text x="145" y="18" font-family="Arial, sans-serif" font-weight="400" font-size="18" fill="#007BFF">Voice of Retail</text>
+    </g>
+  </g>
+</svg>

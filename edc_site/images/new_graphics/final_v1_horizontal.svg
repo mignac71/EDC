@@ -1,0 +1,29 @@
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- White Background -->
+  <rect width="600" height="200" fill="white" />
+  
+  <!-- Graphic EDC Monogram -->
+  <g transform="translate(40, 40)">
+    <text x="0" y="50" font-family="Arial, sans-serif" font-weight="900" font-size="60" fill="#001E50">EDC</text>
+    <path d="M0 65 H120" stroke="#001E50" stroke-width="4" />
+  </g>
+  
+  <!-- Main Title -->
+  <text x="180" y="70" font-family="Arial, sans-serif" font-weight="700" font-size="24" fill="#001E50">European Dealer Council</text>
+  <text x="180" y="100" font-family="Arial, sans-serif" font-weight="400" font-size="18" fill="#555">Voice of Retail</text>
+  
+  <!-- Logos Section -->
+  <g transform="translate(180, 130)">
+    <!-- Flat VW Logo -->
+    <circle cx="20" cy="20" r="20" fill="#001E50" />
+    <path d="M10 12 L20 30 L30 12 M10 20 L20 38 L30 20" stroke="white" stroke-width="2.5" fill="none" />
+    
+    <!-- Flat Audi Rings -->
+    <g transform="translate(60, 5)">
+      <circle cx="15" cy="15" r="14" fill="none" stroke="black" stroke-width="2.5" />
+      <circle cx="35" cy="15" r="14" fill="none" stroke="black" stroke-width="2.5" />
+      <circle cx="55" cy="15" r="14" fill="none" stroke="black" stroke-width="2.5" />
+      <circle cx="75" cy="15" r="14" fill="none" stroke="black" stroke-width="2.5" />
+    </g>
+  </g>
+</svg>

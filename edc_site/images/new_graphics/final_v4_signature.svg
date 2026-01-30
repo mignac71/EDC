@@ -1,0 +1,28 @@
+<svg width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="250" fill="white" />
+  
+  <!-- Elegant Square Layout -->
+  <rect x="40" y="40" width="420" height="170" fill="none" stroke="#001E50" stroke-width="1" stroke-dasharray="4,4" opacity="0.2"/>
+  
+  <g transform="translate(250, 90)" text-anchor="middle">
+    <!-- EDC with custom spacing -->
+    <text x="0" y="0" font-family="Arial, sans-serif" font-weight="900" font-size="70" fill="#001E50" letter-spacing="10">EDC</text>
+    
+    <text x="0" y="50" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#001E50" text-transform="uppercase">European Dealer Council</text>
+    <text x="0" y="80" font-family="Arial, sans-serif" font-weight="400" font-size="16" fill="#666" font-style="italic">"Voice of Retail"</text>
+    
+    <!-- Partner Logos -->
+    <g transform="translate(-50, 110)">
+       <!-- VW -->
+       <circle cx="15" cy="15" r="15" fill="#001E50" />
+       <path d="M8 10 L15 22 L22 10 M8 15 L15 27 L22 15" stroke="white" stroke-width="2" fill="none" />
+       <!-- Audi -->
+       <g transform="translate(45, 5)">
+          <circle cx="10" cy="10" r="9" fill="none" stroke="black" stroke-width="1.8" />
+          <circle cx="23" cy="10" r="9" fill="none" stroke="black" stroke-width="1.8" />
+          <circle cx="36" cy="10" r="9" fill="none" stroke="black" stroke-width="1.8" />
+          <circle cx="49" cy="10" r="9" fill="none" stroke="black" stroke-width="1.8" />
+       </g>
+    </g>
+  </g>
+</svg>

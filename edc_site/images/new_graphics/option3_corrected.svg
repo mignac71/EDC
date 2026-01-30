@@ -1,0 +1,29 @@
+<svg width="700" height="180" viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="180" fill="white" />
+  
+  <g transform="translate(30, 90)" dominant-baseline="middle">
+    <!-- VW Logo (Official 2019 flat design) -->
+    <g transform="translate(0, -25)">
+      <circle cx="25" cy="25" r="24" fill="none" stroke="#001E50" stroke-width="2.5" />
+      <path d="M13 14 L25 38 L37 14 M17 14 L25 32 L33 14" fill="none" stroke="#001E50" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    
+    <!-- Audi Rings -->
+    <g transform="translate(65, -10)">
+      <circle cx="15" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="38" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="61" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+      <circle cx="84" cy="15" r="14" fill="none" stroke="#000000" stroke-width="2.2" />
+    </g>
+    
+    <!-- Vertical Divider -->
+    <rect x="175" y="-35" width="1" height="70" fill="#ddd" />
+    
+    <!-- EDC Graphic + Text -->
+    <g transform="translate(200, 0)">
+      <text x="0" y="8" font-family="Arial, sans-serif" font-weight="900" font-size="50" fill="#001E50">EDC</text>
+      <text x="135" y="-12" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#001E50">European Dealer Council</text>
+      <text x="135" y="18" font-family="Arial, sans-serif" font-weight="400" font-size="18" fill="#007BFF">Voice of Retail</text>
+    </g>
+  </g>
+</svg>

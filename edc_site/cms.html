@@ -443,18 +443,39 @@
             <p style="margin-bottom: 1rem; color: #666;">Manage newsletter subscriptions and campaigns.</p>
             <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
               <h3 style="margin-top: 0;">Quick Links</h3>
-              <a href="/newsletter" target="_blank" style="display: inline-block; padding: 0.6rem 1.2rem; background: var(--primary); color: white; text-decoration: none; border-radius: 4px; font-weight: 500; margin-right: 10px;">
-                Open Newsletter Admin
-              </a>
-              <a href="/newsletter/subscribers" target="_blank" style="display: inline-block; padding: 0.6rem 1.2rem; background: #666; color: white; text-decoration: none; border-radius: 4px; font-weight: 500;">
-                View Subscribers
-              </a>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <a href="/newsletter" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: var(--primary); color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  📊 Dashboard
+                </a>
+                <a href="/newsletter/contacts" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: #10b981; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  👥 Contacts
+                </a>
+                <a href="/newsletter/campaigns" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: #8b5cf6; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  📧 Campaigns
+                </a>
+                <a href="/newsletter/contacts/import" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: #f59e0b; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  📥 Import
+                </a>
+                <a href="/newsletter/templates" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: #ef4444; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  📝 Templates
+                </a>
+                <a href="/newsletter/settings" target="_blank"
+                  style="display: inline-block; padding: 0.6rem 1.2rem; background: #666; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; text-align: center;">
+                  ⚙️ Settings
+                </a>
+              </div>
             </div>
             <form id="newsletter-config-form">
               <h3>Newsletter Configuration</h3>
               <div class="form-group">
                 <label for="newsletter-url">Newsletter Admin URL</label>
-                <input type="text" id="newsletter-url" name="newsletterUrl" placeholder="https://newsletter.example.com">
+                <input type="text" id="newsletter-url" name="newsletterUrl"
+                  placeholder="https://newsletter.example.com">
                 <p class="muted" style="margin:5px 0; font-size:0.85rem;">URL to your newsletter management system</p>
               </div>
               <div class="form-group">

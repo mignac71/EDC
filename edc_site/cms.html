@@ -437,6 +437,45 @@
         </details>
         <details class="card full-width">
           <summary>
+            <h2>Newsletter Management</h2>
+          </summary>
+          <div class="card-content">
+            <p style="margin-bottom: 1rem; color: #666;">Manage newsletter subscriptions and campaigns.</p>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+              <h3 style="margin-top: 0;">Quick Links</h3>
+              <a href="/newsletter" target="_blank" style="display: inline-block; padding: 0.6rem 1.2rem; background: var(--primary); color: white; text-decoration: none; border-radius: 4px; font-weight: 500; margin-right: 10px;">
+                Open Newsletter Admin
+              </a>
+              <a href="/newsletter/subscribers" target="_blank" style="display: inline-block; padding: 0.6rem 1.2rem; background: #666; color: white; text-decoration: none; border-radius: 4px; font-weight: 500;">
+                View Subscribers
+              </a>
+            </div>
+            <form id="newsletter-config-form">
+              <h3>Newsletter Configuration</h3>
+              <div class="form-group">
+                <label for="newsletter-url">Newsletter Admin URL</label>
+                <input type="text" id="newsletter-url" name="newsletterUrl" placeholder="https://newsletter.example.com">
+                <p class="muted" style="margin:5px 0; font-size:0.85rem;">URL to your newsletter management system</p>
+              </div>
+              <div class="form-group">
+                <label for="newsletter-enabled">Enable Newsletter Signup</label>
+                <input type="checkbox" id="newsletter-enabled" name="newsletterEnabled" value="1" style="width: auto;">
+                <p class="muted" style="margin:5px 0; font-size:0.85rem;">Show newsletter signup form on the website</p>
+              </div>
+              <input type="hidden" name="action" value="updateNewsletterConfig">
+              <input type="hidden" name="password">
+              <input type="hidden" name="username">
+              <input type="hidden" name="lang" value="en">
+              <div class="form-actions">
+                <button type="submit">Save Configuration</button>
+                <span class="status" id="newsletter-config-status"></span>
+              </div>
+            </form>
+          </div>
+        </details>
+
+        <details class="card full-width">
+          <summary>
             <h2>Account Settings</h2>
           </summary>
           <div class="card-content">

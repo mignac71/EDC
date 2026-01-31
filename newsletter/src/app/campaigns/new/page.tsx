@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Send, Eye, Users, Tag } from "lucide-react";
+import { ArrowLeft, Save, Send, Eye, Users } from "lucide-react";
 import Link from "next/link";
 import { EmailEditor } from "@/components/EmailEditor";
 import type { Tag as TagType, Template, Segment } from "@/lib/types/database";
@@ -239,8 +239,8 @@ export default function NewCampaignPage() {
                                                 })
                                             }
                                             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${campaign.tag_ids.includes(tag.id)
-                                                    ? "text-white"
-                                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                                ? "text-white"
+                                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                                 }`}
                                             style={{
                                                 backgroundColor: campaign.tag_ids.includes(tag.id)

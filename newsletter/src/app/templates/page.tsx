@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, FileText, Edit, Trash2 } from "lucide-react";
+import { Plus, FileText, Edit } from "lucide-react";
 import { format } from "date-fns";
 
 async function getTemplates() {
@@ -96,8 +96,8 @@ export default async function TemplatesPage() {
                                 <div className="mt-4 flex items-center justify-between">
                                     <span
                                         className={`text-xs px-2 py-1 rounded-full ${template.is_active
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-gray-100 text-gray-600"
+                                            ? "bg-green-100 text-green-700"
+                                            : "bg-gray-100 text-gray-600"
                                             }`}
                                     >
                                         {template.is_active ? "Active" : "Inactive"}

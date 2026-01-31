@@ -168,7 +168,7 @@ export default async function ContactsPage({
                 </div>
 
                 {/* Contacts Table */}
-                <ContactsTable contacts={contacts} tags={tags} />
+                <ContactsTable contacts={contacts} />
             </div>
         </div>
     );

@@ -28,15 +28,14 @@ export default function TagsPage() {
     });
 
     useEffect(() => {
+        const fetchTags = async () => {
+            const supabase = createClient();
+            const { data } = await supabase.from("newsletter_tags").select("*").order("name");
+            if (data) setTags(data);
+            setIsLoading(false);
+        };
         fetchTags();
     }, []);
-
-    const fetchTags = async () => {
-        const supabase = createClient();
-        const { data } = await supabase.from("newsletter_tags").select("*").order("name");
-        if (data) setTags(data);
-        setIsLoading(false);
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -205,8 +204,8 @@ export default function TagsPage() {
                                             type="button"
                                             onClick={() => setFormData({ ...formData, color })}
                                             className={`w-8 h-8 rounded-full border-2 transition-transform ${formData.color === color
-                                                    ? "border-gray-900 scale-110"
-                                                    : "border-transparent hover:scale-110"
+                                                ? "border-gray-900 scale-110"
+                                                : "border-transparent hover:scale-110"
                                                 }`}
                                             style={{ backgroundColor: color }}
                                         />

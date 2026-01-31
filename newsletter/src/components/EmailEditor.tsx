@@ -13,9 +13,6 @@ import {
     Heading2,
     Undo,
     Redo,
-    AlignLeft,
-    AlignCenter,
-    AlignRight,
     Code,
 } from "lucide-react";
 

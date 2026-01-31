@@ -23,7 +23,7 @@ interface ColumnMapping {
 
 export default function ImportContactsPage() {
     const [step, setStep] = useState<ImportStep>("upload");
-    const [file, setFile] = useState<File | null>(null);
+
     const [parsedData, setParsedData] = useState<ParsedData | null>(null);
     const [mapping, setMapping] = useState<ColumnMapping>({
         email: 0,
@@ -39,7 +39,7 @@ export default function ImportContactsPage() {
         success: number;
         errors: Array<{ row: number; email: string; error: string }>;
     } | null>(null);
-    const [isImporting, setIsImporting] = useState(false);
+
 
     // Fetch tags on mount
     useState(() => {
@@ -55,7 +55,7 @@ export default function ImportContactsPage() {
         const uploadedFile = e.target.files?.[0];
         if (!uploadedFile) return;
 
-        setFile(uploadedFile);
+
 
         // Parse CSV
         Papa.parse(uploadedFile, {
@@ -105,7 +105,7 @@ export default function ImportContactsPage() {
     const handleImport = async () => {
         if (!parsedData) return;
 
-        setIsImporting(true);
+
         setStep("importing");
 
         const supabase = createClient();
@@ -160,7 +160,7 @@ export default function ImportContactsPage() {
 
         setImportResult({ success: successCount, errors });
         setStep("complete");
-        setIsImporting(false);
+
     };
 
     return (
@@ -456,7 +456,7 @@ export default function ImportContactsPage() {
                             <button
                                 onClick={() => {
                                     setStep("upload");
-                                    setFile(null);
+
                                     setParsedData(null);
                                     setImportResult(null);
                                 }}

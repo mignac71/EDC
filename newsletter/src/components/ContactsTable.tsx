@@ -12,10 +12,10 @@ interface ContactWithTags extends Contact {
 
 interface ContactsTableProps {
     contacts: ContactWithTags[];
-    tags: Tag[];
+
 }
 
-export function ContactsTable({ contacts, tags }: ContactsTableProps) {
+export function ContactsTable({ contacts }: ContactsTableProps) {
     if (contacts.length === 0) {
         return (
             <div className="p-12 text-center">
@@ -97,12 +97,12 @@ export function ContactsTable({ contacts, tags }: ContactsTableProps) {
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <span
                                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${contact.status === "active"
-                                            ? "bg-green-100 text-green-800"
-                                            : contact.status === "unsubscribed"
-                                                ? "bg-red-100 text-red-800"
-                                                : contact.status === "bounced"
-                                                    ? "bg-yellow-100 text-yellow-800"
-                                                    : "bg-gray-100 text-gray-800"
+                                        ? "bg-green-100 text-green-800"
+                                        : contact.status === "unsubscribed"
+                                            ? "bg-red-100 text-red-800"
+                                            : contact.status === "bounced"
+                                                ? "bg-yellow-100 text-yellow-800"
+                                                : "bg-gray-100 text-gray-800"
                                         }`}
                                 >
                                     {contact.status}

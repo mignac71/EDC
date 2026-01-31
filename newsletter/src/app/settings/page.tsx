@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Mail, Shield, Globe, Key } from "lucide-react";
+import { Save, Mail, Shield, Globe, Key, LogOut } from "lucide-react";
+import { signout } from "@/app/login/actions";
 
 export default function SettingsPage() {
     const [settings, setSettings] = useState({

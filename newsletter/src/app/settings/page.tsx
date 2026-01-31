@@ -42,14 +42,25 @@ export default function SettingsPage() {
                     <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
                     <p className="text-gray-500">Configure your newsletter system</p>
                 </div>
-                <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
-                >
-                    <Save className="h-4 w-4" />
-                    {isSaving ? "Saving..." : "Save Settings"}
-                </button>
+                <div className="flex gap-3">
+                    <form action={signout}>
+                        <button
+                            type="submit"
+                            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            Sign Out
+                        </button>
+                    </form>
+                    <button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                    >
+                        <Save className="h-4 w-4" />
+                        {isSaving ? "Saving..." : "Save Settings"}
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-6">

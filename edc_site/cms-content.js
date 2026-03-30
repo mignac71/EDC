@@ -4,6 +4,7 @@
 
   function applyHeroCopy(hero) {
     if (!hero) return;
+    const heroSection = document.querySelector('.hero');
     const titleEl = document.querySelector('.hero h1');
     const subtitleEl = document.querySelector('.hero p');
     if (titleEl && hero.title) {
@@ -14,7 +15,6 @@
     }
 
     // Handle Hero Slideshow or Single Image
-    const heroSection = document.querySelector('.hero');
     if (heroSection && hero.images && Array.isArray(hero.images) && hero.images.length > 0) {
       // Clear static bg and any competing inline styles
       heroSection.style.backgroundImage = 'none';
@@ -36,12 +36,42 @@
 
       heroSection.insertBefore(container, heroSection.firstChild);
 
+      // Wait for first image to load, then reveal hero
+      const firstImg = container.querySelector('img');
+      if (firstImg) {
+        const reveal = () => heroSection.classList.add('hero-loaded');
+        if (firstImg.complete && firstImg.naturalWidth > 0) {
+          reveal();
+        } else {
+          firstImg.addEventListener('load', reveal);
+          firstImg.addEventListener('error', reveal); // reveal even on error
+        }
+      } else {
+        heroSection.classList.add('hero-loaded');
+      }
+
       // Trigger slideshow.js logic if available
       const evt = new Event('slideshows:refresh');
       document.dispatchEvent(evt);
     } else if (hero.image) {
       // Fallback for single image property (legacy)
-      if (heroSection) heroSection.style.backgroundImage = `url('${hero.image}')`;
+      const preload = new Image();
+      preload.src = hero.image;
+      const reveal = () => {
+        if (heroSection) {
+          heroSection.style.backgroundImage = `url('${hero.image}')`;
+          heroSection.classList.add('hero-loaded');
+        }
+      };
+      if (preload.complete && preload.naturalWidth > 0) {
+        reveal();
+      } else {
+        preload.addEventListener('load', reveal);
+        preload.addEventListener('error', reveal);
+      }
+    } else {
+      // No images at all — just show the text overlay
+      if (heroSection) heroSection.classList.add('hero-loaded');
     }
   }
 

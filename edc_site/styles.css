@@ -494,6 +494,69 @@ h2 {
   flex-grow: 1;
 }
 
+/* Flags Carousel */
+.flags-carousel {
+  overflow: hidden;
+  width: 100%;
+  margin: 30px 0 20px;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+.flags-track {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  width: max-content;
+  animation: flagsScroll 40s linear infinite;
+}
+
+.flags-carousel:hover .flags-track {
+  animation-play-state: paused;
+}
+
+.flag-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.flag-item:hover {
+  transform: scale(1.1);
+}
+
+.flag-item img {
+  height: 40px;
+  width: 71px; /* 16:9 ratio */
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.flag-item span {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+@keyframes flagsScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Map and Partners Split Layout */
 .map-section {
   padding: 60px 0;

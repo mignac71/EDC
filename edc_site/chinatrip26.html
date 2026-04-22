@@ -241,8 +241,6 @@
         </div>
       </div>
       <h1 id="pageTitle"></h1>
-      <p class="sub" id="pageSub"></p>
-      <p class="tiny" id="lastRefresh">—</p>
     </section>
 
     <section class="status-grid">
@@ -258,15 +256,9 @@
         <p class="tiny" id="nextTime">—</p>
         <p class="tiny" id="nextDesc">—</p>
       </article>
-      <article class="card">
-        <h2 id="countdownTitle"></h2>
-        <p class="tiny" id="countdownValue">—</p>
-        <p class="tiny" id="countdownHint">—</p>
-      </article>
     </section>
 
     <div class="timeline-meta">
-      <span class="chip" id="timelineCountdown"></span>
       <button type="button" id="togglePast"></button>
     </div>
 
@@ -548,22 +540,17 @@
       const copy = getCopy();
       const now = Date.now();
       const { current, next } = findCurrentAndNext(now);
-      const remaining = next ? fmtRemaining(next.start - now) : '0h 0m';
 
       document.documentElement.lang = lang;
       document.getElementById('pageTitle').textContent = copy.title;
-      document.getElementById('pageSub').textContent = copy.sub;
       document.getElementById('badgeCurrent').textContent = copy.current;
       document.getElementById('badgeNext').textContent = copy.next;
-      document.getElementById('countdownTitle').textContent = copy.countdown;
-      document.getElementById('countdownHint').textContent = copy.countdownHint;
       document.getElementById('clockBeijingLabel').textContent = copy.beijing;
       document.getElementById('clockBerlinLabel').textContent = copy.berlin;
       document.getElementById('topCountdownLabel').textContent = copy.shortCountdown;
       document.getElementById('beijingNow').textContent = formatClock(now, lang, 'Asia/Shanghai');
       document.getElementById('berlinNow').textContent = formatClock(now, lang, 'Europe/Berlin');
       document.getElementById('topCountdownValue').textContent = fmtCountdownClock(next ? next.start - now : 0);
-      document.getElementById('lastRefresh').textContent = `${copy.lastRefresh}: ${formatDate(now, lang, 'Asia/Shanghai')} (Beijing)`;
       document.getElementById('toggleNowNext').textContent = nowNextOnly ? copy.nowNextOnlyOn : copy.nowNextOnlyOff;
       document.getElementById('exportIcs').textContent = copy.exportIcs;
       const alertsBtn = document.getElementById('enableAlerts');
@@ -591,9 +578,6 @@
       document.getElementById('nextTitle').textContent = next ? next.title : copy.noNext;
       document.getElementById('nextTime').textContent = next ? `${formatDay(next.d, next.city, lang)} | ${next.t}–${next.e}` : copy.noNext;
       document.getElementById('nextDesc').textContent = next ? (next.desc || '—') : copy.noNextDesc;
-
-      document.getElementById('countdownValue').textContent = next ? `${remaining} (${copy.untilNext})` : copy.noNextDesc;
-      document.getElementById('timelineCountdown').textContent = next ? `${copy.untilNext}: ${remaining}` : copy.noNext;
 
       buildTimeline(current?.idx, next?.idx, now);
       scheduleUpcomingNotifications(now);

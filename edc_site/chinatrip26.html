@@ -20,6 +20,10 @@
       --accent-soft: #e9f1ff;
       --ok: #0f9d58;
       --warn: #dc8b00;
+      --current-bg: #e9f8ef;
+      --next-bg: #fff5e2;
+      --current-text: #0e6f41;
+      --next-text: #9b6200;
     }
 
     :root[data-theme="dark"] {
@@ -35,6 +39,10 @@
       --accent-soft: #213357;
       --ok: #3bc878;
       --warn: #ffbc49;
+      --current-bg: #19382c;
+      --next-bg: #3e2d14;
+      --current-text: #7ee3a6;
+      --next-text: #ffd485;
     }
 
     * { box-sizing: border-box; }
@@ -84,21 +92,27 @@
       background: transparent;
       border: 1px solid var(--line);
       border-radius: 10px;
-      padding: .22rem .5rem;
+      padding: .35rem .55rem;
       min-width: 0;
       display: inline-flex;
-      align-items: baseline;
-      gap: .35rem;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .04rem;
     }
     .floating-chip strong {
-      display: inline;
-      font-size: .78rem;
+      display: block;
+      font-size: .66rem;
+      font-weight: 700;
+      letter-spacing: .01em;
       color: var(--muted);
+      line-height: 1.1;
     }
     .floating-chip .floating-time {
-      font-size: 1rem;
-      font-weight: 700;
+      font-size: 1.58rem;
+      font-weight: 800;
       letter-spacing: .02em;
+      line-height: 1;
     }
 
     .topbar { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
@@ -153,8 +167,8 @@
     .card { padding: .85rem; }
     .card h2 { margin: 0 0 .35rem; font-size: 1rem; }
     .badge { display:inline-block; font-size:.76rem; font-weight:700; text-transform:uppercase; border-radius:999px; padding:.2rem .55rem; margin-bottom:.42rem; }
-    .b-current { background: #e9f8ef; color: var(--ok); }
-    .b-next { background: #fff5e2; color: var(--warn); }
+    .b-current { background: var(--current-bg); color: var(--current-text); }
+    .b-next { background: var(--next-bg); color: var(--next-text); }
 
     .timeline-meta { display: flex; justify-content: space-between; align-items: center; gap: .7rem; margin-bottom: .55rem; }
     .timeline { display: grid; gap: .8rem; }
@@ -170,8 +184,8 @@
     .time { font-weight: 700; color: var(--accent); }
     .title { font-weight: 700; margin-bottom: .1rem; }
     .desc { margin: .05rem 0; color: var(--muted); font-size: .9rem; }
-    .current-item { border-left: 3px solid var(--ok); background: color-mix(in srgb, var(--card), #e7fff1 65%); }
-    .next-item { border-left: 3px solid var(--warn); background: color-mix(in srgb, var(--card), #fff5df 65%); }
+    .current-item { border-left: 3px solid var(--ok); background: color-mix(in srgb, var(--card), var(--current-bg) 72%); }
+    .next-item { border-left: 3px solid var(--warn); background: color-mix(in srgb, var(--card), var(--next-bg) 72%); }
 
     .modal {
       position: fixed; inset: 0; background: rgba(0,0,0,.45);
@@ -192,9 +206,9 @@
 <body>
   <section class="floating-top" aria-live="polite">
     <div class="floating-line">
-      <div class="floating-chip"><strong id="clockBeijingLabel"></strong><div class="floating-time" id="beijingNow">—</div></div>
-      <div class="floating-chip"><strong id="clockBerlinLabel"></strong><div class="floating-time" id="berlinNow">—</div></div>
-      <div class="floating-chip"><strong id="topCountdownLabel"></strong><div class="floating-time" id="topCountdownValue">—</div></div>
+      <div class="floating-chip"><div class="floating-time" id="beijingNow">—</div><strong id="clockBeijingLabel"></strong></div>
+      <div class="floating-chip"><div class="floating-time" id="berlinNow">—</div><strong id="clockBerlinLabel"></strong></div>
+      <div class="floating-chip"><div class="floating-time" id="topCountdownValue">—</div><strong id="topCountdownLabel"></strong></div>
     </div>
     <details class="settings-menu">
       <summary id="settingsSummaryIcon" aria-label="Settings menu">☰</summary>
@@ -281,9 +295,9 @@
         enableAlerts: 'Enable alerts', alertsOn: 'Alerts enabled', alertsBlocked: 'Alerts blocked',
         exportIcs: 'Export ICS',
         pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
-        beijing: 'Beijing local time', berlin: 'Berlin local time', lastRefresh: 'Last refresh',
+        beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Last refresh',
         untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
-        settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in (hh:mm)'
+        settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -297,9 +311,9 @@
         enableAlerts: 'Włącz alarmy', alertsOn: 'Alarmy włączone', alertsBlocked: 'Alarmy zablokowane',
         exportIcs: 'Eksport ICS',
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
-        beijing: 'Czas lokalny Pekin', berlin: 'Czas lokalny Berlin', lastRefresh: 'Ostatnia aktualizacja',
+        beijing: 'Pekin', berlin: 'Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
-        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Następny za (gg:mm)'
+        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Next in'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -313,9 +327,9 @@
         enableAlerts: 'Értesítések bekapcsolása', alertsOn: 'Értesítések engedélyezve', alertsBlocked: 'Értesítések tiltva',
         exportIcs: 'ICS export',
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
-        beijing: 'Pekingi helyi idő', berlin: 'Berlini helyi idő', lastRefresh: 'Utolsó frissítés',
+        beijing: 'Peking', berlin: 'Berlin', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
-        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Következő (óó:pp)'
+        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Next in'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -329,9 +343,9 @@
         enableAlerts: 'Aktivér alarmer', alertsOn: 'Alarmer aktiveret', alertsBlocked: 'Alarmer blokeret',
         exportIcs: 'Eksportér ICS',
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
-        beijing: 'Lokal tid i Beijing', berlin: 'Lokal tid i Berlin', lastRefresh: 'Seneste opdatering',
+        beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
-        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Næste om (tt:mm)'
+        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Next in'
       }
     };
 

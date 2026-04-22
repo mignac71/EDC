@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>China Trip 2026 | Live Program</title>
+  <link rel="manifest" href="chinatrip26.webmanifest" />
   <style>
     :root {
       color-scheme: light;
@@ -116,6 +117,9 @@
         <div class="controls">
           <button id="fontDown" type="button">A−</button>
           <button id="fontUp" type="button">A+</button>
+          <button id="toggleNowNext" type="button"></button>
+          <button id="enableAlerts" type="button"></button>
+          <button id="exportIcs" type="button"></button>
           <button id="themeSystem" type="button">System</button>
           <button id="themeLight" type="button">Light</button>
           <button id="themeDark" type="button">Dark</button>
@@ -176,6 +180,9 @@
         noNext: 'End of schedule', noNextDesc: 'No more events planned.',
         countdown: 'Time to next event', countdownHint: 'Always shown as hours and minutes.',
         details: 'Details', showPast: 'Show past events', hidePast: 'Hide past events',
+        nowNextOnlyOn: 'Now + Next only: ON', nowNextOnlyOff: 'Now + Next only: OFF',
+        enableAlerts: 'Enable alerts', alertsOn: 'Alerts enabled', alertsBlocked: 'Alerts blocked',
+        exportIcs: 'Export ICS',
         pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
         beijing: 'Beijing local time', berlin: 'Berlin local time', lastRefresh: 'Last refresh',
         untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark'
@@ -188,6 +195,9 @@
         noNext: 'Koniec harmonogramu', noNextDesc: 'Brak kolejnych punktów.',
         countdown: 'Czas do kolejnego punktu', countdownHint: 'Zawsze pokazywany w godzinach i minutach.',
         details: 'Szczegóły', showPast: 'Pokaż minione punkty', hidePast: 'Ukryj minione punkty',
+        nowNextOnlyOn: 'Tylko teraz + następny: WŁ.', nowNextOnlyOff: 'Tylko teraz + następny: WYŁ.',
+        enableAlerts: 'Włącz alarmy', alertsOn: 'Alarmy włączone', alertsBlocked: 'Alarmy zablokowane',
+        exportIcs: 'Eksport ICS',
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
         beijing: 'Czas lokalny Pekin', berlin: 'Czas lokalny Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny'
@@ -200,6 +210,9 @@
         noNext: 'A program vége', noNextDesc: 'Nincs több esemény.',
         countdown: 'Idő a következő eseményig', countdownHint: 'Mindig óra és perc formában.',
         details: 'Részletek', showPast: 'Múlt események mutatása', hidePast: 'Múlt események elrejtése',
+        nowNextOnlyOn: 'Csak Most + Következő: BE', nowNextOnlyOff: 'Csak Most + Következő: KI',
+        enableAlerts: 'Értesítések bekapcsolása', alertsOn: 'Értesítések engedélyezve', alertsBlocked: 'Értesítések tiltva',
+        exportIcs: 'ICS export',
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
         beijing: 'Pekingi helyi idő', berlin: 'Berlini helyi idő', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét'
@@ -212,6 +225,9 @@
         noNext: 'Slut på programmet', noNextDesc: 'Ingen flere planlagte aktiviteter.',
         countdown: 'Tid til næste aktivitet', countdownHint: 'Vises altid i timer og minutter.',
         details: 'Detaljer', showPast: 'Vis tidligere aktiviteter', hidePast: 'Skjul tidligere aktiviteter',
+        nowNextOnlyOn: 'Kun Nu + Næste: TIL', nowNextOnlyOff: 'Kun Nu + Næste: FRA',
+        enableAlerts: 'Aktivér alarmer', alertsOn: 'Alarmer aktiveret', alertsBlocked: 'Alarmer blokeret',
+        exportIcs: 'Eksportér ICS',
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
         beijing: 'Lokal tid i Beijing', berlin: 'Lokal tid i Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk'
@@ -306,6 +322,8 @@
 
     let lang = localStorage.getItem('china_trip_lang') || 'en';
     let showPast = false;
+    let nowNextOnly = localStorage.getItem('china_trip_now_next_only') === '1';
+    const scheduledAlertKeys = new Set();
 
     const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
       timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
@@ -361,6 +379,7 @@
         head.textContent = formatDay(date, city, lang);
 
         list.forEach(ev => {
+          if (nowNextOnly && ev.idx !== currentIdx && ev.idx !== nextIdx) return;
           if (!showPast && ev.end < nowMs) return;
           const item = document.createElement('div');
           item.className = 'item';
@@ -420,6 +439,20 @@
       document.getElementById('beijingNow').textContent = formatDate(now, lang, 'Asia/Shanghai');
       document.getElementById('berlinNow').textContent = formatDate(now, lang, 'Europe/Berlin');
       document.getElementById('lastRefresh').textContent = `${copy.lastRefresh}: ${formatDate(now, lang, 'Asia/Shanghai')} (Beijing)`;
+      document.getElementById('toggleNowNext').textContent = nowNextOnly ? copy.nowNextOnlyOn : copy.nowNextOnlyOff;
+      document.getElementById('exportIcs').textContent = copy.exportIcs;
+      const alertsBtn = document.getElementById('enableAlerts');
+      if (!('Notification' in window)) {
+        alertsBtn.textContent = copy.alertsBlocked;
+        alertsBtn.disabled = true;
+      } else {
+        alertsBtn.disabled = false;
+        alertsBtn.textContent =
+          Notification.permission === 'granted' ? copy.alertsOn : Notification.permission === 'denied' ? copy.alertsBlocked : copy.enableAlerts;
+      }
+      document.getElementById('themeSystem').textContent = copy.themeSystem;
+      document.getElementById('themeLight').textContent = copy.themeLight;
+      document.getElementById('themeDark').textContent = copy.themeDark;
 
       document.getElementById('currentTitle').textContent = current ? current.title : copy.noCurrent;
       document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : copy.noCurrentDesc;
@@ -433,6 +466,7 @@
       document.getElementById('timelineCountdown').textContent = next ? `${copy.untilNext}: ${remaining}` : copy.noNext;
 
       buildTimeline(current?.idx, next?.idx, now);
+      scheduleUpcomingNotifications(now);
 
       if (!current && next && scrollWhenIdle) {
         const nextEl = document.querySelector(`.item[data-idx="${next.idx}"]`);
@@ -460,8 +494,18 @@
 
     setupLangButtons();
     document.getElementById('togglePast').addEventListener('click', () => { showPast = !showPast; refreshView(false); });
+    document.getElementById('toggleNowNext').addEventListener('click', () => {
+      nowNextOnly = !nowNextOnly;
+      localStorage.setItem('china_trip_now_next_only', nowNextOnly ? '1' : '0');
+      refreshView(false);
+    });
     document.getElementById('closeModal').addEventListener('click', () => document.getElementById('detailsModal').classList.remove('open'));
     document.getElementById('detailsModal').addEventListener('click', (e) => { if (e.target.id === 'detailsModal') e.currentTarget.classList.remove('open'); });
+    document.getElementById('enableAlerts').addEventListener('click', async () => {
+      if (!('Notification' in window)) return;
+      if (Notification.permission !== 'granted') await Notification.requestPermission();
+      refreshView(false);
+    });
 
     let scale = Number(localStorage.getItem('china_trip_font_scale') || 1);
     const applyScale = () => { document.documentElement.style.setProperty('--font-scale', scale); };
@@ -479,6 +523,67 @@
     document.getElementById('themeLight').addEventListener('click', () => applyTheme('light'));
     document.getElementById('themeDark').addEventListener('click', () => applyTheme('dark'));
     applyTheme(localStorage.getItem('china_trip_theme') || 'system');
+
+    function escapeIcs(text) {
+      return String(text || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    }
+
+    function toIcsStamp(ms) {
+      return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    }
+
+    function downloadIcs() {
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//EDC//ChinaTrip26//EN'
+      ];
+      normalized.forEach((ev) => {
+        lines.push('BEGIN:VEVENT');
+        lines.push(`UID:chinatrip26-${ev.idx}@edc`);
+        lines.push(`DTSTAMP:${toIcsStamp(Date.now())}`);
+        lines.push(`DTSTART:${toIcsStamp(ev.start)}`);
+        lines.push(`DTEND:${toIcsStamp(ev.end)}`);
+        lines.push(`SUMMARY:${escapeIcs(ev.title)}`);
+        lines.push(`DESCRIPTION:${escapeIcs(ev.desc || '')}`);
+        lines.push(`LOCATION:${escapeIcs(ev.city)}`);
+        lines.push('END:VEVENT');
+      });
+      lines.push('END:VCALENDAR');
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'china-trip-2026.ics';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function scheduleUpcomingNotifications(nowMs) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      const horizonMs = 1000 * 60 * 60 * 12;
+      normalized.forEach(ev => {
+        if (ev.start < nowMs || ev.start - nowMs > horizonMs) return;
+        [30, 10].forEach(minBefore => {
+          const fireAt = ev.start - (minBefore * 60 * 1000);
+          if (fireAt <= nowMs) return;
+          const key = `${ev.idx}-${minBefore}`;
+          if (scheduledAlertKeys.has(key)) return;
+          scheduledAlertKeys.add(key);
+          setTimeout(() => {
+            new Notification(`T-${minBefore} min: ${ev.title}`, {
+              body: `${ev.t}–${ev.e} • ${ev.city}`
+            });
+          }, fireAt - nowMs);
+        });
+      });
+    }
+
+    document.getElementById('exportIcs').addEventListener('click', downloadIcs);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./chinatrip26-sw.js').catch(() => {});
+    }
 
     refreshView(true);
     setInterval(() => refreshView(false), 60_000);

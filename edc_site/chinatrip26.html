@@ -1,381 +1,487 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>China Trip 2026 | Harmonogram</title>
+  <title>China Trip 2026 | Live Program</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #182033;
-      --muted: #5c667a;
-      --line: #d9dfeb;
-      --accent: #0c63e7;
-      --accent-soft: #eaf2ff;
-      --current: #0f9d58;
-      --next: #f29900;
+      --font-scale: 1;
+      --bg: #f4f7fc;
+      --bg-grad-1: #f8fbff;
+      --bg-grad-2: #edf2fb;
+      --card: #fff;
+      --text: #162137;
+      --muted: #607089;
+      --line: #d8e1ee;
+      --accent: #0f5ee0;
+      --accent-soft: #e9f1ff;
+      --ok: #0f9d58;
+      --warn: #dc8b00;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0f1524;
+      --bg-grad-1: #10182a;
+      --bg-grad-2: #0e1420;
+      --card: #172238;
+      --text: #eaf0ff;
+      --muted: #b7c3db;
+      --line: #29354e;
+      --accent: #6ea8ff;
+      --accent-soft: #213357;
+      --ok: #3bc878;
+      --warn: #ffbc49;
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: calc(16px * var(--font-scale));
       color: var(--text);
-      background: linear-gradient(180deg, #f8faff 0%, #f3f5fa 100%);
+      background: linear-gradient(180deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
       line-height: 1.45;
     }
 
-    .container {
-      width: min(1060px, 100% - 2rem);
-      margin: 0 auto;
-      padding: 1rem 0 3rem;
-    }
+    .container { width: min(1100px, 100% - 2rem); margin: 0 auto; padding: 1rem 0 2.5rem; }
+    .hero, .card, .day { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 20px rgba(18, 34, 70, 0.05); }
+    .hero { padding: 1rem; margin-bottom: .8rem; }
 
-    .hero, .card {
-      background: var(--card);
+    .topbar { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: .35rem; }
+    button, .chip {
       border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(19, 36, 77, 0.05);
-    }
-
-    .hero {
-      padding: 1.2rem;
-      margin-bottom: 1rem;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.2rem, 2.6vw, 1.8rem);
-    }
-
-    .sub {
-      margin: 0.35rem 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.8rem;
-      margin-bottom: 1rem;
-    }
-
-    .card {
-      padding: 1rem;
-    }
-
-    .card h2 {
-      margin: 0 0 0.55rem;
-      font-size: 1rem;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      background: var(--card);
+      color: var(--text);
       border-radius: 999px;
-      padding: 0.2rem 0.55rem;
-      margin-bottom: 0.5rem;
+      padding: .34rem .64rem;
+      font-size: .86rem;
+      cursor: pointer;
     }
+    button:hover { border-color: var(--accent); }
+    .btn-active { background: var(--accent-soft); border-color: var(--accent); }
 
-    .b-current { background: #eaf9f0; color: var(--current); }
-    .b-next { background: #fff6e6; color: #9a6200; }
+    h1 { margin: .2rem 0; font-size: clamp(1.18rem, 2.7vw, 1.9rem); }
+    .sub { color: var(--muted); margin: .2rem 0 .55rem; }
+    .clock-row { display: flex; flex-wrap: wrap; gap: .55rem; margin: .5rem 0 .4rem; }
+    .clock-card { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .7rem; min-width: 220px; }
+    .tiny { color: var(--muted); font-size: .88rem; margin: .2rem 0; }
 
-    .tiny { color: var(--muted); font-size: 0.88rem; }
+    .status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-bottom: .9rem; }
+    .card { padding: .85rem; }
+    .card h2 { margin: 0 0 .35rem; font-size: 1rem; }
+    .badge { display:inline-block; font-size:.76rem; font-weight:700; text-transform:uppercase; border-radius:999px; padding:.2rem .55rem; margin-bottom:.42rem; }
+    .b-current { background: #e9f8ef; color: var(--ok); }
+    .b-next { background: #fff5e2; color: var(--warn); }
 
-    .timeline {
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .day {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    .day-head {
-      padding: 0.8rem 1rem;
-      background: #f4f8ff;
-      border-bottom: 1px solid var(--line);
-      font-weight: 700;
-    }
-
-    .items { padding: 0.25rem 0; }
-
+    .timeline-meta { display: flex; justify-content: space-between; align-items: center; gap: .7rem; margin-bottom: .55rem; }
+    .timeline { display: grid; gap: .8rem; }
+    .day-head { padding: .72rem .9rem; border-bottom: 1px solid var(--line); font-weight: 700; background: color-mix(in srgb, var(--card), var(--accent-soft) 55%); }
     .item {
       display: grid;
-      grid-template-columns: 130px 1fr;
-      gap: 0.8rem;
-      padding: 0.7rem 1rem;
-      border-bottom: 1px solid #eef1f6;
+      grid-template-columns: 128px 1fr;
+      gap: .8rem;
+      padding: .7rem .9rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--line), transparent 20%);
     }
-
     .item:last-child { border-bottom: 0; }
+    .time { font-weight: 700; color: var(--accent); }
+    .title { font-weight: 700; margin-bottom: .1rem; }
+    .desc { margin: .05rem 0; color: var(--muted); font-size: .9rem; }
+    .current-item { border-left: 3px solid var(--ok); background: color-mix(in srgb, var(--card), #e7fff1 65%); }
+    .next-item { border-left: 3px solid var(--warn); background: color-mix(in srgb, var(--card), #fff5df 65%); }
 
-    .time {
-      font-weight: 700;
-      color: #0d3f95;
-      font-size: 0.92rem;
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 40;
     }
+    .modal.open { display: flex; }
+    .modal-box { width: min(720px, 100%); max-height: 82vh; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; }
 
-    .title {
-      font-weight: 700;
-      margin-bottom: 0.15rem;
-    }
-
-    .desc {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-      white-space: pre-line;
-    }
-
-    .current-item {
-      background: #edfff4;
-      border-left: 3px solid var(--current);
-    }
-
-    .next-item {
-      background: #fff8eb;
-      border-left: 3px solid var(--next);
-    }
-
-    @media (max-width: 860px) {
+    @media (max-width: 880px) {
       .status-grid { grid-template-columns: 1fr; }
-      .item { grid-template-columns: 1fr; gap: 0.35rem; }
+      .item { grid-template-columns: 1fr; gap: .33rem; }
+      .timeline-meta { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
   <main class="container">
     <section class="hero">
-      <h1>Wyjazd służbowy do Chin (22–29.04.2026) – harmonogram live</h1>
-      <p class="sub">Strefa czasu: <strong>Asia/Shanghai (Pekin, UTC+8)</strong>. Widok aktualizuje się automatycznie co 10 minut i zaznacza aktualny oraz kolejny punkt.</p>
-      <p class="tiny" id="lastRefresh">Ostatnia aktualizacja: —</p>
+      <div class="topbar">
+        <div class="controls" id="langButtons"></div>
+        <div class="controls">
+          <button id="fontDown" type="button">A−</button>
+          <button id="fontUp" type="button">A+</button>
+          <button id="themeSystem" type="button">System</button>
+          <button id="themeLight" type="button">Light</button>
+          <button id="themeDark" type="button">Dark</button>
+        </div>
+      </div>
+      <h1 id="pageTitle"></h1>
+      <p class="sub" id="pageSub"></p>
+      <div class="clock-row">
+        <div class="clock-card"><strong id="clockBeijingLabel"></strong><div class="tiny" id="beijingNow">—</div></div>
+        <div class="clock-card"><strong id="clockBerlinLabel"></strong><div class="tiny" id="berlinNow">—</div></div>
+      </div>
+      <p class="tiny" id="lastRefresh">—</p>
     </section>
 
     <section class="status-grid">
       <article class="card">
-        <span class="badge b-current">Aktualnie</span>
-        <h2 id="currentTitle">Poza aktywnymi punktami</h2>
+        <span class="badge b-current" id="badgeCurrent"></span>
+        <h2 id="currentTitle">—</h2>
         <p class="tiny" id="currentTime">—</p>
-        <p class="tiny" id="currentDesc">Brak trwającego punktu harmonogramu.</p>
+        <p class="tiny" id="currentDesc">—</p>
       </article>
       <article class="card">
-        <span class="badge b-next">Następnie</span>
+        <span class="badge b-next" id="badgeNext"></span>
         <h2 id="nextTitle">—</h2>
         <p class="tiny" id="nextTime">—</p>
         <p class="tiny" id="nextDesc">—</p>
       </article>
       <article class="card">
-        <h2>Aktualny czas w Pekinie</h2>
-        <p class="tiny" id="beijingNow">—</p>
-        <p class="tiny">Automatyczne przeładowanie strony: co 10 min.</p>
+        <h2 id="countdownTitle"></h2>
+        <p class="tiny" id="countdownValue">—</p>
+        <p class="tiny" id="countdownHint">—</p>
       </article>
     </section>
+
+    <div class="timeline-meta">
+      <span class="chip" id="timelineCountdown"></span>
+      <button type="button" id="togglePast"></button>
+    </div>
 
     <section class="timeline" id="timeline"></section>
   </main>
 
+  <div class="modal" id="detailsModal" aria-hidden="true">
+    <div class="modal-box">
+      <h3 id="modalTitle"></h3>
+      <p id="modalText" class="desc"></p>
+      <button type="button" id="closeModal">Close</button>
+    </div>
+  </div>
+
   <script>
+    const i18n = {
+      en: {
+        flag: '🇬🇧', title: 'China Study Trip (22–29 Apr 2026) — Live schedule',
+        sub: 'Timeline auto-updates every minute. Timezone base: Beijing (UTC+8).',
+        current: 'Current', next: 'Next', noCurrent: 'No active event right now',
+        noCurrentDesc: 'Timeline is aligned close to the next event.',
+        noNext: 'End of schedule', noNextDesc: 'No more events planned.',
+        countdown: 'Time to next event', countdownHint: 'Always shown as hours and minutes.',
+        details: 'Details', showPast: 'Show past events', hidePast: 'Hide past events',
+        pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
+        beijing: 'Beijing local time', berlin: 'Berlin local time', lastRefresh: 'Last refresh',
+        untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark'
+      },
+      pl: {
+        flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
+        sub: 'Oś czasu aktualizuje się co minutę. Strefa bazowa: Pekin (UTC+8).',
+        current: 'Aktualnie', next: 'Następnie', noCurrent: 'Brak aktywnego punktu',
+        noCurrentDesc: 'Widok osi czasu ustawiony tuż przed kolejnym punktem.',
+        noNext: 'Koniec harmonogramu', noNextDesc: 'Brak kolejnych punktów.',
+        countdown: 'Czas do kolejnego punktu', countdownHint: 'Zawsze pokazywany w godzinach i minutach.',
+        details: 'Szczegóły', showPast: 'Pokaż minione punkty', hidePast: 'Ukryj minione punkty',
+        pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
+        beijing: 'Czas lokalny Pekin', berlin: 'Czas lokalny Berlin', lastRefresh: 'Ostatnia aktualizacja',
+        untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny'
+      },
+      hu: {
+        flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
+        sub: 'Az idővonal percenként frissül. Alap időzóna: Peking (UTC+8).',
+        current: 'Most', next: 'Következő', noCurrent: 'Jelenleg nincs aktív program',
+        noCurrentDesc: 'Az idővonal a következő esemény elé ugrik.',
+        noNext: 'A program vége', noNextDesc: 'Nincs több esemény.',
+        countdown: 'Idő a következő eseményig', countdownHint: 'Mindig óra és perc formában.',
+        details: 'Részletek', showPast: 'Múlt események mutatása', hidePast: 'Múlt események elrejtése',
+        pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
+        beijing: 'Pekingi helyi idő', berlin: 'Berlini helyi idő', lastRefresh: 'Utolsó frissítés',
+        untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét'
+      },
+      da: {
+        flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
+        sub: 'Tidslinjen opdateres hvert minut. Basis-tidszone: Beijing (UTC+8).',
+        current: 'Aktuelt', next: 'Næste', noCurrent: 'Ingen aktiv aktivitet lige nu',
+        noCurrentDesc: 'Tidslinjen er justeret tæt på næste punkt.',
+        noNext: 'Slut på programmet', noNextDesc: 'Ingen flere planlagte aktiviteter.',
+        countdown: 'Tid til næste aktivitet', countdownHint: 'Vises altid i timer og minutter.',
+        details: 'Detaljer', showPast: 'Vis tidligere aktiviteter', hidePast: 'Skjul tidligere aktiviteter',
+        pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
+        beijing: 'Lokal tid i Beijing', berlin: 'Lokal tid i Berlin', lastRefresh: 'Seneste opdatering',
+        untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk'
+      }
+    };
+
     const events = [
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '13:00', e: '13:30', title: 'Spotkanie w lobby + przejazd do Forbidden City', desc: 'Hotel Beijing International. Lunch przed spotkaniem. Zabierz paszport i wygodne buty.' },
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '13:30', e: '17:00', title: 'Zwiedzanie The Forbidden City', desc: 'Zwiedzanie z Lars Ulrik Thom (Beijing Postcards).' },
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '17:00', e: '17:30', title: 'Powrót autobusem do hotelu', desc: 'Odbiór przy North Gate. Z grupą jedzie James Xu.' },
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '17:30', e: '18:45', title: 'Czas własny', desc: '' },
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '18:45', e: '19:00', title: 'Spotkanie w lobby + dojazd na kolację', desc: 'Po kolacji możliwy spacer 1,5 km lub taxi.' },
-      { d: '2026-04-22', day: 'Środa 22/04 – Beijing', t: '19:00', e: '21:30', title: 'Kolacja: Da Dong Wangfujing', desc: 'Pekin duck + wprowadzenie do programu tygodnia.' },
-
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '08:25', e: '08:30', title: 'Spotkanie w lobby', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '08:30', e: '10:00', title: 'Przejazd do Bytedance', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '10:00', e: '12:00', title: 'Spotkanie z Bytedance (TikTok / Dongchedi)', desc: 'Experience center + spotkanie o ekosystemie i automotive leads.' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '12:00', e: '12:30', title: 'Lunch w Bytedance', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '12:30', e: '13:30', title: 'Przejazd do JD.com', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '13:30', e: '15:30', title: 'Spotkanie z JD.com (JD Automotive)', desc: 'Experience center + strategia e-commerce/logistyki/automotive.' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '15:30', e: '16:30', title: 'Powrót autobusem do hotelu', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '16:30', e: '17:00', title: 'Czas własny', desc: '' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '17:00', e: '18:00', title: 'Dojazd na event networkingowy', desc: 'Jing A Wangjing Brewery.' },
-      { d: '2026-04-23', day: 'Czwartek 23/04 – Beijing', t: '18:00', e: '20:00', title: 'Networking (DCCC + German Chamber)', desc: 'Wystąpienia i networking.' },
-
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '10:00', e: '10:45', title: 'Przejazd do WeRide', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '10:45', e: '11:30', title: 'WeRide: autonomiczna jazda', desc: 'Przejazd i omówienie technologii.' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '11:30', e: '12:15', title: 'Shopping mall: ekspozycja i sprzedaż aut', desc: 'M.in. Xiaomi i Aito (Huawei).' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '12:15', e: '12:30', title: 'Przejazd do restauracji', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '12:30', e: '13:40', title: 'Lunch', desc: 'Chińska restauracja.' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '13:40', e: '14:00', title: 'Przejazd do CATL', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '14:00', e: '16:00', title: 'Spotkanie z CATL', desc: 'Baterie, storage, V2G, recykling i strategia europejska.' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '16:00', e: '17:00', title: 'Powrót autobusem do hotelu', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '17:00', e: '17:55', title: 'Czas własny', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '17:55', e: '18:00', title: 'Spotkanie w lobby', desc: '' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '18:00', e: '18:30', title: 'Spotkanie z przewodnikami food tour', desc: 'Przejazd do Hutong.' },
-      { d: '2026-04-24', day: 'Piątek 24/04 – Beijing', t: '18:30', e: '22:00', title: 'Beijing Hutong Food Tour', desc: '4 lokale, lokalna kuchnia, wieczór integracyjny.' },
-
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '07:55', e: '08:00', title: 'Spotkanie w lobby', desc: 'Paszport, wygodne buty, krem z filtrem.' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '08:00', e: '09:30', title: 'Przejazd do Great Wall (Badaling)', desc: '' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '09:30', e: '10:00', title: 'Dystrybucja biletów + wejście', desc: '' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '10:00', e: '12:00', title: 'Great Wall walk', desc: 'Spacer ok. 2h, opcja kolejki linowej.' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '12:00', e: '14:00', title: 'Lunch', desc: 'Lunch przed powrotem do hotelu.' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '14:00', e: '15:30', title: 'Powrót do hotelu', desc: '' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '15:30', e: '18:30', title: 'Czas własny', desc: '' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '18:30', e: '19:00', title: 'Wyjazd na kolację', desc: '' },
-      { d: '2026-04-25', day: 'Sobota 25/04 – Beijing', t: '19:00', e: '21:00', title: 'Kolacja: San Li Tun', desc: '' },
-
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '08:15', e: '08:30', title: 'Spotkanie z walizkami w lobby', desc: 'Check-out i opłata mini baru przed spotkaniem.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '08:30', e: '09:30', title: 'Przejazd na Beijing Auto Show', desc: '' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '09:30', e: '10:00', title: 'Wejście i bilety na Auto Show', desc: 'Mieć paszport.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '10:15', e: '10:45', title: 'Meeting 1: Leapmotor', desc: 'JV ze Stellantis, rozwój i ekspansja w Europie.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '11:00', e: '11:45', title: 'Meeting 2: Xiaomi', desc: 'Pozycjonowanie rynkowe i plany europejskie.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '12:00', e: '12:45', title: 'Meeting 3: NIO', desc: 'Strategia, technologie i battery swapping.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '12:45', e: '14:00', title: 'Czas własny na Auto Show', desc: 'Następnie spotkanie CADA.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '14:00', e: '15:15', title: 'Spotkanie z CADA', desc: 'Współpraca dealerów europejskich i chińskich.' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '15:30', e: '16:00', title: 'Przejazd na lotnisko + check-in', desc: '' },
-      { d: '2026-04-26', day: 'Niedziela 26/04 – Beijing → Guangzhou', t: '19:15', e: '22:35', title: 'Lot CA1379: PEK → CAN', desc: 'Air China, Terminal 3 → Terminal 1.' },
-
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '08:45', e: '09:00', title: 'Spotkanie w lobby', desc: 'Check-out i bagaże do autobusu.' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '09:00', e: '10:00', title: 'Przejazd do Xpeng', desc: '' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '10:00', e: '12:00', title: 'Spotkanie z Xpeng', desc: 'Experience center, EV, eVTOL, software, roboty IRON.' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '12:00', e: '12:30', title: 'Lunch (sandwich)', desc: '' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '12:30', e: '13:30', title: 'Przejazd do GAC Factory', desc: '' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '13:30', e: '15:30', title: 'Spotkanie + factory tour GAC', desc: 'Inteligentna fabryka, AION, autonomia L2-L4.' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '15:30', e: '17:30', title: 'Przejazd autobusem do Shenzhen', desc: '' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '17:30', e: '19:15', title: 'Check-in + czas własny', desc: 'Shenzhen Shanghai Hotel.' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '19:15', e: '19:30', title: 'Spotkanie w lobby + dojazd', desc: '' },
-      { d: '2026-04-27', day: 'Poniedziałek 27/04 – Guangzhou → Shenzhen', t: '19:30', e: '21:30', title: 'Kolacja: Terra Madre', desc: 'Włoska kolacja integracyjna.' },
-
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '08:55', e: '09:00', title: 'Spotkanie w lobby', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '09:00', e: '10:00', title: 'Przejazd do Huawei', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '10:00', e: '12:00', title: 'Spotkanie z Huawei', desc: 'Experience centre, AI, cloud, 5G, automotive.' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '12:00', e: '13:00', title: 'Lunch', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '13:00', e: '14:00', title: 'Przejazd do UBTech', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '14:00', e: '16:00', title: 'Wizyta w UBTech', desc: 'Spotkanie z managementem i demonstracje robotów humanoidalnych.' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '16:00', e: '17:00', title: 'Powrót do hotelu', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '17:00', e: '18:45', title: 'Czas własny', desc: '' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '18:45', e: '19:00', title: 'Wyjście pieszo do restauracji', desc: '400 m.' },
-      { d: '2026-04-28', day: 'Wtorek 28/04 – Shenzhen', t: '19:00', e: '21:00', title: 'Farewell dinner: Xu’s Seafood', desc: 'Kuchnia kantońska.' },
-
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '09:55', e: '10:00', title: 'Spotkanie w lobby', desc: 'Check-out, możliwe pozostawienie bagażu.' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '10:00', e: '11:30', title: 'Huaqiangbei electronics market', desc: 'Spacer 550 m, czas na samodzielne zwiedzanie.' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '11:45', e: '12:00', title: 'Powrót i spotkanie w lobby', desc: '' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '12:00', e: '13:00', title: 'Lunch dostarczony dronami (Meituan)', desc: 'Strefa przy zatoce z widokiem na Hong Kong.' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '13:00', e: '14:00', title: 'Transport do BYD', desc: '' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '14:00', e: '16:00', title: 'Spotkanie z BYD', desc: 'Exhibition center, bateria, aftermarket, recykling, strategia łańcucha dostaw.' },
-      { d: '2026-04-29', day: 'Środa 29/04 – Shenzhen', t: '16:00', e: '17:00', title: 'Powrót po bagaże / transfery lotniskowe', desc: 'Część grupy jedzie bezpośrednio na lotnisko.' }
+      { d:'2026-04-22', city:'Beijing', t:'13:00', e:'13:30', title:'Meet in lobby + transfer to Forbidden City', desc:'Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes.' },
+      { d:'2026-04-22', city:'Beijing', t:'13:30', e:'17:00', title:'Visit: The Forbidden City', desc:'Guided tour with Lars Ulrik Thom from Beijing Postcards.' },
+      { d:'2026-04-22', city:'Beijing', t:'17:00', e:'17:30', title:'Bus back to hotel', desc:'Pickup at North Gate with James Xu.' },
+      { d:'2026-04-22', city:'Beijing', t:'17:30', e:'18:45', title:'Own time', desc:'' },
+      { d:'2026-04-22', city:'Beijing', t:'18:45', e:'19:00', title:'Meet in lobby + transfer to dinner', desc:'After dinner: optional 1.5 km walk or taxi.' },
+      { d:'2026-04-22', city:'Beijing', t:'19:00', e:'21:30', title:'Dinner: Da Dong Wangfujing', desc:'Peking duck and intro to the week program.' },
+      { d:'2026-04-23', city:'Beijing', t:'08:25', e:'08:30', title:'Meet in lobby', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'08:30', e:'10:00', title:'Transfer to Bytedance', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'10:00', e:'12:00', title:'Meeting: Bytedance (TikTok / Dongchedi)', desc:'Experience center and session on ecosystem and automotive leads.' },
+      { d:'2026-04-23', city:'Beijing', t:'12:00', e:'12:30', title:'Lunch at Bytedance', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'12:30', e:'13:30', title:'Transfer to JD.com', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'13:30', e:'15:30', title:'Meeting: JD.com (JD Automotive)', desc:'Experience center and e-commerce/logistics/automotive strategy.' },
+      { d:'2026-04-23', city:'Beijing', t:'15:30', e:'16:30', title:'Bus back to hotel', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'16:30', e:'17:00', title:'Own time', desc:'' },
+      { d:'2026-04-23', city:'Beijing', t:'17:00', e:'18:00', title:'Transfer to networking event', desc:'Jing A Wangjing Brewery.' },
+      { d:'2026-04-23', city:'Beijing', t:'18:00', e:'20:00', title:'Networking (DCCC + German Chamber)', desc:'Presentations and networking session.' },
+      { d:'2026-04-24', city:'Beijing', t:'10:00', e:'10:45', title:'Transfer to WeRide', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'10:45', e:'11:30', title:'WeRide: autonomous drive', desc:'Demonstration and technology discussion.' },
+      { d:'2026-04-24', city:'Beijing', t:'11:30', e:'12:15', title:'Shopping mall automotive display', desc:'Including Xiaomi and Aito (Huawei).' },
+      { d:'2026-04-24', city:'Beijing', t:'12:15', e:'12:30', title:'Transfer to restaurant', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'12:30', e:'13:40', title:'Lunch', desc:'Chinese restaurant.' },
+      { d:'2026-04-24', city:'Beijing', t:'13:40', e:'14:00', title:'Transfer to CATL', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'14:00', e:'16:00', title:'Meeting: CATL', desc:'Battery, storage, V2G, recycling and European strategy.' },
+      { d:'2026-04-24', city:'Beijing', t:'16:00', e:'17:00', title:'Bus back to hotel', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'17:00', e:'17:55', title:'Own time', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'17:55', e:'18:00', title:'Meet in lobby', desc:'' },
+      { d:'2026-04-24', city:'Beijing', t:'18:00', e:'18:30', title:'Meet food tour guides', desc:'Transfer to Hutong area.' },
+      { d:'2026-04-24', city:'Beijing', t:'18:30', e:'22:00', title:'Beijing Hutong Food Tour', desc:'4 local venues and integration evening.' },
+      { d:'2026-04-25', city:'Beijing', t:'07:55', e:'08:00', title:'Meet in lobby', desc:'Passport, comfortable shoes, sunscreen.' },
+      { d:'2026-04-25', city:'Beijing', t:'08:00', e:'09:30', title:'Transfer to Great Wall (Badaling)', desc:'' },
+      { d:'2026-04-25', city:'Beijing', t:'09:30', e:'10:00', title:'Ticket distribution + entry', desc:'' },
+      { d:'2026-04-25', city:'Beijing', t:'10:00', e:'12:00', title:'Great Wall walk', desc:'Approx. 2h walk, cable car option possible.' },
+      { d:'2026-04-25', city:'Beijing', t:'12:00', e:'14:00', title:'Lunch', desc:'Lunch before transfer back to hotel.' },
+      { d:'2026-04-25', city:'Beijing', t:'14:00', e:'15:30', title:'Return to hotel', desc:'' },
+      { d:'2026-04-25', city:'Beijing', t:'15:30', e:'18:30', title:'Own time', desc:'' },
+      { d:'2026-04-25', city:'Beijing', t:'18:30', e:'19:00', title:'Departure for dinner', desc:'' },
+      { d:'2026-04-25', city:'Beijing', t:'19:00', e:'21:00', title:'Dinner: San Li Tun', desc:'' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'08:15', e:'08:30', title:'Meet with suitcases in lobby', desc:'Check-out and minibar payment before meeting.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'08:30', e:'09:30', title:'Transfer to Beijing Auto Show', desc:'' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'09:30', e:'10:00', title:'Entry and tickets for Auto Show', desc:'Please carry passport.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'10:15', e:'10:45', title:'Meeting 1: Leapmotor', desc:'Joint venture with Stellantis and expansion in Europe.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'11:00', e:'11:45', title:'Meeting 2: Xiaomi', desc:'Market positioning and European plans.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'12:00', e:'12:45', title:'Meeting 3: NIO', desc:'Strategy, technology, and battery swapping.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'12:45', e:'14:00', title:'Own time at Auto Show', desc:'Then meeting with CADA.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'14:00', e:'15:15', title:'Meeting with CADA', desc:'Cooperation between European and Chinese dealers.' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'15:30', e:'16:00', title:'Transfer to airport + check-in', desc:'' },
+      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'19:15', e:'22:35', title:'Flight CA1379: PEK → CAN', desc:'Air China, Terminal 3 to Terminal 1.' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'08:45', e:'09:00', title:'Meet in lobby', desc:'Check-out and luggage to bus.' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'09:00', e:'10:00', title:'Transfer to Xpeng', desc:'' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'10:00', e:'12:00', title:'Meeting with Xpeng', desc:'Experience center, EV, eVTOL, software, IRON robotics.' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'12:00', e:'12:30', title:'Lunch (sandwich)', desc:'' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'12:30', e:'13:30', title:'Transfer to GAC Factory', desc:'' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'13:30', e:'15:30', title:'Meeting + factory tour at GAC', desc:'Intelligent factory, AION, autonomy L2-L4.' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'15:30', e:'17:30', title:'Bus transfer to Shenzhen', desc:'' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'17:30', e:'19:15', title:'Check-in + own time', desc:'Shenzhen Shanghai Hotel.' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'19:15', e:'19:30', title:'Meet in lobby + transfer', desc:'' },
+      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'19:30', e:'21:30', title:'Dinner: Terra Madre', desc:'Italian dinner and networking.' },
+      { d:'2026-04-28', city:'Shenzhen', t:'08:55', e:'09:00', title:'Meet in lobby', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'09:00', e:'10:00', title:'Transfer to Huawei', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'10:00', e:'12:00', title:'Meeting with Huawei', desc:'Experience center, AI, cloud, 5G and automotive.' },
+      { d:'2026-04-28', city:'Shenzhen', t:'12:00', e:'13:00', title:'Lunch', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'13:00', e:'14:00', title:'Transfer to UBTech', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'14:00', e:'16:00', title:'Visit UBTech', desc:'Management meeting and humanoid robot demonstrations.' },
+      { d:'2026-04-28', city:'Shenzhen', t:'16:00', e:'17:00', title:'Return to hotel', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'17:00', e:'18:45', title:'Own time', desc:'' },
+      { d:'2026-04-28', city:'Shenzhen', t:'18:45', e:'19:00', title:'Walk to restaurant', desc:'Approx. 400m.' },
+      { d:'2026-04-28', city:'Shenzhen', t:'19:00', e:'21:00', title:'Farewell dinner: Xu’s Seafood', desc:'Cantonese cuisine.' },
+      { d:'2026-04-29', city:'Shenzhen', t:'09:55', e:'10:00', title:'Meet in lobby', desc:'Check-out; luggage storage possible.' },
+      { d:'2026-04-29', city:'Shenzhen', t:'10:00', e:'11:30', title:'Huaqiangbei electronics market', desc:'550m walk and own exploration time.' },
+      { d:'2026-04-29', city:'Shenzhen', t:'11:45', e:'12:00', title:'Return and meet in lobby', desc:'' },
+      { d:'2026-04-29', city:'Shenzhen', t:'12:00', e:'13:00', title:'Lunch delivered by drones (Meituan)', desc:'Bay area near Hong Kong view point.' },
+      { d:'2026-04-29', city:'Shenzhen', t:'13:00', e:'14:00', title:'Transfer to BYD', desc:'' },
+      { d:'2026-04-29', city:'Shenzhen', t:'14:00', e:'16:00', title:'Meeting with BYD', desc:'Exhibition center, batteries, aftermarket, recycling and supply chain strategy.' },
+      { d:'2026-04-29', city:'Shenzhen', t:'16:00', e:'17:00', title:'Return for luggage / airport transfers', desc:'Part of the group goes directly to the airport.' }
     ];
 
-    function parseInChina(date, time) {
-      const [y, m, d] = date.split('-').map(Number);
-      const [hh, mm] = time.split(':').map(Number);
-      return Date.UTC(y, m - 1, d, hh - 8, mm, 0);
-    }
+    const parseInChina = (date, time) => {
+      const [y,m,d] = date.split('-').map(Number);
+      const [hh,mm] = time.split(':').map(Number);
+      return Date.UTC(y, m-1, d, hh-8, mm, 0);
+    };
 
-    const normalized = events.map((ev, idx) => ({
-      ...ev,
-      start: parseInChina(ev.d, ev.t),
-      end: parseInChina(ev.d, ev.e),
-      idx
-    })).sort((a, b) => a.start - b.start);
+    const normalized = events.map((ev, idx) => ({ ...ev, idx, start: parseInChina(ev.d, ev.t), end: parseInChina(ev.d, ev.e) }))
+      .sort((a,b) => a.start - b.start);
 
-    function fmtChinaNow() {
-      return new Date().toLocaleString('pl-PL', {
-        timeZone: 'Asia/Shanghai',
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      });
-    }
+    let lang = localStorage.getItem('china_trip_lang') || 'en';
+    let showPast = false;
+
+    const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
+      timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
+    }).format(ms);
+
+    const formatDay = (d, city, locale) => `${new Intl.DateTimeFormat(locale, { weekday:'long', day:'2-digit', month:'2-digit' }).format(new Date(`${d}T00:00:00Z`))} — ${city}`;
+    const getCopy = () => i18n[lang] || i18n.en;
 
     function findCurrentAndNext(nowMs) {
-      let current = null;
-      let next = null;
-
+      let current = null; let next = null;
       for (const ev of normalized) {
-        if (nowMs >= ev.start && nowMs < ev.end) {
-          current = ev;
-        }
-        if (ev.start > nowMs) {
-          next = ev;
-          break;
-        }
+        if (nowMs >= ev.start && nowMs < ev.end) current = ev;
+        if (!next && ev.start > nowMs) next = ev;
       }
-
-      if (!next && current) {
-        const i = normalized.findIndex(e => e.idx === current.idx);
-        next = normalized[i + 1] || null;
-      }
-
       return { current, next };
     }
 
-    function buildTimeline(currentIdx, nextIdx) {
-      const byDay = normalized.reduce((acc, ev) => {
-        if (!acc[ev.day]) acc[ev.day] = [];
-        acc[ev.day].push(ev);
+    const fmtRemaining = (ms) => {
+      if (ms <= 0) return '0h 0m';
+      const totalM = Math.floor(ms / 60000);
+      return `${Math.floor(totalM/60)}h ${totalM%60}m`;
+    };
+
+    const isLongDesc = (txt) => ((txt || '').trim().match(/[.!?](\s|$)/g) || []).length > 1;
+
+    function openDetails(title, text) {
+      const copy = getCopy();
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalText').textContent = text || '—';
+      document.getElementById('closeModal').textContent = copy.close;
+      document.getElementById('detailsModal').classList.add('open');
+      document.getElementById('detailsModal').setAttribute('aria-hidden', 'false');
+    }
+
+    function buildTimeline(currentIdx, nextIdx, nowMs) {
+      const copy = getCopy();
+      const grouped = normalized.reduce((acc, ev) => {
+        const k = `${ev.d}|${ev.city}`;
+        (acc[k] ||= []).push(ev);
         return acc;
       }, {});
 
       const wrapper = document.getElementById('timeline');
       wrapper.innerHTML = '';
 
-      Object.entries(byDay).forEach(([day, list]) => {
-        const dayEl = document.createElement('article');
-        dayEl.className = 'day';
+      Object.entries(grouped).forEach(([key, list]) => {
+        const dayCard = document.createElement('article');
+        dayCard.className = 'day';
 
+        const [date, city] = key.split('|');
         const head = document.createElement('div');
         head.className = 'day-head';
-        head.textContent = day;
-
-        const items = document.createElement('div');
-        items.className = 'items';
+        head.textContent = formatDay(date, city, lang);
 
         list.forEach(ev => {
+          if (!showPast && ev.end < nowMs) return;
           const item = document.createElement('div');
           item.className = 'item';
+          item.dataset.idx = ev.idx;
           if (ev.idx === currentIdx) item.classList.add('current-item');
           if (ev.idx === nextIdx) item.classList.add('next-item');
+
+          const descText = ev.desc || '—';
+          const needsDetails = isLongDesc(descText);
+          const short = needsDetails ? `${descText.split(/[.!?]/)[0]}.` : descText;
 
           item.innerHTML = `
             <div class="time">${ev.t}–${ev.e}</div>
             <div>
               <div class="title">${ev.title}</div>
-              <p class="desc">${ev.desc || '—'}</p>
+              <p class="desc">${short}</p>
+              ${needsDetails ? `<button type="button" class="chip details-btn">${copy.details}</button>` : ''}
             </div>
           `;
-          items.appendChild(item);
+
+          if (needsDetails) {
+            item.querySelector('.details-btn').addEventListener('click', () => openDetails(ev.title, descText));
+          }
+          dayCard.appendChild(item);
         });
 
-        dayEl.append(head, items);
-        wrapper.appendChild(dayEl);
+        if (dayCard.querySelector('.item')) {
+          dayCard.insertBefore(head, dayCard.firstChild);
+          wrapper.appendChild(dayCard);
+        }
+      });
+
+      const toggle = document.getElementById('togglePast');
+      toggle.textContent = showPast ? copy.hidePast : copy.showPast;
+    }
+
+    function applyThemeButtons(mode) {
+      ['themeSystem','themeLight','themeDark'].forEach(id => document.getElementById(id).classList.remove('btn-active'));
+      document.getElementById(mode === 'light' ? 'themeLight' : mode === 'dark' ? 'themeDark' : 'themeSystem').classList.add('btn-active');
+    }
+
+    function refreshView(scrollWhenIdle = false) {
+      const copy = getCopy();
+      const now = Date.now();
+      const { current, next } = findCurrentAndNext(now);
+      const remaining = next ? fmtRemaining(next.start - now) : '0h 0m';
+
+      document.documentElement.lang = lang;
+      document.getElementById('pageTitle').textContent = copy.title;
+      document.getElementById('pageSub').textContent = copy.sub;
+      document.getElementById('badgeCurrent').textContent = copy.current;
+      document.getElementById('badgeNext').textContent = copy.next;
+      document.getElementById('countdownTitle').textContent = copy.countdown;
+      document.getElementById('countdownHint').textContent = copy.countdownHint;
+      document.getElementById('clockBeijingLabel').textContent = copy.beijing;
+      document.getElementById('clockBerlinLabel').textContent = copy.berlin;
+      document.getElementById('beijingNow').textContent = formatDate(now, lang, 'Asia/Shanghai');
+      document.getElementById('berlinNow').textContent = formatDate(now, lang, 'Europe/Berlin');
+      document.getElementById('lastRefresh').textContent = `${copy.lastRefresh}: ${formatDate(now, lang, 'Asia/Shanghai')} (Beijing)`;
+
+      document.getElementById('currentTitle').textContent = current ? current.title : copy.noCurrent;
+      document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : copy.noCurrentDesc;
+      document.getElementById('currentDesc').textContent = current ? (current.desc || '—') : copy.noCurrentDesc;
+
+      document.getElementById('nextTitle').textContent = next ? next.title : copy.noNext;
+      document.getElementById('nextTime').textContent = next ? `${formatDay(next.d, next.city, lang)} | ${next.t}–${next.e}` : copy.noNext;
+      document.getElementById('nextDesc').textContent = next ? (next.desc || '—') : copy.noNextDesc;
+
+      document.getElementById('countdownValue').textContent = next ? `${remaining} (${copy.untilNext})` : copy.noNextDesc;
+      document.getElementById('timelineCountdown').textContent = next ? `${copy.untilNext}: ${remaining}` : copy.noNext;
+
+      buildTimeline(current?.idx, next?.idx, now);
+
+      if (!current && next && scrollWhenIdle) {
+        const nextEl = document.querySelector(`.item[data-idx="${next.idx}"]`);
+        if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function setupLangButtons() {
+      const wrap = document.getElementById('langButtons');
+      wrap.innerHTML = '';
+      Object.keys(i18n).forEach(k => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = `${i18n[k].flag} ${k.toUpperCase()}`;
+        if (k === lang) btn.classList.add('btn-active');
+        btn.addEventListener('click', () => {
+          lang = k;
+          localStorage.setItem('china_trip_lang', lang);
+          setupLangButtons();
+          refreshView(true);
+        });
+        wrap.appendChild(btn);
       });
     }
 
-    function refreshView() {
-      const now = Date.now();
-      const { current, next } = findCurrentAndNext(now);
+    setupLangButtons();
+    document.getElementById('togglePast').addEventListener('click', () => { showPast = !showPast; refreshView(false); });
+    document.getElementById('closeModal').addEventListener('click', () => document.getElementById('detailsModal').classList.remove('open'));
+    document.getElementById('detailsModal').addEventListener('click', (e) => { if (e.target.id === 'detailsModal') e.currentTarget.classList.remove('open'); });
 
-      document.getElementById('beijingNow').textContent = fmtChinaNow();
-      document.getElementById('lastRefresh').textContent = `Ostatnia aktualizacja: ${fmtChinaNow()} (Pekin)`;
+    let scale = Number(localStorage.getItem('china_trip_font_scale') || 1);
+    const applyScale = () => { document.documentElement.style.setProperty('--font-scale', scale); };
+    document.getElementById('fontUp').addEventListener('click', () => { scale = Math.min(1.3, +(scale + 0.05).toFixed(2)); localStorage.setItem('china_trip_font_scale', scale); applyScale(); });
+    document.getElementById('fontDown').addEventListener('click', () => { scale = Math.max(0.85, +(scale - 0.05).toFixed(2)); localStorage.setItem('china_trip_font_scale', scale); applyScale(); });
+    applyScale();
 
-      document.getElementById('currentTitle').textContent = current ? current.title : 'Poza aktywnymi punktami';
-      document.getElementById('currentTime').textContent = current ? `${current.day}, ${current.t}–${current.e}` : 'Teraz nie trwa żaden zaplanowany punkt.';
-      document.getElementById('currentDesc').textContent = current ? (current.desc || '—') : 'Sprawdź sekcję „Następnie”, aby zobaczyć kolejny punkt.';
+    const applyTheme = (mode) => {
+      localStorage.setItem('china_trip_theme', mode);
+      if (mode === 'system') document.documentElement.removeAttribute('data-theme');
+      else document.documentElement.setAttribute('data-theme', mode);
+      applyThemeButtons(mode);
+    };
+    document.getElementById('themeSystem').addEventListener('click', () => applyTheme('system'));
+    document.getElementById('themeLight').addEventListener('click', () => applyTheme('light'));
+    document.getElementById('themeDark').addEventListener('click', () => applyTheme('dark'));
+    applyTheme(localStorage.getItem('china_trip_theme') || 'system');
 
-      document.getElementById('nextTitle').textContent = next ? next.title : 'Koniec harmonogramu';
-      document.getElementById('nextTime').textContent = next ? `${next.day}, ${next.t}–${next.e}` : 'Brak kolejnych punktów.';
-      document.getElementById('nextDesc').textContent = next ? (next.desc || '—') : 'Wyjazd zakończony zgodnie z harmonogramem.';
-
-      buildTimeline(current?.idx, next?.idx);
-    }
-
-    refreshView();
-    setInterval(refreshView, 60_000);
-    setInterval(() => window.location.reload(), 10 * 60 * 1000);
+    refreshView(true);
+    setInterval(() => refreshView(false), 60_000);
   </script>
 </body>
 </html>

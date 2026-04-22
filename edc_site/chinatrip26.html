@@ -45,11 +45,51 @@
       color: var(--text);
       background: linear-gradient(180deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
       line-height: 1.45;
+      padding-top: 4.3rem;
     }
 
     .container { width: min(1100px, 100% - 2rem); margin: 0 auto; padding: 1rem 0 2.5rem; }
     .hero, .card, .day { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 20px rgba(18, 34, 70, 0.05); }
     .hero { padding: 1rem; margin-bottom: .8rem; }
+
+    .floating-top {
+      position: fixed;
+      top: .6rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1100px, calc(100% - 1.4rem));
+      z-index: 50;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .45rem;
+      background: color-mix(in srgb, var(--card), transparent 8%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: .5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(18, 34, 70, 0.12);
+    }
+    .floating-chip {
+      background: var(--accent-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .45rem .65rem;
+      min-width: 0;
+    }
+    .floating-chip strong {
+      display: block;
+      font-size: .8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .floating-chip .floating-time {
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-top: .1rem;
+      letter-spacing: .02em;
+    }
 
     .topbar { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
     .controls { display: flex; flex-wrap: wrap; gap: .35rem; }
@@ -65,10 +105,37 @@
     button:hover { border-color: var(--accent); }
     .btn-active { background: var(--accent-soft); border-color: var(--accent); }
 
-    h1 { margin: .2rem 0; font-size: clamp(1.18rem, 2.7vw, 1.9rem); }
-    .sub { color: var(--muted); margin: .2rem 0 .55rem; }
-    .clock-row { display: flex; flex-wrap: wrap; gap: .55rem; margin: .5rem 0 .4rem; }
-    .clock-card { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .7rem; min-width: 220px; }
+    h1 { margin: .2rem 0; font-size: clamp(1.45rem, 3vw, 2.3rem); }
+    .sub { color: var(--muted); margin: .3rem 0 .75rem; font-size: 1.08rem; }
+    .settings-menu { position: relative; }
+    .settings-menu summary {
+      list-style: none;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 999px;
+      padding: .34rem .72rem;
+      font-size: .9rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .settings-menu summary::-webkit-details-marker { display: none; }
+    .settings-panel {
+      position: absolute;
+      right: 0;
+      top: calc(100% + .35rem);
+      z-index: 30;
+      width: min(92vw, 450px);
+      padding: .7rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      box-shadow: 0 10px 24px rgba(18, 34, 70, 0.12);
+      display: grid;
+      gap: .6rem;
+    }
+    .settings-group { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+    .settings-label { font-size: .85rem; color: var(--muted); width: 100%; margin-bottom: .1rem; }
     .tiny { color: var(--muted); font-size: .88rem; margin: .2rem 0; }
 
     .status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-bottom: .9rem; }
@@ -106,31 +173,48 @@
       .status-grid { grid-template-columns: 1fr; }
       .item { grid-template-columns: 1fr; gap: .33rem; }
       .timeline-meta { flex-direction: column; align-items: flex-start; }
+      .floating-top { grid-template-columns: 1fr; padding: .4rem; }
+      body { padding-top: 9.5rem; }
     }
   </style>
 </head>
 <body>
+  <section class="floating-top" aria-live="polite">
+    <div class="floating-chip"><strong id="clockBeijingLabel"></strong><div class="floating-time" id="beijingNow">—</div></div>
+    <div class="floating-chip"><strong id="clockBerlinLabel"></strong><div class="floating-time" id="berlinNow">—</div></div>
+    <div class="floating-chip"><strong id="topCountdownLabel"></strong><div class="floating-time" id="topCountdownValue">—</div></div>
+  </section>
   <main class="container">
     <section class="hero">
       <div class="topbar">
-        <div class="controls" id="langButtons"></div>
         <div class="controls">
-          <button id="fontDown" type="button">A−</button>
-          <button id="fontUp" type="button">A+</button>
           <button id="toggleNowNext" type="button"></button>
           <button id="enableAlerts" type="button"></button>
           <button id="exportIcs" type="button"></button>
-          <button id="themeSystem" type="button">System</button>
-          <button id="themeLight" type="button">Light</button>
-          <button id="themeDark" type="button">Dark</button>
         </div>
+        <details class="settings-menu">
+          <summary id="settingsSummary"></summary>
+          <div class="settings-panel">
+            <div class="settings-group">
+              <span class="settings-label" id="langLabel"></span>
+              <div class="controls" id="langButtons"></div>
+            </div>
+            <div class="settings-group">
+              <span class="settings-label" id="fontLabel"></span>
+              <button id="fontDown" type="button">A−</button>
+              <button id="fontUp" type="button">A+</button>
+            </div>
+            <div class="settings-group">
+              <span class="settings-label" id="appearanceLabel"></span>
+              <button id="themeSystem" type="button">System</button>
+              <button id="themeLight" type="button">Light</button>
+              <button id="themeDark" type="button">Dark</button>
+            </div>
+          </div>
+        </details>
       </div>
       <h1 id="pageTitle"></h1>
       <p class="sub" id="pageSub"></p>
-      <div class="clock-row">
-        <div class="clock-card"><strong id="clockBeijingLabel"></strong><div class="tiny" id="beijingNow">—</div></div>
-        <div class="clock-card"><strong id="clockBerlinLabel"></strong><div class="tiny" id="berlinNow">—</div></div>
-      </div>
       <p class="tiny" id="lastRefresh">—</p>
     </section>
 
@@ -185,7 +269,8 @@
         exportIcs: 'Export ICS',
         pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
         beijing: 'Beijing local time', berlin: 'Berlin local time', lastRefresh: 'Last refresh',
-        untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark'
+        untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
+        settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in (hh:mm)'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -200,7 +285,8 @@
         exportIcs: 'Eksport ICS',
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
         beijing: 'Czas lokalny Pekin', berlin: 'Czas lokalny Berlin', lastRefresh: 'Ostatnia aktualizacja',
-        untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny'
+        untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
+        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Następny za (gg:mm)'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -215,7 +301,8 @@
         exportIcs: 'ICS export',
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
         beijing: 'Pekingi helyi idő', berlin: 'Berlini helyi idő', lastRefresh: 'Utolsó frissítés',
-        untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét'
+        untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
+        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Következő (óó:pp)'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -230,7 +317,8 @@
         exportIcs: 'Eksportér ICS',
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
         beijing: 'Lokal tid i Beijing', berlin: 'Lokal tid i Berlin', lastRefresh: 'Seneste opdatering',
-        untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk'
+        untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
+        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Næste om (tt:mm)'
       }
     };
 
@@ -328,6 +416,9 @@
     const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
       timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
     }).format(ms);
+    const formatClock = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
+      timeZone: tz, hour: '2-digit', minute:'2-digit', second:'2-digit'
+    }).format(ms);
 
     const formatDay = (d, city, locale) => `${new Intl.DateTimeFormat(locale, { weekday:'long', day:'2-digit', month:'2-digit' }).format(new Date(`${d}T00:00:00Z`))} — ${city}`;
     const getCopy = () => i18n[lang] || i18n.en;
@@ -345,6 +436,11 @@
       if (ms <= 0) return '0h 0m';
       const totalM = Math.floor(ms / 60000);
       return `${Math.floor(totalM/60)}h ${totalM%60}m`;
+    };
+    const fmtCountdownClock = (ms) => {
+      if (ms <= 0) return '00:00';
+      const totalM = Math.floor(ms / 60000);
+      return `${String(Math.floor(totalM / 60)).padStart(2, '0')}:${String(totalM % 60).padStart(2, '0')}`;
     };
 
     const isLongDesc = (txt) => ((txt || '').trim().match(/[.!?](\s|$)/g) || []).length > 1;
@@ -436,8 +532,10 @@
       document.getElementById('countdownHint').textContent = copy.countdownHint;
       document.getElementById('clockBeijingLabel').textContent = copy.beijing;
       document.getElementById('clockBerlinLabel').textContent = copy.berlin;
-      document.getElementById('beijingNow').textContent = formatDate(now, lang, 'Asia/Shanghai');
-      document.getElementById('berlinNow').textContent = formatDate(now, lang, 'Europe/Berlin');
+      document.getElementById('topCountdownLabel').textContent = copy.shortCountdown;
+      document.getElementById('beijingNow').textContent = formatClock(now, lang, 'Asia/Shanghai');
+      document.getElementById('berlinNow').textContent = formatClock(now, lang, 'Europe/Berlin');
+      document.getElementById('topCountdownValue').textContent = fmtCountdownClock(next ? next.start - now : 0);
       document.getElementById('lastRefresh').textContent = `${copy.lastRefresh}: ${formatDate(now, lang, 'Asia/Shanghai')} (Beijing)`;
       document.getElementById('toggleNowNext').textContent = nowNextOnly ? copy.nowNextOnlyOn : copy.nowNextOnlyOff;
       document.getElementById('exportIcs').textContent = copy.exportIcs;
@@ -453,6 +551,10 @@
       document.getElementById('themeSystem').textContent = copy.themeSystem;
       document.getElementById('themeLight').textContent = copy.themeLight;
       document.getElementById('themeDark').textContent = copy.themeDark;
+      document.getElementById('settingsSummary').textContent = copy.settings;
+      document.getElementById('langLabel').textContent = copy.language;
+      document.getElementById('fontLabel').textContent = copy.fontSize;
+      document.getElementById('appearanceLabel').textContent = copy.appearance;
 
       document.getElementById('currentTitle').textContent = current ? current.title : copy.noCurrent;
       document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : copy.noCurrentDesc;

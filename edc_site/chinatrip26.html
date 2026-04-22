@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>China Trip 2026 | Live Program</title>
   <link rel="manifest" href="chinatrip26.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="./images/chinatrip26-icon.svg" />
   <style>
     :root {
       color-scheme: light;
@@ -116,6 +117,19 @@
     }
 
     .topbar { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+    .push-consent {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      margin: 0 0 .8rem;
+      padding: .55rem .7rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--card), var(--accent-soft) 45%);
+    }
+    .push-consent.open { display: flex; }
+    .push-consent .tiny { margin: 0; }
     .controls { display: flex; flex-wrap: wrap; gap: .35rem; }
     button, .chip {
       border: 1px solid var(--line);
@@ -233,6 +247,13 @@
   </section>
   <main class="container">
     <section class="hero">
+      <div class="push-consent" id="pushConsentBar" role="region" aria-live="polite">
+        <p class="tiny" id="pushConsentText"></p>
+        <div class="controls">
+          <button id="pushConsentEnable" type="button"></button>
+          <button id="pushConsentDismiss" type="button"></button>
+        </div>
+      </div>
       <div class="topbar">
         <div class="controls">
           <button id="toggleNowNext" type="button"></button>
@@ -289,7 +310,9 @@
         pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Last refresh',
         untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
-        settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in'
+        settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in',
+        pushConsentText: 'Enable push alerts to avoid browser blocking reminders.',
+        pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -305,7 +328,9 @@
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
         beijing: 'Pekin', berlin: 'Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
-        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Next in'
+        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Next in',
+        pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
+        pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -321,7 +346,9 @@
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
         beijing: 'Peking', berlin: 'Berlin', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
-        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Next in'
+        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Next in',
+        pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
+        pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -337,7 +364,9 @@
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
-        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Next in'
+        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Next in',
+        pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
+        pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere'
       }
     };
 
@@ -431,6 +460,7 @@
     let showPast = false;
     let nowNextOnly = localStorage.getItem('china_trip_now_next_only') === '1';
     const scheduledAlertKeys = new Set();
+    let pushPromptDismissed = localStorage.getItem('china_trip_push_prompt_dismissed') === '1';
 
     const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
       timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
@@ -554,13 +584,20 @@
       document.getElementById('toggleNowNext').textContent = nowNextOnly ? copy.nowNextOnlyOn : copy.nowNextOnlyOff;
       document.getElementById('exportIcs').textContent = copy.exportIcs;
       const alertsBtn = document.getElementById('enableAlerts');
+      const pushConsentBar = document.getElementById('pushConsentBar');
       if (!('Notification' in window)) {
         alertsBtn.textContent = copy.alertsBlocked;
         alertsBtn.disabled = true;
+        pushConsentBar.classList.remove('open');
       } else {
         alertsBtn.disabled = false;
         alertsBtn.textContent =
           Notification.permission === 'granted' ? copy.alertsOn : Notification.permission === 'denied' ? copy.alertsBlocked : copy.enableAlerts;
+        document.getElementById('pushConsentText').textContent = copy.pushConsentText;
+        document.getElementById('pushConsentEnable').textContent = copy.pushConsentEnable;
+        document.getElementById('pushConsentDismiss').textContent = copy.pushConsentDismiss;
+        const shouldShowPushPrompt = Notification.permission === 'default' && !pushPromptDismissed;
+        pushConsentBar.classList.toggle('open', shouldShowPushPrompt);
       }
       document.getElementById('themeSystem').textContent = copy.themeSystem;
       document.getElementById('themeLight').textContent = copy.themeLight;
@@ -572,8 +609,8 @@
       document.getElementById('appearanceLabel').textContent = copy.appearance;
 
       document.getElementById('currentTitle').textContent = current ? current.title : copy.noCurrent;
-      document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : copy.noCurrentDesc;
-      document.getElementById('currentDesc').textContent = current ? (current.desc || '—') : copy.noCurrentDesc;
+      document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : '';
+      document.getElementById('currentDesc').textContent = current ? (current.desc || '—') : '';
 
       document.getElementById('nextTitle').textContent = next ? next.title : copy.noNext;
       document.getElementById('nextTime').textContent = next ? `${formatDay(next.d, next.city, lang)} | ${next.t}–${next.e}` : copy.noNext;
@@ -618,6 +655,18 @@
     document.getElementById('enableAlerts').addEventListener('click', async () => {
       if (!('Notification' in window)) return;
       if (Notification.permission !== 'granted') await Notification.requestPermission();
+      refreshView(false);
+    });
+    document.getElementById('pushConsentEnable').addEventListener('click', async () => {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default') await Notification.requestPermission();
+      pushPromptDismissed = true;
+      localStorage.setItem('china_trip_push_prompt_dismissed', '1');
+      refreshView(false);
+    });
+    document.getElementById('pushConsentDismiss').addEventListener('click', () => {
+      pushPromptDismissed = true;
+      localStorage.setItem('china_trip_push_prompt_dismissed', '1');
       refreshView(false);
     });
 

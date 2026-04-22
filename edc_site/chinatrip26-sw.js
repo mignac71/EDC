@@ -1,7 +1,8 @@
-const CACHE_NAME = 'chinatrip26-v2';
+const CACHE_NAME = 'chinatrip26-v3';
 const APP_SHELL = [
   './chinatrip26.html',
-  './chinatrip26.webmanifest'
+  './chinatrip26.webmanifest',
+  './images/chinatrip26-icon.svg'
 ];
 
 self.addEventListener('install', (event) => {

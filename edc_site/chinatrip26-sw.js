@@ -1,4 +1,5 @@
-const CACHE_NAME = 'chinatrip26-v4';
+const VERSION = new URL(self.location.href).searchParams.get('v') || 'fallback';
+const CACHE_NAME = `chinatrip26-${VERSION}`;
 const APP_SHELL = [
   './chinatrip26.html',
   './chinatrip26.webmanifest',

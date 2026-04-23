@@ -3,5 +3,34 @@
     "api/*.php": {
       "runtime": "vercel-php@0.7.4"
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/chinatrip26-sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/chinatrip26.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/chinatrip26-version.php",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, max-age=0"
+        }
+      ]
+    }
+  ]
 }

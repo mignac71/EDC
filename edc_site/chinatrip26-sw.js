@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chinatrip26-v3';
+const CACHE_NAME = 'chinatrip26-v4';
 const APP_SHELL = [
   './chinatrip26.html',
   './chinatrip26.webmanifest',
@@ -22,6 +22,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+
+  if (event.data && event.data.type === 'REFRESH_OFFLINE') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        await Promise.all(APP_SHELL.map(async (asset) => {
+          try {
+            const response = await fetch(new Request(asset, { cache: 'no-store' }));
+            if (response.ok) await cache.put(asset, response.clone());
+          } catch (_) {}
+        }));
+      })
+    );
   }
 });
 

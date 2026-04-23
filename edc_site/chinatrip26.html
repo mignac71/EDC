@@ -725,9 +725,10 @@
     function scheduleUpcomingNotifications(nowMs) {
       if (!('Notification' in window) || Notification.permission !== 'granted') return;
       const horizonMs = 1000 * 60 * 60 * 12;
+      const reminderLeadMinutes = [15];
       normalized.forEach(ev => {
         if (ev.start < nowMs || ev.start - nowMs > horizonMs) return;
-        [30, 10].forEach(minBefore => {
+        reminderLeadMinutes.forEach(minBefore => {
           const fireAt = ev.start - (minBefore * 60 * 1000);
           if (fireAt <= nowMs) return;
           const key = `${ev.idx}-${minBefore}`;

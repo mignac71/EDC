@@ -1648,8 +1648,19 @@
       }, { passive: true });
     }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./chinatrip26-sw.js').then((registration) => {
+    async function initServiceWorker() {
+      if (!('serviceWorker' in navigator)) return;
+
+      let swVersion = String(Date.now());
+      try {
+        const response = await fetch('./api/chinatrip26-version.php', { cache: 'no-store' });
+        if (response.ok) {
+          const payload = await response.json();
+          if (payload?.version) swVersion = payload.version;
+        }
+      } catch (_) {}
+
+      navigator.serviceWorker.register(`./chinatrip26-sw.js?v=${encodeURIComponent(swVersion)}`).then((registration) => {
         registration.update().catch(() => {});
 
         if (registration.waiting) {
@@ -1672,6 +1683,7 @@
       });
     }
 
+    initServiceWorker();
     setupPullToRefresh();
     refreshView(true);
     setInterval(() => refreshView(false), 60_000);

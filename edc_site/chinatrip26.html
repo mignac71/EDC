@@ -245,6 +245,12 @@
           <button id="themeLight" type="button">Light</button>
           <button id="themeDark" type="button">Dark</button>
         </div>
+        <div class="settings-group">
+          <span class="settings-label" id="refreshLabel"></span>
+          <button id="refreshSlow" type="button">Eco</button>
+          <button id="refreshMedium" type="button">Balanced</button>
+          <button id="refreshFast" type="button">Live</button>
+        </div>
       </div>
     </details>
   </section>
@@ -316,6 +322,7 @@
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Last refresh',
         untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
         settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in',
+        refreshRate: 'Refresh rate', refreshSlow: 'Eco (5 min)', refreshMedium: 'Balanced (1 min)', refreshFast: 'Live (30 sec)',
         pushConsentText: 'Enable push alerts to avoid browser blocking reminders.',
         pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later'
       },
@@ -334,6 +341,7 @@
         beijing: 'Pekin', berlin: 'Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
         settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Za',
+        refreshRate: 'Częstotliwość odświeżania', refreshSlow: 'Eco (5 min)', refreshMedium: 'Standard (1 min)', refreshFast: 'Live (30 s)',
         pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
         pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później'
       },
@@ -352,6 +360,7 @@
         beijing: 'Peking', berlin: 'Berlin', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
         settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Következő ennyi idő múlva',
+        refreshRate: 'Frissítési ütem', refreshSlow: 'Eco (5 perc)', refreshMedium: 'Normál (1 perc)', refreshFast: 'Live (30 mp)',
         pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
         pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később'
       },
@@ -370,6 +379,7 @@
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
         settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Næste om',
+        refreshRate: 'Opdateringsfrekvens', refreshSlow: 'Eco (5 min)', refreshMedium: 'Normal (1 min)', refreshFast: 'Live (30 sek)',
         pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
         pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere'
       }
@@ -1310,6 +1320,8 @@
     let lang = localStorage.getItem('china_trip_lang') || 'en';
     let showPast = false;
     let nowNextOnly = localStorage.getItem('china_trip_now_next_only') === '1';
+    let refreshMode = localStorage.getItem('china_trip_refresh_mode') || 'medium';
+    let refreshTimerId = null;
     const scheduledAlertKeys = new Set();
     let pushPromptDismissed = localStorage.getItem('china_trip_push_prompt_dismissed') === '1';
 
@@ -1419,6 +1431,31 @@
       document.getElementById(mode === 'light' ? 'themeLight' : mode === 'dark' ? 'themeDark' : 'themeSystem').classList.add('btn-active');
     }
 
+    function applyRefreshButtons(mode) {
+      ['refreshSlow', 'refreshMedium', 'refreshFast'].forEach((id) => document.getElementById(id).classList.remove('btn-active'));
+      const activeId = mode === 'slow' ? 'refreshSlow' : mode === 'fast' ? 'refreshFast' : 'refreshMedium';
+      document.getElementById(activeId).classList.add('btn-active');
+    }
+
+    function getRefreshIntervalMs() {
+      if (refreshMode === 'slow') return 5 * 60_000;
+      if (refreshMode === 'fast') return 30_000;
+      return 60_000;
+    }
+
+    function scheduleRefreshLoop() {
+      if (refreshTimerId) {
+        clearTimeout(refreshTimerId);
+        refreshTimerId = null;
+      }
+      if (document.hidden) return;
+      const interval = getRefreshIntervalMs();
+      refreshTimerId = setTimeout(() => {
+        refreshView(false);
+        scheduleRefreshLoop();
+      }, interval);
+    }
+
     function refreshView(scrollWhenIdle = false) {
       const copy = getCopy();
       const now = Date.now();
@@ -1460,6 +1497,10 @@
       document.getElementById('langLabel').textContent = copy.language;
       document.getElementById('fontLabel').textContent = copy.fontSize;
       document.getElementById('appearanceLabel').textContent = copy.appearance;
+      document.getElementById('refreshLabel').textContent = copy.refreshRate;
+      document.getElementById('refreshSlow').textContent = copy.refreshSlow;
+      document.getElementById('refreshMedium').textContent = copy.refreshMedium;
+      document.getElementById('refreshFast').textContent = copy.refreshFast;
       const pullRefreshStatus = document.getElementById('pullRefreshStatus');
       if (pullRefreshStatus && !pullRefreshStatus.classList.contains('visible')) pullRefreshStatus.textContent = copy.pullToRefreshHint;
 
@@ -1541,6 +1582,25 @@
     document.getElementById('themeLight').addEventListener('click', () => applyTheme('light'));
     document.getElementById('themeDark').addEventListener('click', () => applyTheme('dark'));
     applyTheme(localStorage.getItem('china_trip_theme') || 'system');
+    applyRefreshButtons(refreshMode);
+    document.getElementById('refreshSlow').addEventListener('click', () => {
+      refreshMode = 'slow';
+      localStorage.setItem('china_trip_refresh_mode', refreshMode);
+      applyRefreshButtons(refreshMode);
+      scheduleRefreshLoop();
+    });
+    document.getElementById('refreshMedium').addEventListener('click', () => {
+      refreshMode = 'medium';
+      localStorage.setItem('china_trip_refresh_mode', refreshMode);
+      applyRefreshButtons(refreshMode);
+      scheduleRefreshLoop();
+    });
+    document.getElementById('refreshFast').addEventListener('click', () => {
+      refreshMode = 'fast';
+      localStorage.setItem('china_trip_refresh_mode', refreshMode);
+      applyRefreshButtons(refreshMode);
+      scheduleRefreshLoop();
+    });
 
     function escapeIcs(text) {
       return String(text || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
@@ -1686,7 +1746,11 @@
     initServiceWorker();
     setupPullToRefresh();
     refreshView(true);
-    setInterval(() => refreshView(false), 60_000);
+    scheduleRefreshLoop();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) refreshView(false);
+      scheduleRefreshLoop();
+    }, { passive: true });
   </script>
 </body>
 </html>

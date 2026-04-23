@@ -177,6 +177,9 @@
     .settings-label { font-size: .85rem; color: var(--muted); width: 100%; margin-bottom: .1rem; }
     .tiny { color: var(--muted); font-size: .88rem; margin: .2rem 0; }
 
+    .pull-refresh { position: fixed; top: 3.35rem; left: 50%; transform: translate(-50%, -140%); transition: transform .2s ease; padding: .35rem .6rem; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: .8rem; z-index: 60; box-shadow: 0 6px 18px rgba(18, 34, 70, 0.12); }
+    .pull-refresh.visible { transform: translate(-50%, 0); }
+
     .status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin-bottom: .9rem; }
     .card { padding: .85rem; }
     .card h2 { margin: 0 0 .35rem; font-size: 1rem; }
@@ -245,6 +248,8 @@
       </div>
     </details>
   </section>
+  <div class="pull-refresh" id="pullRefreshStatus"></div>
+
   <main class="container">
     <section class="hero">
       <div class="push-consent" id="pushConsentBar" role="region" aria-live="polite">
@@ -328,7 +333,7 @@
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
         beijing: 'Pekin', berlin: 'Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
-        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Next in',
+        settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Za',
         pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
         pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później'
       },
@@ -346,7 +351,7 @@
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
         beijing: 'Peking', berlin: 'Berlin', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
-        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Next in',
+        settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Következő ennyi idő múlva',
         pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
         pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később'
       },
@@ -364,88 +369,927 @@
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
-        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Next in',
+        settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Næste om',
         pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
         pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere'
       }
     };
 
-    const events = [
-      { d:'2026-04-22', city:'Beijing', t:'13:00', e:'13:30', title:'Meet in lobby + transfer to Forbidden City', desc:'Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes.' },
-      { d:'2026-04-22', city:'Beijing', t:'13:30', e:'17:00', title:'Visit: The Forbidden City', desc:'Guided tour with Lars Ulrik Thom from Beijing Postcards.' },
-      { d:'2026-04-22', city:'Beijing', t:'17:00', e:'17:30', title:'Bus back to hotel', desc:'Pickup at North Gate with James Xu.' },
-      { d:'2026-04-22', city:'Beijing', t:'17:30', e:'18:45', title:'Own time', desc:'' },
-      { d:'2026-04-22', city:'Beijing', t:'18:45', e:'19:00', title:'Meet in lobby + transfer to dinner', desc:'After dinner: optional 1.5 km walk or taxi.' },
-      { d:'2026-04-22', city:'Beijing', t:'19:00', e:'21:30', title:'Dinner: Da Dong Wangfujing', desc:'Peking duck and intro to the week program.' },
-      { d:'2026-04-23', city:'Beijing', t:'08:25', e:'08:30', title:'Meet in lobby', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'08:30', e:'10:00', title:'Transfer to Bytedance', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'10:00', e:'12:00', title:'Meeting: Bytedance (TikTok / Dongchedi)', desc:'Experience center and session on ecosystem and automotive leads.' },
-      { d:'2026-04-23', city:'Beijing', t:'12:00', e:'12:30', title:'Lunch at Bytedance', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'12:30', e:'13:30', title:'Transfer to JD.com', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'13:30', e:'15:30', title:'Meeting: JD.com (JD Automotive)', desc:'Experience center and e-commerce/logistics/automotive strategy.' },
-      { d:'2026-04-23', city:'Beijing', t:'15:30', e:'16:30', title:'Bus back to hotel', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'16:30', e:'17:00', title:'Own time', desc:'' },
-      { d:'2026-04-23', city:'Beijing', t:'17:00', e:'18:00', title:'Transfer to networking event', desc:'Jing A Wangjing Brewery.' },
-      { d:'2026-04-23', city:'Beijing', t:'18:00', e:'20:00', title:'Networking (DCCC + German Chamber)', desc:'Presentations and networking session.' },
-      { d:'2026-04-24', city:'Beijing', t:'10:00', e:'10:45', title:'Transfer to WeRide', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'10:45', e:'11:30', title:'WeRide: autonomous drive', desc:'Demonstration and technology discussion.' },
-      { d:'2026-04-24', city:'Beijing', t:'11:30', e:'12:15', title:'Shopping mall automotive display', desc:'Including Xiaomi and Aito (Huawei).' },
-      { d:'2026-04-24', city:'Beijing', t:'12:15', e:'12:30', title:'Transfer to restaurant', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'12:30', e:'13:40', title:'Lunch', desc:'Chinese restaurant.' },
-      { d:'2026-04-24', city:'Beijing', t:'13:40', e:'14:00', title:'Transfer to CATL', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'14:00', e:'16:00', title:'Meeting: CATL', desc:'Battery, storage, V2G, recycling and European strategy.' },
-      { d:'2026-04-24', city:'Beijing', t:'16:00', e:'17:00', title:'Bus back to hotel', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'17:00', e:'17:55', title:'Own time', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'17:55', e:'18:00', title:'Meet in lobby', desc:'' },
-      { d:'2026-04-24', city:'Beijing', t:'18:00', e:'18:30', title:'Meet food tour guides', desc:'Transfer to Hutong area.' },
-      { d:'2026-04-24', city:'Beijing', t:'18:30', e:'22:00', title:'Beijing Hutong Food Tour', desc:'4 local venues and integration evening.' },
-      { d:'2026-04-25', city:'Beijing', t:'07:55', e:'08:00', title:'Meet in lobby', desc:'Passport, comfortable shoes, sunscreen.' },
-      { d:'2026-04-25', city:'Beijing', t:'08:00', e:'09:30', title:'Transfer to Great Wall (Badaling)', desc:'' },
-      { d:'2026-04-25', city:'Beijing', t:'09:30', e:'10:00', title:'Ticket distribution + entry', desc:'' },
-      { d:'2026-04-25', city:'Beijing', t:'10:00', e:'12:00', title:'Great Wall walk', desc:'Approx. 2h walk, cable car option possible.' },
-      { d:'2026-04-25', city:'Beijing', t:'12:00', e:'14:00', title:'Lunch', desc:'Lunch before transfer back to hotel.' },
-      { d:'2026-04-25', city:'Beijing', t:'14:00', e:'15:30', title:'Return to hotel', desc:'' },
-      { d:'2026-04-25', city:'Beijing', t:'15:30', e:'18:30', title:'Own time', desc:'' },
-      { d:'2026-04-25', city:'Beijing', t:'18:30', e:'19:00', title:'Departure for dinner', desc:'' },
-      { d:'2026-04-25', city:'Beijing', t:'19:00', e:'21:00', title:'Dinner: San Li Tun', desc:'' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'08:15', e:'08:30', title:'Meet with suitcases in lobby', desc:'Check-out and minibar payment before meeting.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'08:30', e:'09:30', title:'Transfer to Beijing Auto Show', desc:'' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'09:30', e:'10:00', title:'Entry and tickets for Auto Show', desc:'Please carry passport.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'10:15', e:'10:45', title:'Meeting 1: Leapmotor', desc:'Joint venture with Stellantis and expansion in Europe.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'11:00', e:'11:45', title:'Meeting 2: Xiaomi', desc:'Market positioning and European plans.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'12:00', e:'12:45', title:'Meeting 3: NIO', desc:'Strategy, technology, and battery swapping.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'12:45', e:'14:00', title:'Own time at Auto Show', desc:'Then meeting with CADA.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'14:00', e:'15:15', title:'Meeting with CADA', desc:'Cooperation between European and Chinese dealers.' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'15:30', e:'16:00', title:'Transfer to airport + check-in', desc:'' },
-      { d:'2026-04-26', city:'Beijing → Guangzhou', t:'19:15', e:'22:35', title:'Flight CA1379: PEK → CAN', desc:'Air China, Terminal 3 to Terminal 1.' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'08:45', e:'09:00', title:'Meet in lobby', desc:'Check-out and luggage to bus.' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'09:00', e:'10:00', title:'Transfer to Xpeng', desc:'' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'10:00', e:'12:00', title:'Meeting with Xpeng', desc:'Experience center, EV, eVTOL, software, IRON robotics.' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'12:00', e:'12:30', title:'Lunch (sandwich)', desc:'' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'12:30', e:'13:30', title:'Transfer to GAC Factory', desc:'' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'13:30', e:'15:30', title:'Meeting + factory tour at GAC', desc:'Intelligent factory, AION, autonomy L2-L4.' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'15:30', e:'17:30', title:'Bus transfer to Shenzhen', desc:'' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'17:30', e:'19:15', title:'Check-in + own time', desc:'Shenzhen Shanghai Hotel.' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'19:15', e:'19:30', title:'Meet in lobby + transfer', desc:'' },
-      { d:'2026-04-27', city:'Guangzhou → Shenzhen', t:'19:30', e:'21:30', title:'Dinner: Terra Madre', desc:'Italian dinner and networking.' },
-      { d:'2026-04-28', city:'Shenzhen', t:'08:55', e:'09:00', title:'Meet in lobby', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'09:00', e:'10:00', title:'Transfer to Huawei', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'10:00', e:'12:00', title:'Meeting with Huawei', desc:'Experience center, AI, cloud, 5G and automotive.' },
-      { d:'2026-04-28', city:'Shenzhen', t:'12:00', e:'13:00', title:'Lunch', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'13:00', e:'14:00', title:'Transfer to UBTech', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'14:00', e:'16:00', title:'Visit UBTech', desc:'Management meeting and humanoid robot demonstrations.' },
-      { d:'2026-04-28', city:'Shenzhen', t:'16:00', e:'17:00', title:'Return to hotel', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'17:00', e:'18:45', title:'Own time', desc:'' },
-      { d:'2026-04-28', city:'Shenzhen', t:'18:45', e:'19:00', title:'Walk to restaurant', desc:'Approx. 400m.' },
-      { d:'2026-04-28', city:'Shenzhen', t:'19:00', e:'21:00', title:'Farewell dinner: Xu’s Seafood', desc:'Cantonese cuisine.' },
-      { d:'2026-04-29', city:'Shenzhen', t:'09:55', e:'10:00', title:'Meet in lobby', desc:'Check-out; luggage storage possible.' },
-      { d:'2026-04-29', city:'Shenzhen', t:'10:00', e:'11:30', title:'Huaqiangbei electronics market', desc:'550m walk and own exploration time.' },
-      { d:'2026-04-29', city:'Shenzhen', t:'11:45', e:'12:00', title:'Return and meet in lobby', desc:'' },
-      { d:'2026-04-29', city:'Shenzhen', t:'12:00', e:'13:00', title:'Lunch delivered by drones (Meituan)', desc:'Bay area near Hong Kong view point.' },
-      { d:'2026-04-29', city:'Shenzhen', t:'13:00', e:'14:00', title:'Transfer to BYD', desc:'' },
-      { d:'2026-04-29', city:'Shenzhen', t:'14:00', e:'16:00', title:'Meeting with BYD', desc:'Exhibition center, batteries, aftermarket, recycling and supply chain strategy.' },
-      { d:'2026-04-29', city:'Shenzhen', t:'16:00', e:'17:00', title:'Return for luggage / airport transfers', desc:'Part of the group goes directly to the airport.' }
-    ];
+    const eventsEn = [
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "13:00",
+            "e": "13:30",
+            "title": "Meet in lobby + transfer to Forbidden City",
+            "desc": "Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes."
+      },
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "13:30",
+            "e": "17:00",
+            "title": "Visit: The Forbidden City",
+            "desc": "Guided tour with Lars Ulrik Thom from Beijing Postcards."
+      },
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "17:00",
+            "e": "17:30",
+            "title": "Bus back to hotel",
+            "desc": "Pickup at North Gate with James Xu."
+      },
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "17:30",
+            "e": "18:45",
+            "title": "Own time",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "18:45",
+            "e": "19:00",
+            "title": "Meet in lobby + transfer to dinner",
+            "desc": "After dinner: optional 1.5 km walk or taxi."
+      },
+      {
+            "d": "2026-04-22",
+            "city": "Beijing",
+            "t": "19:00",
+            "e": "21:30",
+            "title": "Dinner: Da Dong Wangfujing",
+            "desc": "Peking duck and intro to the week program."
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "08:25",
+            "e": "08:30",
+            "title": "Meet in lobby",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "08:30",
+            "e": "10:00",
+            "title": "Transfer to Bytedance",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "10:00",
+            "e": "12:00",
+            "title": "Meeting: Bytedance (TikTok / Dongchedi)",
+            "desc": "Experience center and session on ecosystem and automotive leads."
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "12:00",
+            "e": "12:30",
+            "title": "Lunch at Bytedance",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "12:30",
+            "e": "13:30",
+            "title": "Transfer to JD.com",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "13:30",
+            "e": "15:30",
+            "title": "Meeting: JD.com (JD Automotive)",
+            "desc": "Experience center and e-commerce/logistics/automotive strategy."
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "15:30",
+            "e": "16:30",
+            "title": "Bus back to hotel",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "16:30",
+            "e": "17:00",
+            "title": "Own time",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "17:00",
+            "e": "18:00",
+            "title": "Transfer to networking event",
+            "desc": "Jing A Wangjing Brewery."
+      },
+      {
+            "d": "2026-04-23",
+            "city": "Beijing",
+            "t": "18:00",
+            "e": "20:00",
+            "title": "Networking (DCCC + German Chamber)",
+            "desc": "Presentations and networking session."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "10:00",
+            "e": "10:45",
+            "title": "Transfer to WeRide",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "10:45",
+            "e": "11:30",
+            "title": "WeRide: autonomous drive",
+            "desc": "Demonstration and technology discussion."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "11:30",
+            "e": "12:15",
+            "title": "Shopping mall automotive display",
+            "desc": "Including Xiaomi and Aito (Huawei)."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "12:15",
+            "e": "12:30",
+            "title": "Transfer to restaurant",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "12:30",
+            "e": "13:40",
+            "title": "Lunch",
+            "desc": "Chinese restaurant."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "13:40",
+            "e": "14:00",
+            "title": "Transfer to CATL",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "14:00",
+            "e": "16:00",
+            "title": "Meeting: CATL",
+            "desc": "Battery, storage, V2G, recycling and European strategy."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "16:00",
+            "e": "17:00",
+            "title": "Bus back to hotel",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "17:00",
+            "e": "17:55",
+            "title": "Own time",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "17:55",
+            "e": "18:00",
+            "title": "Meet in lobby",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "18:00",
+            "e": "18:30",
+            "title": "Meet food tour guides",
+            "desc": "Transfer to Hutong area."
+      },
+      {
+            "d": "2026-04-24",
+            "city": "Beijing",
+            "t": "18:30",
+            "e": "22:00",
+            "title": "Beijing Hutong Food Tour",
+            "desc": "4 local venues and integration evening."
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "07:55",
+            "e": "08:00",
+            "title": "Meet in lobby",
+            "desc": "Passport, comfortable shoes, sunscreen."
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "08:00",
+            "e": "09:30",
+            "title": "Transfer to Great Wall (Badaling)",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "09:30",
+            "e": "10:00",
+            "title": "Ticket distribution + entry",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "10:00",
+            "e": "12:00",
+            "title": "Great Wall walk",
+            "desc": "Approx. 2h walk, cable car option possible."
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "12:00",
+            "e": "14:00",
+            "title": "Lunch",
+            "desc": "Lunch before transfer back to hotel."
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "14:00",
+            "e": "15:30",
+            "title": "Return to hotel",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "15:30",
+            "e": "18:30",
+            "title": "Own time",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "18:30",
+            "e": "19:00",
+            "title": "Departure for dinner",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-25",
+            "city": "Beijing",
+            "t": "19:00",
+            "e": "21:00",
+            "title": "Dinner: San Li Tun",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "08:15",
+            "e": "08:30",
+            "title": "Meet with suitcases in lobby",
+            "desc": "Check-out and minibar payment before meeting."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "08:30",
+            "e": "09:30",
+            "title": "Transfer to Beijing Auto Show",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "09:30",
+            "e": "10:00",
+            "title": "Entry and tickets for Auto Show",
+            "desc": "Please carry passport."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "10:15",
+            "e": "10:45",
+            "title": "Meeting 1: Leapmotor",
+            "desc": "Joint venture with Stellantis and expansion in Europe."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "11:00",
+            "e": "11:45",
+            "title": "Meeting 2: Xiaomi",
+            "desc": "Market positioning and European plans."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "12:00",
+            "e": "12:45",
+            "title": "Meeting 3: NIO",
+            "desc": "Strategy, technology, and battery swapping."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "12:45",
+            "e": "14:00",
+            "title": "Own time at Auto Show",
+            "desc": "Then meeting with CADA."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "14:00",
+            "e": "15:15",
+            "title": "Meeting with CADA",
+            "desc": "Cooperation between European and Chinese dealers."
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "15:30",
+            "e": "16:00",
+            "title": "Transfer to airport + check-in",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-26",
+            "city": "Beijing → Guangzhou",
+            "t": "19:15",
+            "e": "22:35",
+            "title": "Flight CA1379: PEK → CAN",
+            "desc": "Air China, Terminal 3 to Terminal 1."
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "08:45",
+            "e": "09:00",
+            "title": "Meet in lobby",
+            "desc": "Check-out and luggage to bus."
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "09:00",
+            "e": "10:00",
+            "title": "Transfer to Xpeng",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "10:00",
+            "e": "12:00",
+            "title": "Meeting with Xpeng",
+            "desc": "Experience center, EV, eVTOL, software, IRON robotics."
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "12:00",
+            "e": "12:30",
+            "title": "Lunch (sandwich)",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "12:30",
+            "e": "13:30",
+            "title": "Transfer to GAC Factory",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "13:30",
+            "e": "15:30",
+            "title": "Meeting + factory tour at GAC",
+            "desc": "Intelligent factory, AION, autonomy L2-L4."
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "15:30",
+            "e": "17:30",
+            "title": "Bus transfer to Shenzhen",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "17:30",
+            "e": "19:15",
+            "title": "Check-in + own time",
+            "desc": "Shenzhen Shanghai Hotel."
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "19:15",
+            "e": "19:30",
+            "title": "Meet in lobby + transfer",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-27",
+            "city": "Guangzhou → Shenzhen",
+            "t": "19:30",
+            "e": "21:30",
+            "title": "Dinner: Terra Madre",
+            "desc": "Italian dinner and networking."
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "08:55",
+            "e": "09:00",
+            "title": "Meet in lobby",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "09:00",
+            "e": "10:00",
+            "title": "Transfer to Huawei",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "10:00",
+            "e": "12:00",
+            "title": "Meeting with Huawei",
+            "desc": "Experience center, AI, cloud, 5G and automotive."
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "12:00",
+            "e": "13:00",
+            "title": "Lunch",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "13:00",
+            "e": "14:00",
+            "title": "Transfer to UBTech",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "14:00",
+            "e": "16:00",
+            "title": "Visit UBTech",
+            "desc": "Management meeting and humanoid robot demonstrations."
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "16:00",
+            "e": "17:00",
+            "title": "Return to hotel",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "17:00",
+            "e": "18:45",
+            "title": "Own time",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "18:45",
+            "e": "19:00",
+            "title": "Walk to restaurant",
+            "desc": "Approx. 400m."
+      },
+      {
+            "d": "2026-04-28",
+            "city": "Shenzhen",
+            "t": "19:00",
+            "e": "21:00",
+            "title": "Farewell dinner: Xu’s Seafood",
+            "desc": "Cantonese cuisine."
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "09:55",
+            "e": "10:00",
+            "title": "Meet in lobby",
+            "desc": "Check-out; luggage storage possible."
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "10:00",
+            "e": "11:30",
+            "title": "Huaqiangbei electronics market",
+            "desc": "550m walk and own exploration time."
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "11:45",
+            "e": "12:00",
+            "title": "Return and meet in lobby",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "12:00",
+            "e": "13:00",
+            "title": "Lunch delivered by drones (Meituan)",
+            "desc": "Bay area near Hong Kong view point."
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "13:00",
+            "e": "14:00",
+            "title": "Transfer to BYD",
+            "desc": ""
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "14:00",
+            "e": "16:00",
+            "title": "Meeting with BYD",
+            "desc": "Exhibition center, batteries, aftermarket, recycling and supply chain strategy."
+      },
+      {
+            "d": "2026-04-29",
+            "city": "Shenzhen",
+            "t": "16:00",
+            "e": "17:00",
+            "title": "Return for luggage / airport transfers",
+            "desc": "Part of the group goes directly to the airport."
+      }
+];
+
+    const eventTranslations = {
+      "pl": {
+            "4 local venues and integration evening.": "4 lokale lokalne i wieczór integracyjny.",
+            "550m walk and own exploration time.": "550m spaceru i czas na własną eksplorację.",
+            "After dinner: optional 1.5 km walk or taxi.": "Po kolacji: opcjonalnie 1,5 km pieszo lub taksówką.",
+            "Air China, Terminal 3 to Terminal 1.": "Air China, Terminal 3 do Terminalu 1.",
+            "Approx. 2h walk, cable car option possible.": "Około. 2h spaceru, możliwa opcja kolejki linowej.",
+            "Approx. 400m.": "Około. 400 m.",
+            "Battery, storage, V2G, recycling and European strategy.": "Bateria, magazynowanie, V2G, recykling i strategia europejska.",
+            "Bay area near Hong Kong view point.": "Obszar zatoki w pobliżu punktu widokowego w Hongkongu.",
+            "Beijing": "Pekin",
+            "Beijing Hutong Food Tour": "Wycieczka kulinarna po Pekinie Hutong",
+            "Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes.": "Hotel Międzynarodowy w Pekinie. Proszę zjeść lunch przed spotkaniem. Zabierz ze sobą paszport i wygodne buty.",
+            "Beijing → Guangzhou": "Pekin → Kanton",
+            "Bus back to hotel": "Autobus powrotny do hotelu",
+            "Bus transfer to Shenzhen": "Przejazd autokarem do Shenzhen",
+            "Cantonese cuisine.": "Kuchnia kantońska.",
+            "Check-in + own time": "Zameldowanie + czas własny",
+            "Check-out and luggage to bus.": "Wymeldowanie i bagaż do autobusu.",
+            "Check-out and minibar payment before meeting.": "Wymeldowanie i płatność w minibarze przed spotkaniem.",
+            "Check-out; luggage storage possible.": "Wymeldować się; możliwość przechowania bagażu.",
+            "Chinese restaurant.": "Chińska restauracja.",
+            "Cooperation between European and Chinese dealers.": "Współpraca dealerów europejskich i chińskich.",
+            "Demonstration and technology discussion.": "Demonstracja i dyskusja na temat technologii.",
+            "Departure for dinner": "Wyjazd na kolację",
+            "Dinner: Da Dong Wangfujing": "Kolacja: Da Dong Wangfujing",
+            "Dinner: San Li Tun": "Kolacja: San Li Tun",
+            "Dinner: Terra Madre": "Kolacja: Terra Madre",
+            "Entry and tickets for Auto Show": "Wstęp i bilety na Auto Show",
+            "Exhibition center, batteries, aftermarket, recycling and supply chain strategy.": "Centrum wystawiennicze, baterie, rynek części zamiennych, recykling i strategia łańcucha dostaw.",
+            "Experience center and e-commerce/logistics/automotive strategy.": "Centrum doświadczeń i strategia e-commerce/logistyki/motoryzacji.",
+            "Experience center and session on ecosystem and automotive leads.": "Centrum doświadczeń i sesja na temat ekosystemów i potencjalnych klientów z branży motoryzacyjnej.",
+            "Experience center, AI, cloud, 5G and automotive.": "Centrum doświadczeń, sztuczna inteligencja, chmura, 5G i motoryzacja.",
+            "Experience center, EV, eVTOL, software, IRON robotics.": "Centrum doświadczeń, EV, eVTOL, oprogramowanie, robotyka IRON.",
+            "Farewell dinner: Xu’s Seafood": "Pożegnalna kolacja: owoce morza Xu",
+            "Flight CA1379: PEK → CAN": "Lot CA1379: PEK → CAN",
+            "Great Wall walk": "Spacer po Wielkim Murze",
+            "Guangzhou → Shenzhen": "Kanton → Shenzhen",
+            "Guided tour with Lars Ulrik Thom from Beijing Postcards.": "Wycieczka z przewodnikiem z Larsem Ulrikiem Thomem z Beijing Postcards.",
+            "Huaqiangbei electronics market": "Rynek elektroniki Huaqiangbei",
+            "Including Xiaomi and Aito (Huawei).": "W tym Xiaomi i Aito (Huawei).",
+            "Intelligent factory, AION, autonomy L2-L4.": "Inteligentna fabryka, AION, autonomia L2-L4.",
+            "Italian dinner and networking.": "Włoska kolacja i networking.",
+            "Jing A Wangjing Brewery.": "Browar Jing A Wangjing.",
+            "Joint venture with Stellantis and expansion in Europe.": "Joint venture ze Stellantis i ekspansja w Europie.",
+            "Lunch": "Obiad",
+            "Lunch (sandwich)": "Obiad (kanapka)",
+            "Lunch at Bytedance": "Obiad w Bytedance",
+            "Lunch before transfer back to hotel.": "Obiad przed transferem z powrotem do hotelu.",
+            "Lunch delivered by drones (Meituan)": "Lunch dostarczony przez drony (Meituan)",
+            "Management meeting and humanoid robot demonstrations.": "Spotkanie kierownictwa i pokazy robotów humanoidalnych.",
+            "Market positioning and European plans.": "Pozycjonowanie na rynku i plany europejskie.",
+            "Meet food tour guides": "Poznaj przewodników kulinarnych",
+            "Meet in lobby": "Spotkaj się w holu",
+            "Meet in lobby + transfer": "Spotkanie w lobby + transfer",
+            "Meet in lobby + transfer to Forbidden City": "Spotkanie w lobby + transfer do Zakazanego Miasta",
+            "Meet in lobby + transfer to dinner": "Spotkanie w lobby + transfer na kolację",
+            "Meet with suitcases in lobby": "Spotkaj się z walizkami w lobby",
+            "Meeting + factory tour at GAC": "Spotkanie + zwiedzanie fabryki w GAC",
+            "Meeting 1: Leapmotor": "Spotkanie 1: Silnik skokowy",
+            "Meeting 2: Xiaomi": "Spotkanie 2: Xiaomi",
+            "Meeting 3: NIO": "Spotkanie 3: NIO",
+            "Meeting with BYD": "Spotkanie z BYD",
+            "Meeting with CADA": "Spotkanie z CADĄ",
+            "Meeting with Huawei": "Spotkanie z Huaweiem",
+            "Meeting with Xpeng": "Spotkanie z Xpengiem",
+            "Meeting: Bytedance (TikTok / Dongchedi)": "Spotkanie: Bytedance (TikTok / Dongchedi)",
+            "Meeting: CATL": "Spotkanie: CATL",
+            "Meeting: JD.com (JD Automotive)": "Spotkanie: JD.com (JD Automotive)",
+            "Networking (DCCC + German Chamber)": "Networking (DCCC + Izba Niemiecka)",
+            "Own time": "Własny czas",
+            "Own time at Auto Show": "Czas własny na Auto Show",
+            "Part of the group goes directly to the airport.": "Część grupy jedzie bezpośrednio na lotnisko.",
+            "Passport, comfortable shoes, sunscreen.": "Paszport, wygodne buty, krem ​​z filtrem przeciwsłonecznym.",
+            "Peking duck and intro to the week program.": "Kaczka po pekińsku i wprowadzenie do programu tygodniowego.",
+            "Pickup at North Gate with James Xu.": "Odbiór z North Gate z Jamesem Xu.",
+            "Please carry passport.": "Proszę mieć przy sobie paszport.",
+            "Presentations and networking session.": "Prezentacje i sesja networkingowa.",
+            "Return and meet in lobby": "Wróć i spotkaj się w lobby",
+            "Return for luggage / airport transfers": "Zwrot bagażu/transfer lotniskowy",
+            "Return to hotel": "Powrót do hotelu",
+            "Shenzhen": "Shenzhen",
+            "Shenzhen Shanghai Hotel.": "Hotel Shenzhen w Szanghaju.",
+            "Shopping mall automotive display": "Wystawa samochodowa w centrum handlowym",
+            "Strategy, technology, and battery swapping.": "Strategia, technologia i wymiana baterii.",
+            "Then meeting with CADA.": "Następnie spotkanie z CADA.",
+            "Ticket distribution + entry": "Dystrybucja biletów + wejście",
+            "Transfer to BYD": "Przeniesienie do BYD",
+            "Transfer to Beijing Auto Show": "Przejazd na Salon Samochodowy w Pekinie",
+            "Transfer to Bytedance": "Przenieś do Bytedance",
+            "Transfer to CATL": "Przejazd do CATL",
+            "Transfer to GAC Factory": "Przeniesienie do fabryki GAC",
+            "Transfer to Great Wall (Badaling)": "Przejazd do Wielkiego Muru (Badaling)",
+            "Transfer to Huawei": "Przelew do Huawei",
+            "Transfer to Hutong area.": "Transfer do rejonu Hutong.",
+            "Transfer to JD.com": "Przenieś na JD.com",
+            "Transfer to UBTech": "Przeniesienie do UBTechu",
+            "Transfer to WeRide": "Przejazd do WeRide",
+            "Transfer to Xpeng": "Przejazd do Xpeng",
+            "Transfer to airport + check-in": "Transfer na lotnisko + odprawa",
+            "Transfer to networking event": "Przenieś się na wydarzenie networkingowe",
+            "Transfer to restaurant": "Transfer do restauracji",
+            "Visit UBTech": "Odwiedź UBTech",
+            "Visit: The Forbidden City": "Odwiedź: Zakazane Miasto",
+            "Walk to restaurant": "Spacer do restauracji",
+            "WeRide: autonomous drive": "WeRide: jazda autonomiczna"
+      },
+      "hu": {
+            "4 local venues and integration evening.": "4 helyi helyszín és integrációs est.",
+            "550m walk and own exploration time.": "550 m séta és saját felfedezési idő.",
+            "After dinner: optional 1.5 km walk or taxi.": "Vacsora után: fakultatív 1,5 km séta vagy taxi.",
+            "Air China, Terminal 3 to Terminal 1.": "Air China, a 3-as termináltól az 1-es terminálig.",
+            "Approx. 2h walk, cable car option possible.": "kb. 2 óra séta, felvonó lehetőség.",
+            "Approx. 400m.": "kb. 400 m.",
+            "Battery, storage, V2G, recycling and European strategy.": "Akkumulátor, tárolás, V2G, újrahasznosítás és európai stratégia.",
+            "Bay area near Hong Kong view point.": "Öböl környéke Hong Kong kilátó közelében.",
+            "Beijing": "Peking",
+            "Beijing Hutong Food Tour": "Pekingi Hutong Food Tour",
+            "Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes.": "Beijing International Hotel. Kérem, ebédeljen az ülés előtt. Vigye magával az útlevelét és kényelmes cipőjét.",
+            "Beijing → Guangzhou": "Peking → Guangzhou",
+            "Bus back to hotel": "Busz vissza a szállodába",
+            "Bus transfer to Shenzhen": "Busztranszfer Shenzhenbe",
+            "Cantonese cuisine.": "Kantoni konyha.",
+            "Check-in + own time": "Bejelentkezés + saját idő",
+            "Check-out and luggage to bus.": "Kijelentkezés és csomagok a buszhoz.",
+            "Check-out and minibar payment before meeting.": "Kijelentkezés és minibár fizetés a találkozás előtt.",
+            "Check-out; luggage storage possible.": "Kijelentkezés; csomagmegőrzés lehetséges.",
+            "Chinese restaurant.": "Kínai étterem.",
+            "Cooperation between European and Chinese dealers.": "Együttműködés európai és kínai kereskedők között.",
+            "Demonstration and technology discussion.": "Bemutató és technológiai beszélgetés.",
+            "Departure for dinner": "Indulás vacsorára",
+            "Dinner: Da Dong Wangfujing": "Vacsora: Da Dong Wangfujing",
+            "Dinner: San Li Tun": "Vacsora: San Li Tun",
+            "Dinner: Terra Madre": "Vacsora: Terra Madre",
+            "Entry and tickets for Auto Show": "Belépés és jegyek az Autószalonra",
+            "Exhibition center, batteries, aftermarket, recycling and supply chain strategy.": "Kiállítási központ, akkumulátorok, utópiac, újrahasznosítás és ellátási lánc stratégia.",
+            "Experience center and e-commerce/logistics/automotive strategy.": "Élményközpont és e-kereskedelmi/logisztikai/autóipari stratégia.",
+            "Experience center and session on ecosystem and automotive leads.": "Élményközpont és előadás az ökoszisztémákról és az autóiparról.",
+            "Experience center, AI, cloud, 5G and automotive.": "Élményközpont, mesterséges intelligencia, felhő, 5G és autóipar.",
+            "Experience center, EV, eVTOL, software, IRON robotics.": "Élményközpont, EV, eVTOL, szoftver, IRON robotika.",
+            "Farewell dinner: Xu’s Seafood": "Búcsúvacsora: Xu’s Seafood",
+            "Flight CA1379: PEK → CAN": "CA1379 járat: PEK → CAN",
+            "Great Wall walk": "Nagy Fal séta",
+            "Guangzhou → Shenzhen": "Kanton → Sencsen",
+            "Guided tour with Lars Ulrik Thom from Beijing Postcards.": "Tárlatvezetés Lars Ulrik Thommal a Beijing Postcards-tól.",
+            "Huaqiangbei electronics market": "Huaqiangbei elektronikai piac",
+            "Including Xiaomi and Aito (Huawei).": "Beleértve a Xiaomit és az Aito-t (Huawei).",
+            "Intelligent factory, AION, autonomy L2-L4.": "Intelligens gyár, AION, autonómia L2-L4.",
+            "Italian dinner and networking.": "Olasz vacsora és kapcsolatépítés.",
+            "Jing A Wangjing Brewery.": "Jing A Wangjing Sörgyár.",
+            "Joint venture with Stellantis and expansion in Europe.": "Közös vállalkozás a Stellantis-szel és terjeszkedés Európában.",
+            "Lunch": "Ebéd",
+            "Lunch (sandwich)": "Ebéd (szendvics)",
+            "Lunch at Bytedance": "Ebéd a Bytedance-ben",
+            "Lunch before transfer back to hotel.": "Ebéd transzfer előtt a szállodába.",
+            "Lunch delivered by drones (Meituan)": "Drónokkal szállított ebéd (Meituan)",
+            "Management meeting and humanoid robot demonstrations.": "Vezetői értekezlet és humanoid robot bemutatók.",
+            "Market positioning and European plans.": "Piaci pozicionálás és európai tervek.",
+            "Meet food tour guides": "Ismerje meg az idegenvezetőket",
+            "Meet in lobby": "Találkozás a hallban",
+            "Meet in lobby + transfer": "Találkozás a hallban + transzfer",
+            "Meet in lobby + transfer to Forbidden City": "Találkozás a hallban + transzfer a Tiltott Városba",
+            "Meet in lobby + transfer to dinner": "Találkozás a hallban + transzfer vacsorára",
+            "Meet with suitcases in lobby": "Találkozzon a bőröndökkel a hallban",
+            "Meeting + factory tour at GAC": "Találkozó + üzembejárás a GAC-ban",
+            "Meeting 1: Leapmotor": "1. találkozó: Leapmotor",
+            "Meeting 2: Xiaomi": "2. találkozó: Xiaomi",
+            "Meeting 3: NIO": "3. találkozó: NIO",
+            "Meeting with BYD": "Találkozó a BYD-vel",
+            "Meeting with CADA": "Találkozó a CADA-val",
+            "Meeting with Huawei": "Találkozás a Huawei-vel",
+            "Meeting with Xpeng": "Találkozás Xpenggel",
+            "Meeting: Bytedance (TikTok / Dongchedi)": "Találkozó: Bytedance (TikTok / Dongchedi)",
+            "Meeting: CATL": "Találkozó: CATL",
+            "Meeting: JD.com (JD Automotive)": "Találkozó: JD.com (JD Automotive)",
+            "Networking (DCCC + German Chamber)": "Hálózatépítés (DCCC + Német Kamara)",
+            "Own time": "Saját idő",
+            "Own time at Auto Show": "Saját idő az Autószalonon",
+            "Part of the group goes directly to the airport.": "A csoport egy része közvetlenül a repülőtérre megy.",
+            "Passport, comfortable shoes, sunscreen.": "Útlevél, kényelmes cipő, fényvédő.",
+            "Peking duck and intro to the week program.": "Pekingi kacsa és bevezető a heti programba.",
+            "Pickup at North Gate with James Xu.": "Átvétel a North Gate-nél James Xuval.",
+            "Please carry passport.": "Kérjük, vigyen útlevelet.",
+            "Presentations and networking session.": "Előadások és hálózatépítés.",
+            "Return and meet in lobby": "Térjen vissza és találkozzon a hallban",
+            "Return for luggage / airport transfers": "Vissza a poggyászhoz/reptéri transzferhez",
+            "Return to hotel": "Visszatérés a szállodába",
+            "Shenzhen": "Shenzhen",
+            "Shenzhen Shanghai Hotel.": "Shenzhen Shanghai Hotel.",
+            "Shopping mall automotive display": "Bevásárlóközpont autóipari kijelző",
+            "Strategy, technology, and battery swapping.": "Stratégia, technológia és akkumulátorcsere.",
+            "Then meeting with CADA.": "Aztán találkozunk a CADA-val.",
+            "Ticket distribution + entry": "Jegyosztás + belépő",
+            "Transfer to BYD": "Transzfer a BYD-be",
+            "Transfer to Beijing Auto Show": "Transzfer a Pekingi Autószalonra",
+            "Transfer to Bytedance": "Átvitel a Bytedance-ba",
+            "Transfer to CATL": "Transzfer a CATL-hez",
+            "Transfer to GAC Factory": "Transzfer a GAC ​​gyárba",
+            "Transfer to Great Wall (Badaling)": "Transzfer a Nagy Falhoz (Badaling)",
+            "Transfer to Huawei": "Transzfer a Huaweihez",
+            "Transfer to Hutong area.": "Transzfer Hutong területére.",
+            "Transfer to JD.com": "Transzfer a JD.com oldalra",
+            "Transfer to UBTech": "Transzfer az UTBech-hez",
+            "Transfer to WeRide": "Transzfer a WeRide-ba",
+            "Transfer to Xpeng": "Transzfer az Xpengre",
+            "Transfer to airport + check-in": "Transzfer a repülőtérre + check-in",
+            "Transfer to networking event": "Transzfer hálózati eseményre",
+            "Transfer to restaurant": "Transzfer az étterembe",
+            "Visit UBTech": "Látogasson el az UTBech oldalra",
+            "Visit: The Forbidden City": "Látogatás: A tiltott város",
+            "Walk to restaurant": "Sétáljon az étterembe",
+            "WeRide: autonomous drive": "WeRide: autonóm hajtás"
+      },
+      "da": {
+            "4 local venues and integration evening.": "4 lokale spillesteder og integrationsaften.",
+            "550m walk and own exploration time.": "550m gang og egen udforskningstid.",
+            "After dinner: optional 1.5 km walk or taxi.": "Efter middagen: valgfri 1,5 km gåtur eller taxa.",
+            "Air China, Terminal 3 to Terminal 1.": "Air China, Terminal 3 til Terminal 1.",
+            "Approx. 2h walk, cable car option possible.": "Ca. 2 timers gåtur, mulighed for svævebane.",
+            "Approx. 400m.": "Ca. 400m.",
+            "Battery, storage, V2G, recycling and European strategy.": "Batteri, opbevaring, V2G, genbrug og europæisk strategi.",
+            "Bay area near Hong Kong view point.": "Bugtområde nær udsigtspunktet Hong Kong.",
+            "Beijing": "Beijing",
+            "Beijing Hutong Food Tour": "Beijing Hutong Food Tour",
+            "Beijing International Hotel. Please have lunch before the meeting. Bring your passport and comfortable shoes.": "Beijing International Hotel. Spis gerne frokost inden mødet. Medbring pas og behagelige sko.",
+            "Beijing → Guangzhou": "Beijing → Guangzhou",
+            "Bus back to hotel": "Bus tilbage til hotellet",
+            "Bus transfer to Shenzhen": "Bustransport til Shenzhen",
+            "Cantonese cuisine.": "Kantonesisk køkken.",
+            "Check-in + own time": "Check-in + egen tid",
+            "Check-out and luggage to bus.": "Check-out og bagage til bus.",
+            "Check-out and minibar payment before meeting.": "Check-out og minibar betaling inden møde.",
+            "Check-out; luggage storage possible.": "Check-out; bagageopbevaring muligt.",
+            "Chinese restaurant.": "kinesisk restaurant.",
+            "Cooperation between European and Chinese dealers.": "Samarbejde mellem europæiske og kinesiske forhandlere.",
+            "Demonstration and technology discussion.": "Demonstration og teknologidiskussion.",
+            "Departure for dinner": "Afgang til middag",
+            "Dinner: Da Dong Wangfujing": "Middag: Da Dong Wangfujing",
+            "Dinner: San Li Tun": "Aftensmad: San Li Tun",
+            "Dinner: Terra Madre": "Aftensmad: Terra Madre",
+            "Entry and tickets for Auto Show": "Adgang og billetter til Auto Show",
+            "Exhibition center, batteries, aftermarket, recycling and supply chain strategy.": "Udstillingscenter, batterier, eftermarked, genbrug og forsyningskædestrategi.",
+            "Experience center and e-commerce/logistics/automotive strategy.": "Erfaringscenter og e-handel/logistik/bilstrategi.",
+            "Experience center and session on ecosystem and automotive leads.": "Erfaringscenter og session om økosystemer og automotive leads.",
+            "Experience center, AI, cloud, 5G and automotive.": "Oplevelsescenter, AI, cloud, 5G og bilindustrien.",
+            "Experience center, EV, eVTOL, software, IRON robotics.": "Erfaringscenter, EV, eVTOL, software, IRON-robotik.",
+            "Farewell dinner: Xu’s Seafood": "Afskedsmiddag: Xu's Seafood",
+            "Flight CA1379: PEK → CAN": "Fly CA1379: PEK → CAN",
+            "Great Wall walk": "Great Wall gåtur",
+            "Guangzhou → Shenzhen": "Guangzhou → Shenzhen",
+            "Guided tour with Lars Ulrik Thom from Beijing Postcards.": "Rundvisning med Lars Ulrik Thom fra Beijing Postcards.",
+            "Huaqiangbei electronics market": "Huaqiangbei elektronikmarked",
+            "Including Xiaomi and Aito (Huawei).": "Herunder Xiaomi og Aito (Huawei).",
+            "Intelligent factory, AION, autonomy L2-L4.": "Intelligent fabrik, AION, autonomi L2-L4.",
+            "Italian dinner and networking.": "Italiensk middag og netværk.",
+            "Jing A Wangjing Brewery.": "Jing A Wangjing Bryggeri.",
+            "Joint venture with Stellantis and expansion in Europe.": "Joint venture med Stellantis og ekspansion i Europa.",
+            "Lunch": "Frokost",
+            "Lunch (sandwich)": "Frokost (sandwich)",
+            "Lunch at Bytedance": "Frokost på Bytedance",
+            "Lunch before transfer back to hotel.": "Frokost før transfer tilbage til hotellet.",
+            "Lunch delivered by drones (Meituan)": "Frokost leveret af droner (Meituan)",
+            "Management meeting and humanoid robot demonstrations.": "Ledelsesmøde og humanoide robotdemonstrationer.",
+            "Market positioning and European plans.": "Markedspositionering og europæiske planer.",
+            "Meet food tour guides": "Mød madrejseledere",
+            "Meet in lobby": "Mød i lobbyen",
+            "Meet in lobby + transfer": "Mød i lobbyen + transfer",
+            "Meet in lobby + transfer to Forbidden City": "Mød op i lobbyen + overførsel til Forbidden City",
+            "Meet in lobby + transfer to dinner": "Mød i lobbyen + transfer til middag",
+            "Meet with suitcases in lobby": "Mød med kufferter i lobbyen",
+            "Meeting + factory tour at GAC": "Møde + fabriksrundvisning på GAC",
+            "Meeting 1: Leapmotor": "Møde 1: Leapmotor",
+            "Meeting 2: Xiaomi": "Møde 2: Xiaomi",
+            "Meeting 3: NIO": "Møde 3: NIO",
+            "Meeting with BYD": "Møde med BYD",
+            "Meeting with CADA": "Møde med CADA",
+            "Meeting with Huawei": "Møde med Huawei",
+            "Meeting with Xpeng": "Møde med Xpeng",
+            "Meeting: Bytedance (TikTok / Dongchedi)": "Møde: Bytedance (TikTok / Dongchedi)",
+            "Meeting: CATL": "Møde: CATL",
+            "Meeting: JD.com (JD Automotive)": "Møde: JD.com (JD Automotive)",
+            "Networking (DCCC + German Chamber)": "Netværk (DCCC + German Chamber)",
+            "Own time": "Egen tid",
+            "Own time at Auto Show": "Egen tid på Auto Show",
+            "Part of the group goes directly to the airport.": "En del af gruppen tager direkte til lufthavnen.",
+            "Passport, comfortable shoes, sunscreen.": "Pas, komfortable sko, solcreme.",
+            "Peking duck and intro to the week program.": "Pekingand og introduktion til ugeprogrammet.",
+            "Pickup at North Gate with James Xu.": "Afhentning ved North Gate med James Xu.",
+            "Please carry passport.": "Medbring venligst pas.",
+            "Presentations and networking session.": "Præsentationer og netværkssession.",
+            "Return and meet in lobby": "Vend tilbage og mød i lobbyen",
+            "Return for luggage / airport transfers": "Retur for bagage / lufthavnstransport",
+            "Return to hotel": "Tilbage til hotellet",
+            "Shenzhen": "Shenzhen",
+            "Shenzhen Shanghai Hotel.": "Shenzhen Shanghai Hotel.",
+            "Shopping mall automotive display": "Indkøbscenter automotive display",
+            "Strategy, technology, and battery swapping.": "Strategi, teknologi og batteribytning.",
+            "Then meeting with CADA.": "Derefter møde med CADA.",
+            "Ticket distribution + entry": "Billetuddeling + entré",
+            "Transfer to BYD": "Overfør til BYD",
+            "Transfer to Beijing Auto Show": "Transfer til Beijing Auto Show",
+            "Transfer to Bytedance": "Overførsel til Bytedance",
+            "Transfer to CATL": "Overførsel til CATL",
+            "Transfer to GAC Factory": "Overførsel til GAC Factory",
+            "Transfer to Great Wall (Badaling)": "Overførsel til Great Wall (Badaling)",
+            "Transfer to Huawei": "Overfør til Huawei",
+            "Transfer to Hutong area.": "Transfer til Hutong-området.",
+            "Transfer to JD.com": "Overfør til JD.com",
+            "Transfer to UBTech": "Overførsel til UBTech",
+            "Transfer to WeRide": "Overfør til WeRide",
+            "Transfer to Xpeng": "Overfør til Xpeng",
+            "Transfer to airport + check-in": "Transfer til lufthavn + check-in",
+            "Transfer to networking event": "Overfør til netværksbegivenhed",
+            "Transfer to restaurant": "Transfer til restaurant",
+            "Visit UBTech": "Besøg UBTech",
+            "Visit: The Forbidden City": "Besøg: Den forbudte by",
+            "Walk to restaurant": "Gå til restaurant",
+            "WeRide: autonomous drive": "WeRide: autonom kørsel"
+      }
+};
 
     const parseInChina = (date, time) => {
       const [y,m,d] = date.split('-').map(Number);
@@ -453,8 +1297,15 @@
       return Date.UTC(y, m-1, d, hh-8, mm, 0);
     };
 
-    const normalized = events.map((ev, idx) => ({ ...ev, idx, start: parseInChina(ev.d, ev.t), end: parseInChina(ev.d, ev.e) }))
-      .sort((a,b) => a.start - b.start);
+    const buildNormalized = () => eventsEn.map((ev, idx) => {
+      const translated = {
+        ...ev,
+        city: eventTranslations[lang]?.[ev.city] || ev.city,
+        title: eventTranslations[lang]?.[ev.title] || ev.title,
+        desc: ev.desc ? (eventTranslations[lang]?.[ev.desc] || ev.desc) : ''
+      };
+      return { ...translated, idx, start: parseInChina(ev.d, ev.t), end: parseInChina(ev.d, ev.e) };
+    }).sort((a,b) => a.start - b.start);
 
     let lang = localStorage.getItem('china_trip_lang') || 'en';
     let showPast = false;
@@ -474,6 +1325,7 @@
 
     function findCurrentAndNext(nowMs) {
       let current = null; let next = null;
+      const normalized = buildNormalized();
       for (const ev of normalized) {
         if (nowMs >= ev.start && nowMs < ev.end) current = ev;
         if (!next && ev.start > nowMs) next = ev;
@@ -505,6 +1357,7 @@
 
     function buildTimeline(currentIdx, nextIdx, nowMs) {
       const copy = getCopy();
+      const normalized = buildNormalized();
       const grouped = normalized.reduce((acc, ev) => {
         const k = `${ev.d}|${ev.city}`;
         (acc[k] ||= []).push(ev);
@@ -607,6 +1460,8 @@
       document.getElementById('langLabel').textContent = copy.language;
       document.getElementById('fontLabel').textContent = copy.fontSize;
       document.getElementById('appearanceLabel').textContent = copy.appearance;
+      const pullRefreshStatus = document.getElementById('pullRefreshStatus');
+      if (pullRefreshStatus && !pullRefreshStatus.classList.contains('visible')) pullRefreshStatus.textContent = copy.pullToRefreshHint;
 
       document.getElementById('currentTitle').textContent = current ? current.title : copy.noCurrent;
       document.getElementById('currentTime').textContent = current ? `${formatDay(current.d, current.city, lang)} | ${current.t}–${current.e}` : '';
@@ -701,6 +1556,7 @@
         'VERSION:2.0',
         'PRODID:-//EDC//ChinaTrip26//EN'
       ];
+      const normalized = buildNormalized();
       normalized.forEach((ev) => {
         lines.push('BEGIN:VEVENT');
         lines.push(`UID:chinatrip26-${ev.idx}@edc`);
@@ -726,6 +1582,7 @@
       if (!('Notification' in window) || Notification.permission !== 'granted') return;
       const horizonMs = 1000 * 60 * 60 * 12;
       const reminderLeadMinutes = [15];
+      const normalized = buildNormalized();
       normalized.forEach(ev => {
         if (ev.start < nowMs || ev.start - nowMs > horizonMs) return;
         reminderLeadMinutes.forEach(minBefore => {
@@ -744,6 +1601,52 @@
     }
 
     document.getElementById('exportIcs').addEventListener('click', downloadIcs);
+
+
+    async function refreshOfflineContent() {
+      const copy = getCopy();
+      const badge = document.getElementById('pullRefreshStatus');
+      badge.textContent = copy.pullRefreshing;
+      badge.classList.add('visible');
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          registration.active?.postMessage({ type: 'REFRESH_OFFLINE' });
+        }
+        await fetch('./chinatrip26.html', { cache: 'no-store' });
+      } catch (_) {}
+      refreshView(false);
+      badge.textContent = copy.pullRefreshed;
+      setTimeout(() => badge.classList.remove('visible'), 1200);
+    }
+
+    function setupPullToRefresh() {
+      let startY = 0;
+      let triggered = false;
+      const threshold = 70;
+      const badge = document.getElementById('pullRefreshStatus');
+      const setHint = () => { badge.textContent = getCopy().pullToRefreshHint; };
+      setHint();
+      document.addEventListener('touchstart', (event) => {
+        if (window.scrollY > 0) return;
+        startY = event.touches[0].clientY;
+        triggered = false;
+        setHint();
+      }, { passive: true });
+      document.addEventListener('touchmove', (event) => {
+        if (window.scrollY > 0 || !startY) return;
+        const delta = event.touches[0].clientY - startY;
+        if (delta > 18) badge.classList.add('visible');
+        if (delta > threshold && !triggered) {
+          triggered = true;
+          refreshOfflineContent();
+        }
+      }, { passive: true });
+      document.addEventListener('touchend', () => {
+        startY = 0;
+        if (!triggered) setTimeout(() => badge.classList.remove('visible'), 180);
+      }, { passive: true });
+    }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./chinatrip26-sw.js').then((registration) => {
@@ -769,6 +1672,7 @@
       });
     }
 
+    setupPullToRefresh();
     refreshView(true);
     setInterval(() => refreshView(false), 60_000);
   </script>

@@ -200,7 +200,22 @@
     .item:last-child { border-bottom: 0; }
     .time { font-weight: 700; color: var(--accent); }
     .title { font-weight: 700; margin-bottom: .1rem; }
+    .title-row { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+    .entity-icon { font-size: 1rem; }
     .desc { margin: .05rem 0; color: var(--muted); font-size: .9rem; }
+    .info-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+      margin-top: .25rem;
+      border: none;
+      background: transparent;
+      color: var(--accent);
+      font-weight: 600;
+      padding: 0;
+      border-radius: 0;
+    }
+    .info-link:hover { text-decoration: underline; border: none; }
     .current-item { border-left: 3px solid var(--ok); background: color-mix(in srgb, var(--card), var(--current-bg) 72%); }
     .next-item { border-left: 3px solid var(--warn); background: color-mix(in srgb, var(--card), var(--next-bg) 72%); }
 
@@ -210,6 +225,7 @@
     }
     .modal.open { display: flex; }
     .modal-box { width: min(720px, 100%); max-height: 82vh; overflow: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; }
+    .modal-box #modalText { white-space: pre-wrap; line-height: 1.55; }
 
     @media (max-width: 880px) {
       .status-grid { grid-template-columns: 1fr; }
@@ -324,7 +340,8 @@
         settings: 'Settings', language: 'Language', fontSize: 'Font size', appearance: 'Appearance', shortCountdown: 'Next in',
         refreshRate: 'Refresh rate', refreshSlow: 'Eco (5 min)', refreshMedium: 'Balanced (1 min)', refreshFast: 'Live (30 sec)',
         pushConsentText: 'Enable push alerts to avoid browser blocking reminders.',
-        pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later'
+        pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later',
+        moreInfo: '(i) More info'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -343,7 +360,8 @@
         settings: 'Ustawienia', language: 'Język', fontSize: 'Wielkość czcionki', appearance: 'Wygląd', shortCountdown: 'Za',
         refreshRate: 'Częstotliwość odświeżania', refreshSlow: 'Eco (5 min)', refreshMedium: 'Standard (1 min)', refreshFast: 'Live (30 s)',
         pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
-        pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później'
+        pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później',
+        moreInfo: '(i) Więcej informacji'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -362,7 +380,8 @@
         settings: 'Beállítások', language: 'Nyelv', fontSize: 'Betűméret', appearance: 'Megjelenés', shortCountdown: 'Következő ennyi idő múlva',
         refreshRate: 'Frissítési ütem', refreshSlow: 'Eco (5 perc)', refreshMedium: 'Normál (1 perc)', refreshFast: 'Live (30 mp)',
         pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
-        pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később'
+        pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később',
+        moreInfo: '(i) További információ'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -381,7 +400,8 @@
         settings: 'Indstillinger', language: 'Sprog', fontSize: 'Skriftstørrelse', appearance: 'Udseende', shortCountdown: 'Næste om',
         refreshRate: 'Opdateringsfrekvens', refreshSlow: 'Eco (5 min)', refreshMedium: 'Normal (1 min)', refreshFast: 'Live (30 sek)',
         pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
-        pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere'
+        pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere',
+        moreInfo: '(i) Mere info'
       }
     };
 
@@ -1301,6 +1321,161 @@
       }
 };
 
+    const entityCatalog = [
+      {
+        id: 'forbidden-city',
+        type: 'historic',
+        icon: '🏯',
+        aliases: ['forbidden city'],
+        title: 'The Forbidden City',
+        info: `The Forbidden City is the former imperial palace complex at the heart of Beijing and one of the most important monuments in Chinese history. Construction began in 1406 during the Ming dynasty and the site became the political and ceremonial center of imperial rule in 1420. For almost five centuries, emperors of the Ming and Qing dynasties governed from this vast compound, which includes ceremonial halls, residences, administrative courtyards, temples, and landscaped spaces. The architecture is carefully aligned to traditional cosmology, hierarchy, and ritual order, and the color palette of vermilion walls and golden roofs became globally iconic. After the fall of the Qing dynasty, the complex gradually transformed into the Palace Museum, opened to the public in 1925. Today, visitors can follow the central axis through major halls while also exploring side palaces and exhibitions focused on calligraphy, ceramics, bronzes, and court life. The Forbidden City has UNESCO World Heritage status and remains central to understanding dynastic governance, imperial art, and urban planning in East Asia. For study groups, it offers a practical case of how heritage protection, tourism management, and national identity are balanced in a living capital city.`
+      },
+      {
+        id: 'great-wall',
+        type: 'historic',
+        icon: '🏯',
+        aliases: ['great wall', 'badaling'],
+        title: 'Great Wall (Badaling)',
+        info: `The Badaling section is one of the most visited and best known stretches of the Great Wall of China, located northwest of central Beijing. The Great Wall is not a single continuous wall from one period, but a network of fortifications expanded and rebuilt by different dynasties. The sections around Badaling are largely associated with Ming dynasty military engineering, designed to defend key passes and communication routes into the capital region. Badaling became especially prominent in the modern era because it was among the earliest sections restored for tourism and public education, making it a symbolic gateway for domestic and international visitors. The site demonstrates advanced historical logistics: watchtowers, beacon systems, steep stair gradients, and strategic visibility across mountain ridges. UNESCO recognizes the Great Wall as a World Heritage site, emphasizing both its architectural scale and cultural meaning. Today, Badaling also illustrates modern heritage challenges, including crowd management, transportation planning, and conservation under heavy visitor pressure. For delegation travelers, the location combines landscape, engineering, military history, and nation-brand storytelling in a single field visit, and is often used as a benchmark when discussing how countries protect high-profile monuments while keeping them accessible and economically viable.`
+      },
+      {
+        id: 'bytedance',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['bytedance', 'tiktok', 'dongchedi'],
+        title: 'ByteDance',
+        info: `ByteDance is a Beijing-founded technology company best known globally for TikTok and in China for products such as Douyin and Toutiao. Established in 2012, the company expanded rapidly by combining large-scale content platforms with recommendation algorithms optimized for user relevance and engagement. ByteDance’s ecosystem spans social media, short video, creator tools, enterprise software, and vertical products in areas such as automotive media through Dongchedi. Its growth model is often discussed as a case of product-led global expansion from China, with localized operations, data infrastructure, and regulatory adaptation in different regions. For business delegations, ByteDance is relevant not only as a media platform but also as a marketing and commerce channel that influences consumer discovery and purchase decisions. Automotive brands, dealers, and aftersales businesses increasingly use short-form video and live commerce formats to drive leads and brand positioning. At the same time, ByteDance is frequently part of policy debates around platform governance, privacy, algorithm transparency, and cross-border data compliance. A visit helps teams understand how digital ecosystems now shape demand generation, customer segmentation, and retail conversion in China’s fast-moving mobility market, where media, commerce, and software-enabled customer journeys are deeply integrated.`
+      },
+      {
+        id: 'jd',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['jd.com', 'jd automotive'],
+        title: 'JD.com',
+        info: `JD.com is one of China’s largest technology-driven retail and supply-chain companies, headquartered in Beijing. The company began as an electronics retailer and evolved into a broad platform combining first-party retail, marketplace operations, logistics, cloud-enabled services, and data capabilities. A defining characteristic of JD is its long-term investment in infrastructure, including warehousing networks, fulfillment technology, and last-mile delivery systems, which support reliability and speed at national scale. For mobility and automotive participants, JD Automotive provides a useful reference for how digital channels connect consumers with vehicles, parts, accessories, maintenance services, and financing touchpoints. The company’s ecosystem demonstrates how e-commerce, logistics, and data analytics can compress the path from demand insight to inventory placement and final delivery. JD also illustrates China’s advanced experimentation with omnichannel retail, where online engagement, physical service nodes, and aftersales coordination are tightly linked. In strategy discussions, teams often focus on assortment planning, conversion optimization, and supply-chain resilience under rapid market shifts. Visiting JD helps delegation members compare platform-led retail models with dealership-led models and identify practical lessons in operational excellence, technology adoption, and customer experience design relevant to the European automotive distribution context.`
+      },
+      {
+        id: 'weride',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['weride', 'autonomous drive'],
+        title: 'WeRide',
+        info: `WeRide is an autonomous driving technology company founded in China, focused on commercial deployment of self-driving solutions across multiple vehicle types and urban scenarios. The company is known for work in robotaxi services and has expanded into additional applications such as robobuses, logistics, and sanitation vehicles in selected markets. Its business relevance lies in translating advanced driverless research into real-world operations under regulatory constraints, mixed traffic environments, and safety requirements. For trip participants, WeRide offers a concrete view of how AI perception systems, mapping, fleet operations, and remote support infrastructure are integrated in daily service models. The company’s demonstrations typically highlight not only vehicle behavior but also the surrounding operational stack: dispatching, route design, compliance controls, and incident response protocols. Autonomous mobility in China is evolving through city-level pilots and partnerships among technology firms, automakers, and public authorities, making it a valuable case for policy and commercialization analysis. A WeRide session helps visitors evaluate timelines, cost structures, customer acceptance factors, and potential downstream effects on dealership service networks, insurance, fleet management, and urban transport planning as assisted and autonomous features become more mainstream.`
+      },
+      {
+        id: 'catl',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['catl'],
+        title: 'CATL',
+        info: `CATL (Contemporary Amperex Technology Co. Limited) is one of the world’s most influential battery manufacturers and a central player in the global electric mobility value chain. Founded in 2011 and headquartered in Ningde, CATL supplies lithium-ion battery systems and energy-storage solutions to a broad range of automotive and industrial customers. The company is often referenced for scale manufacturing, chemistry innovation, pack integration, and vertical collaboration with automakers. In market strategy discussions, CATL is important because battery cost, performance, durability, and charging behavior directly shape EV competitiveness and consumer adoption. Beyond traction batteries, CATL’s portfolio includes stationary storage solutions that support grid flexibility and renewable integration, illustrating convergence between transport electrification and energy systems. For delegation teams, meetings at CATL can provide insights into roadmap planning, lifecycle management, recycling pathways, and cross-regional supply-chain localization. The company is also a practical case for understanding how Chinese industrial policy, engineering execution, and ecosystem partnerships accelerate time-to-market in critical clean-tech segments. Observing CATL’s approach helps visitors assess opportunities and risks in procurement strategy, technology dependency, and long-term cooperation models for European automotive distribution and service networks transitioning toward electrified fleets.`
+      },
+      {
+        id: 'auto-china',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['auto show', 'beijing auto show', 'auto china'],
+        title: 'Auto China (Beijing Auto Show)',
+        info: `Auto China, commonly called the Beijing Auto Show, is one of the flagship automotive exhibitions in China and an important indicator of market direction in the global industry. Held on a biennial cycle, the event gathers domestic and international manufacturers, suppliers, technology firms, and media in a high-visibility format where product strategy and innovation narratives are publicly tested. The show is especially relevant today because Chinese brands increasingly set pace in electric drivetrains, software-defined vehicle features, connectivity, intelligent cockpit systems, and fast-charging ecosystems. For business delegations, Auto China functions as a dense learning environment: visitors can compare positioning across legacy OEMs, new-energy startups, and component partners in a single venue. Beyond vehicle launches, the event highlights trends in design language, pricing architecture, autonomous features, and digital user experiences that influence consumer expectations across markets. It also provides a useful lens on how policy, supply chains, and local competition shape commercialization speed in China. Structured walkthroughs help participants identify practical signals for product planning, retail adaptation, and partnership strategy in Europe, especially where electrification, software services, and new mobility propositions are rapidly changing dealership economics and customer journeys.`
+      },
+      {
+        id: 'xiaomi',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['xiaomi'],
+        title: 'Xiaomi',
+        info: `Xiaomi is a major Chinese technology company best known for smartphones, connected devices, and a broad consumer electronics ecosystem. In recent years, Xiaomi has expanded into electric vehicles, linking car software, smart devices, and cloud services into one user environment. This makes the company relevant for automotive retail because it shows how consumer-tech brands can enter mobility with strong digital communities, rapid product cycles, and integrated software experiences. For delegation teams, Xiaomi is a practical case for studying cross-industry convergence between electronics and vehicles.`
+      },
+      {
+        id: 'nio',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['nio'],
+        title: 'NIO',
+        info: `NIO is a Chinese smart-EV company known for premium electric vehicles, software-centric user experiences, and battery swap services in selected markets. The company emphasizes digital engagement, branded owner communities, and service innovation around charging and energy flexibility. For business visitors, NIO is useful as a case study in how product, brand experience, and infrastructure can be designed together. Its approach helps teams think about customer loyalty, subscription-style services, and the operational implications of energy ecosystems for dealers and aftersales partners.`
+      },
+      {
+        id: 'xpeng',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['xpeng'],
+        title: 'XPENG',
+        info: `XPENG is a Chinese electric-vehicle manufacturer focused on smart mobility, advanced driver-assistance capabilities, and software-defined product architecture. The brand has become a visible player in China’s fast-moving EV competition and is expanding internationally with selected models. Delegation participants often look at XPENG to understand rapid iteration in cockpit software, connectivity, and intelligent-driving features. The company is relevant for distribution strategy because it illustrates how digital feature roadmaps and OTA updates can influence perceived product value over time.`
+      },
+      {
+        id: 'gac',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['gac'],
+        title: 'GAC Group',
+        info: `GAC Group (Guangzhou Automobile Group) is a large Chinese automotive manufacturer with activities across vehicle production, R&D, component supply, and strategic partnerships. The group includes established brands and new-energy initiatives and is often discussed as an example of how large incumbents adapt to electrification and intelligent mobility. A factory visit is valuable for seeing operational scale, process engineering, and quality systems in practice. For European delegates, GAC offers perspective on manufacturing competitiveness and platform strategy in China’s industrial ecosystem.`
+      },
+      {
+        id: 'huawei',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['huawei', 'aito'],
+        title: 'Huawei',
+        info: `Huawei is a global technology company headquartered in Shenzhen, with capabilities spanning telecommunications, enterprise digital infrastructure, cloud services, and consumer devices. In automotive contexts, Huawei is increasingly visible through intelligent cockpit, connectivity, and assisted-driving technology collaborations with carmakers. This makes Huawei relevant to market observers tracking how ICT companies reshape vehicle architecture and customer experience. For delegation members, meetings can provide insight into software-hardware integration, platform ecosystems, and the growing role of digital infrastructure in automotive value creation.`
+      },
+      {
+        id: 'ubtech',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['ubtech'],
+        title: 'UBTECH Robotics',
+        info: `UBTECH Robotics is a Shenzhen-based robotics company known for humanoid and service-robot development. The firm works on motion control, AI-enabled interaction, and robotics applications across education, enterprise, and industrial scenarios. For automotive-focused delegations, UBTECH is relevant because robotics increasingly intersects with manufacturing, logistics, and customer-facing digital experiences. A visit helps participants evaluate where humanoid and collaborative robot technologies may create practical value, what deployment barriers remain, and how automation strategy connects to workforce and process design.`
+      },
+      {
+        id: 'byd',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['byd'],
+        title: 'BYD',
+        info: `BYD is one of China’s leading new-energy mobility companies and a major global EV producer. Founded in the battery sector and later expanded into vehicles, BYD is frequently cited for vertical integration, scale execution, and rapid product rollout. The company’s portfolio spans passenger cars, commercial vehicles, and energy-related technologies. For delegation teams, BYD provides a strong benchmark for cost structure, battery strategy, and market positioning in high-volume EV competition. It is also useful for understanding how industrial integration can accelerate innovation speed.`
+      },
+      {
+        id: 'cada',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['cada'],
+        title: 'CADA',
+        info: `CADA, the China Automobile Dealers Association, is an industry organization representing automotive circulation and dealership stakeholders in China. It plays a role in market dialogue, sector coordination, and information exchange across the distribution ecosystem. For international groups, CADA sessions are valuable for understanding dealer economics, used-car development, policy trends, and channel transformation in a rapidly electrifying market. The association perspective complements OEM and technology visits by adding a distribution-level view of competition and customer behavior.`
+      },
+      {
+        id: 'leapmotor',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['leapmotor'],
+        title: 'Leapmotor',
+        info: `Leapmotor is a Chinese EV manufacturer focused on cost-efficient smart electric vehicles and in-house development of selected core components. The company is often discussed as part of the new wave of high-speed EV challengers that compete through digital features and value-focused positioning. Delegation participants can use Leapmotor as a reference point for product strategy under intense domestic competition. It helps illustrate how brands balance technology claims, affordability, manufacturing pace, and channel expansion in China’s dynamic market environment.`
+      },
+      {
+        id: 'huaqiangbei',
+        type: 'historic',
+        icon: '🏯',
+        aliases: ['huaqiangbei'],
+        title: 'Huaqiangbei',
+        info: `Huaqiangbei, located in Shenzhen, is one of the world’s most famous electronics market districts and a symbol of China’s hardware innovation ecosystem. While not a classical historical monument, it is a landmark of modern industrial history, representing the rise of rapid prototyping, component trading, and entrepreneurial manufacturing culture in the Pearl River Delta. For business visitors, Huaqiangbei offers a practical look at supply-chain density, speed of iteration, and the ecosystem logic that supported China’s emergence as a global hardware powerhouse.`
+      },
+      {
+        id: 'dccc-gcc',
+        type: 'company',
+        icon: '🏢',
+        aliases: ['dccc', 'german chamber'],
+        title: 'DCCC & German Chamber',
+        info: `The Danish-Chinese Chamber of Commerce (DCCC) and the German Chamber network in China are business organizations that support market entry, peer networking, and policy dialogue for international companies operating in China. Events with these organizations typically combine practical market intelligence with executive-level exchange across industries. For delegation participants, such sessions are useful for understanding on-the-ground business conditions, regulatory expectations, partner selection risks, and operational lessons learned from companies already active in the Chinese market.`
+      },
+      {
+        id: 'hutong',
+        type: 'historic',
+        icon: '🏯',
+        aliases: ['hutong'],
+        title: 'Beijing Hutong Area',
+        info: `Hutongs are traditional alleyway neighborhoods in Beijing that preserve patterns of urban life linked to courtyard housing, local food culture, and community-scale commerce. Many hutong districts trace their development across late imperial and modern periods, making them important for understanding how everyday social history coexists with rapid metropolitan change. Visiting a hutong area offers cultural context beyond formal business meetings: street-scale retail behavior, hospitality traditions, and city-identity narratives that continue to shape Beijing’s tourism and lifestyle economy.`
+      }
+    ];
+
     const parseInChina = (date, time) => {
       const [y,m,d] = date.split('-').map(Number);
       const [hh,mm] = time.split(':').map(Number);
@@ -1357,6 +1532,10 @@
     };
 
     const isLongDesc = (txt) => ((txt || '').trim().match(/[.!?](\s|$)/g) || []).length > 1;
+    const detectEntity = (ev) => {
+      const hay = `${ev.title} ${ev.desc || ''}`.toLowerCase();
+      return entityCatalog.find((entity) => entity.aliases.some((alias) => hay.includes(alias)));
+    };
 
     function openDetails(title, text) {
       const copy = getCopy();
@@ -1398,20 +1577,25 @@
           if (ev.idx === nextIdx) item.classList.add('next-item');
 
           const descText = ev.desc || '—';
-          const needsDetails = isLongDesc(descText);
-          const short = needsDetails ? `${descText.split(/[.!?]/)[0]}.` : descText;
+          const entity = detectEntity(ev);
+          const entityInfo = entity ? entity.info : '';
+          const titleText = entity ? `${entity.icon} ${ev.title}` : ev.title;
+          const needsDetails = Boolean(entity) || isLongDesc(descText);
+          const short = entity ? `${descText}${descText && descText !== '—' ? ' ' : ''}` : (needsDetails ? `${descText.split(/[.!?]/)[0]}.` : descText);
+          const detailsText = entity ? `${entityInfo}\n\n${descText && descText !== '—' ? `Program context: ${descText}` : ''}`.trim() : descText;
+          const detailsTitle = entity ? `${entity.title}` : ev.title;
 
           item.innerHTML = `
             <div class="time">${ev.t}–${ev.e}</div>
             <div>
-              <div class="title">${ev.title}</div>
+              <div class="title title-row"><span>${titleText}</span></div>
               <p class="desc">${short}</p>
-              ${needsDetails ? `<button type="button" class="chip details-btn">${copy.details}</button>` : ''}
+              ${needsDetails ? `<button type="button" class="info-link details-btn">${copy.moreInfo}</button>` : ''}
             </div>
           `;
 
           if (needsDetails) {
-            item.querySelector('.details-btn').addEventListener('click', () => openDetails(ev.title, descText));
+            item.querySelector('.details-btn').addEventListener('click', () => openDetails(detailsTitle, detailsText));
           }
           dayCard.appendChild(item);
         });

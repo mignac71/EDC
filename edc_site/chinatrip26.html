@@ -341,7 +341,7 @@
         refreshRate: 'Refresh rate', refreshSlow: 'Eco (5 min)', refreshMedium: 'Balanced (1 min)', refreshFast: 'Live (30 sec)',
         pushConsentText: 'Enable push alerts to avoid browser blocking reminders.',
         pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later',
-        moreInfo: '(i) More info'
+        moreInfo: '(i) More info', programContext: 'Program context'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -361,7 +361,7 @@
         refreshRate: 'Częstotliwość odświeżania', refreshSlow: 'Eco (5 min)', refreshMedium: 'Standard (1 min)', refreshFast: 'Live (30 s)',
         pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
         pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później',
-        moreInfo: '(i) Więcej informacji'
+        moreInfo: '(i) Więcej informacji', programContext: 'Kontekst programu'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -381,7 +381,7 @@
         refreshRate: 'Frissítési ütem', refreshSlow: 'Eco (5 perc)', refreshMedium: 'Normál (1 perc)', refreshFast: 'Live (30 mp)',
         pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
         pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később',
-        moreInfo: '(i) További információ'
+        moreInfo: '(i) További információ', programContext: 'Programkörnyezet'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -401,7 +401,7 @@
         refreshRate: 'Opdateringsfrekvens', refreshSlow: 'Eco (5 min)', refreshMedium: 'Normal (1 min)', refreshFast: 'Live (30 sek)',
         pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
         pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere',
-        moreInfo: '(i) Mere info'
+        moreInfo: '(i) Mere info', programContext: 'Programkontekst'
       }
     };
 
@@ -1578,12 +1578,14 @@
 
           const descText = ev.desc || '—';
           const entity = detectEntity(ev);
-          const entityInfo = entity ? entity.info : '';
+          const entityInfo = entity && lang === 'en' ? entity.info : '';
           const titleText = entity ? `${entity.icon} ${ev.title}` : ev.title;
           const needsDetails = Boolean(entity) || isLongDesc(descText);
           const short = entity ? `${descText}${descText && descText !== '—' ? ' ' : ''}` : (needsDetails ? `${descText.split(/[.!?]/)[0]}.` : descText);
-          const detailsText = entity ? `${entityInfo}\n\n${descText && descText !== '—' ? `Program context: ${descText}` : ''}`.trim() : descText;
-          const detailsTitle = entity ? `${entity.title}` : ev.title;
+          const detailsText = entity
+            ? `${entityInfo}${entityInfo && descText && descText !== '—' ? '\n\n' : ''}${descText && descText !== '—' ? `${copy.programContext}: ${descText}` : ''}`.trim()
+            : descText;
+          const detailsTitle = ev.title;
 
           item.innerHTML = `
             <div class="time">${ev.t}–${ev.e}</div>

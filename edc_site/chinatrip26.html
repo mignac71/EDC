@@ -211,6 +211,11 @@
     .title-row { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
     .entity-icon { font-size: 1rem; }
     .desc { margin: .05rem 0; color: var(--muted); font-size: .9rem; }
+    .status-list { list-style: none; margin: .35rem 0 0; padding: 0; display: grid; gap: .35rem; }
+    .status-list li { display: flex; justify-content: space-between; gap: .6rem; font-size: .88rem; }
+    .status-list li strong { color: var(--ink); font-weight: 700; }
+    .inline-links { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .45rem; }
+    .inline-links a { font-size: .8rem; text-decoration: none; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: .2rem .55rem; }
     .info-link {
       display: inline-flex;
       align-items: center;
@@ -313,6 +318,20 @@
         <p class="tiny" id="nextTime">—</p>
         <p class="tiny" id="nextDesc">—</p>
       </article>
+      <article class="card">
+        <span class="badge" id="flightLiveBadge">Flight live</span>
+        <h2 id="flightLiveTitle">CA1379 • PEK → CAN</h2>
+        <ul class="status-list">
+          <li><span id="flightStatusLabel"></span><strong id="flightStatusValue">—</strong></li>
+          <li><span id="flightGateLabel"></span><strong id="flightGateValue">—</strong></li>
+          <li><span id="flightDelayLabel"></span><strong id="flightDelayValue">—</strong></li>
+          <li><span id="flightLiveRefreshLabel"></span><strong id="flightLiveRefreshValue">—</strong></li>
+        </ul>
+        <div class="inline-links">
+          <a href="https://www.flightaware.com/live/flight/CCA1379" target="_blank" rel="noopener noreferrer" id="flightLinkTrack"></a>
+          <a href="https://www.airchina.com.cn/en/" target="_blank" rel="noopener noreferrer" id="flightLinkCarrier"></a>
+        </div>
+      </article>
     </section>
 
     <div class="timeline-meta">
@@ -351,7 +370,12 @@
         refreshRate: 'Refresh rate', refreshSlow: 'Eco (5 min)', refreshMedium: 'Balanced (1 min)', refreshFast: 'Live (30 sec)',
         pushConsentText: 'Enable push alerts to avoid browser blocking reminders.',
         pushConsentEnable: 'Allow push alerts', pushConsentDismiss: 'Later',
-        moreInfo: '(i) More info', programContext: 'Program context'
+        moreInfo: '(i) More info', programContext: 'Program context',
+        flightLiveBadge: 'Flight live', flightStatusLabel: 'Status', flightGateLabel: 'Gate / Terminal',
+        flightDelayLabel: 'Delay', flightLiveRefreshLabel: 'Last update',
+        flightLinkTrack: 'Track flight', flightLinkCarrier: 'Air China',
+        flightStatusUnknown: 'Unknown', flightDelayOnTime: 'On time',
+        flightDelayLate: '{MIN} min late', flightDataUnavailable: 'Live data unavailable'
       },
       pl: {
         flag: '🇵🇱', title: 'Wyjazd do Chin (22–29.04.2026) — harmonogram live',
@@ -372,7 +396,12 @@
         refreshRate: 'Częstotliwość odświeżania', refreshSlow: 'Eco (5 min)', refreshMedium: 'Standard (1 min)', refreshFast: 'Live (30 s)',
         pushConsentText: 'Włącz alerty push, aby przeglądarka nie blokowała przypomnień.',
         pushConsentEnable: 'Zezwól na push', pushConsentDismiss: 'Później',
-        moreInfo: '(i) Więcej informacji', programContext: 'Kontekst programu'
+        moreInfo: '(i) Więcej informacji', programContext: 'Kontekst programu',
+        flightLiveBadge: 'Lot na żywo', flightStatusLabel: 'Status', flightGateLabel: 'Gate / terminal',
+        flightDelayLabel: 'Opóźnienie', flightLiveRefreshLabel: 'Aktualizacja',
+        flightLinkTrack: 'Śledź lot', flightLinkCarrier: 'Air China',
+        flightStatusUnknown: 'Brak danych', flightDelayOnTime: 'Punktualnie',
+        flightDelayLate: '{MIN} min opóźnienia', flightDataUnavailable: 'Brak danych online'
       },
       hu: {
         flag: '🇭🇺', title: 'Kínai tanulmányút (2026. ápr. 22–29.) — élő program',
@@ -393,7 +422,12 @@
         refreshRate: 'Frissítési ütem', refreshSlow: 'Eco (5 perc)', refreshMedium: 'Normál (1 perc)', refreshFast: 'Live (30 mp)',
         pushConsentText: 'Engedélyezd a push értesítéseket, hogy a böngésző ne blokkolja az emlékeztetőket.',
         pushConsentEnable: 'Push engedélyezése', pushConsentDismiss: 'Később',
-        moreInfo: '(i) További információ', programContext: 'Programkörnyezet'
+        moreInfo: '(i) További információ', programContext: 'Programkörnyezet',
+        flightLiveBadge: 'Élő járat', flightStatusLabel: 'Státusz', flightGateLabel: 'Gate / terminál',
+        flightDelayLabel: 'Késés', flightLiveRefreshLabel: 'Frissítve',
+        flightLinkTrack: 'Járatkövetés', flightLinkCarrier: 'Air China',
+        flightStatusUnknown: 'Nincs adat', flightDelayOnTime: 'Pontos',
+        flightDelayLate: '{MIN} perc késés', flightDataUnavailable: 'Nincs élő adat'
       },
       da: {
         flag: '🇩🇰', title: 'Kina studietur (22.–29. apr. 2026) — live program',
@@ -414,7 +448,12 @@
         refreshRate: 'Opdateringsfrekvens', refreshSlow: 'Eco (5 min)', refreshMedium: 'Normal (1 min)', refreshFast: 'Live (30 sek)',
         pushConsentText: 'Aktivér push-alarmer, så browseren ikke blokerer påmindelser.',
         pushConsentEnable: 'Tillad push', pushConsentDismiss: 'Senere',
-        moreInfo: '(i) Mere info', programContext: 'Programkontekst'
+        moreInfo: '(i) Mere info', programContext: 'Programkontekst',
+        flightLiveBadge: 'Fly live', flightStatusLabel: 'Status', flightGateLabel: 'Gate / terminal',
+        flightDelayLabel: 'Forsinkelse', flightLiveRefreshLabel: 'Sidst opdateret',
+        flightLinkTrack: 'Spor fly', flightLinkCarrier: 'Air China',
+        flightStatusUnknown: 'Ukendt', flightDelayOnTime: 'Til tiden',
+        flightDelayLate: '{MIN} min forsinket', flightDataUnavailable: 'Live data utilgængelig'
       }
     };
 
@@ -1576,8 +1615,10 @@
     let nowNextOnly = localStorage.getItem('china_trip_now_next_only') === '1';
     let refreshMode = localStorage.getItem('china_trip_refresh_mode') || 'medium';
     let refreshTimerId = null;
+    let flightRefreshTimerId = null;
     const scheduledAlertKeys = new Set();
     let pushPromptDismissed = localStorage.getItem('china_trip_push_prompt_dismissed') === '1';
+    let flightLiveState = { status: '', depGate: '', depTerminal: '', delayMinutes: null, updatedAtIso: '' };
 
     const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
       timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
@@ -1767,6 +1808,14 @@
       document.getElementById('refreshSlow').textContent = copy.refreshSlow;
       document.getElementById('refreshMedium').textContent = copy.refreshMedium;
       document.getElementById('refreshFast').textContent = copy.refreshFast;
+      document.getElementById('flightLiveBadge').textContent = copy.flightLiveBadge;
+      document.getElementById('flightStatusLabel').textContent = copy.flightStatusLabel;
+      document.getElementById('flightGateLabel').textContent = copy.flightGateLabel;
+      document.getElementById('flightDelayLabel').textContent = copy.flightDelayLabel;
+      document.getElementById('flightLiveRefreshLabel').textContent = copy.flightLiveRefreshLabel;
+      document.getElementById('flightLinkTrack').textContent = copy.flightLinkTrack;
+      document.getElementById('flightLinkCarrier').textContent = copy.flightLinkCarrier;
+      renderFlightLiveCard();
       const pullRefreshStatus = document.getElementById('pullRefreshStatus');
       if (pullRefreshStatus && !pullRefreshStatus.classList.contains('visible')) pullRefreshStatus.textContent = copy.pullToRefreshHint;
 
@@ -1785,6 +1834,73 @@
         const nextEl = document.querySelector(`.item[data-idx="${next.idx}"]`);
         if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+    }
+
+    function formatFlightUpdateTime(iso) {
+      if (!iso) return '—';
+      const dt = new Date(iso);
+      if (Number.isNaN(dt.getTime())) return '—';
+      return new Intl.DateTimeFormat(lang, {
+        timeZone: 'Asia/Shanghai',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(dt);
+    }
+
+    function renderFlightLiveCard() {
+      const copy = getCopy();
+      const statusText = flightLiveState.status || copy.flightStatusUnknown;
+      const gateText = [flightLiveState.depGate, flightLiveState.depTerminal ? `T${flightLiveState.depTerminal}` : ''].filter(Boolean).join(' / ') || '—';
+      let delayText = '—';
+      if (typeof flightLiveState.delayMinutes === 'number') {
+        delayText = flightLiveState.delayMinutes <= 0
+          ? copy.flightDelayOnTime
+          : copy.flightDelayLate.replace('{MIN}', String(flightLiveState.delayMinutes));
+      }
+      document.getElementById('flightStatusValue').textContent = statusText;
+      document.getElementById('flightGateValue').textContent = gateText;
+      document.getElementById('flightDelayValue').textContent = delayText;
+      document.getElementById('flightLiveRefreshValue').textContent = formatFlightUpdateTime(flightLiveState.updatedAtIso);
+    }
+
+    async function refreshFlightLiveStatus() {
+      const copy = getCopy();
+      try {
+        const response = await fetch(`./api/flight-ca1379-status.php?ts=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        if (!payload?.ok || !payload?.flight) throw new Error('Invalid payload');
+        flightLiveState = {
+          status: payload.flight.status || copy.flightStatusUnknown,
+          depGate: payload.flight.departure_gate || '',
+          depTerminal: payload.flight.departure_terminal || '',
+          delayMinutes: typeof payload.flight.departure_delay_min === 'number' ? payload.flight.departure_delay_min : null,
+          updatedAtIso: payload.fetched_at_utc || new Date().toISOString()
+        };
+      } catch (_) {
+        flightLiveState = {
+          ...flightLiveState,
+          status: copy.flightDataUnavailable,
+          updatedAtIso: new Date().toISOString()
+        };
+      }
+      renderFlightLiveCard();
+    }
+
+    function scheduleFlightLiveLoop() {
+      if (flightRefreshTimerId) {
+        clearTimeout(flightRefreshTimerId);
+        flightRefreshTimerId = null;
+      }
+      if (document.hidden) return;
+      flightRefreshTimerId = setTimeout(async () => {
+        await refreshFlightLiveStatus();
+        scheduleFlightLiveLoop();
+      }, 5 * 60_000);
     }
 
     function setupLangButtons() {
@@ -2012,10 +2128,14 @@
     initServiceWorker();
     setupPullToRefresh();
     refreshView(true);
+    refreshFlightLiveStatus();
     scheduleRefreshLoop();
+    scheduleFlightLiveLoop();
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) refreshView(false);
+      if (!document.hidden) refreshFlightLiveStatus();
       scheduleRefreshLoop();
+      scheduleFlightLiveLoop();
     }, { passive: true });
   </script>
 </body>

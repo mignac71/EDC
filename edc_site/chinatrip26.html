@@ -132,6 +132,13 @@
     .push-consent.open { display: flex; }
     .push-consent .tiny { margin: 0; }
     .controls { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
     button, .chip {
       border: 1px solid var(--line);
       background: var(--card);
@@ -287,6 +294,7 @@
           <button id="toggleNowNext" type="button"></button>
           <button id="enableAlerts" type="button"></button>
           <button id="exportIcs" type="button"></button>
+          <a id="autoChinaMapLink" class="chip map-link" href="https://www.autochinashow.org/filedownload/2994429" target="_blank" rel="noopener noreferrer"></a>
         </div>
       </div>
       <h1 id="pageTitle"></h1>
@@ -335,6 +343,7 @@
         nowNextOnlyOn: 'Now + Next only: ON', nowNextOnlyOff: 'Now + Next only: OFF',
         enableAlerts: 'Enable alerts', alertsOn: 'Alerts enabled', alertsBlocked: 'Alerts blocked',
         exportIcs: 'Export ICS',
+        mapAccess: '🗺️ Auto China map',
         pastHidden: 'Past events are hidden', pastVisible: 'Past events are visible',
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Last refresh',
         untilNext: 'Until next event', close: 'Close', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
@@ -355,6 +364,7 @@
         nowNextOnlyOn: 'Tylko teraz + następny: WŁ.', nowNextOnlyOff: 'Tylko teraz + następny: WYŁ.',
         enableAlerts: 'Włącz alarmy', alertsOn: 'Alarmy włączone', alertsBlocked: 'Alarmy zablokowane',
         exportIcs: 'Eksport ICS',
+        mapAccess: '🗺️ Mapa Auto China',
         pastHidden: 'Minione punkty są ukryte', pastVisible: 'Minione punkty są widoczne',
         beijing: 'Pekin', berlin: 'Berlin', lastRefresh: 'Ostatnia aktualizacja',
         untilNext: 'Do następnego punktu', close: 'Zamknij', themeSystem: 'System', themeLight: 'Jasny', themeDark: 'Ciemny',
@@ -375,6 +385,7 @@
         nowNextOnlyOn: 'Csak Most + Következő: BE', nowNextOnlyOff: 'Csak Most + Következő: KI',
         enableAlerts: 'Értesítések bekapcsolása', alertsOn: 'Értesítések engedélyezve', alertsBlocked: 'Értesítések tiltva',
         exportIcs: 'ICS export',
+        mapAccess: '🗺️ Auto China térkép',
         pastHidden: 'A múlt események rejtve', pastVisible: 'A múlt események láthatók',
         beijing: 'Peking', berlin: 'Berlin', lastRefresh: 'Utolsó frissítés',
         untilNext: 'A következő eseményig', close: 'Bezárás', themeSystem: 'Rendszer', themeLight: 'Világos', themeDark: 'Sötét',
@@ -395,6 +406,7 @@
         nowNextOnlyOn: 'Kun Nu + Næste: TIL', nowNextOnlyOff: 'Kun Nu + Næste: FRA',
         enableAlerts: 'Aktivér alarmer', alertsOn: 'Alarmer aktiveret', alertsBlocked: 'Alarmer blokeret',
         exportIcs: 'Eksportér ICS',
+        mapAccess: '🗺️ Auto China kort',
         pastHidden: 'Tidligere aktiviteter er skjult', pastVisible: 'Tidligere aktiviteter er synlige',
         beijing: 'Beijing', berlin: 'Berlin', lastRefresh: 'Seneste opdatering',
         untilNext: 'Til næste aktivitet', close: 'Luk', themeSystem: 'System', themeLight: 'Lys', themeDark: 'Mørk',
@@ -730,10 +742,10 @@
       {
             "d": "2026-04-26",
             "city": "Beijing → Guangzhou",
-            "t": "10:15",
+            "t": "10:00",
             "e": "10:45",
-            "title": "Meeting 1: Leapmotor",
-            "desc": "Joint venture with Stellantis and expansion in Europe."
+            "title": "Meeting 1: Huawei",
+            "desc": "Meeting with Mr. Toilief — Head of Sales and Marketing, Huawei Automotive Business in Europe."
       },
       {
             "d": "2026-04-26",
@@ -741,7 +753,7 @@
             "t": "11:00",
             "e": "11:45",
             "title": "Meeting 2: Xiaomi",
-            "desc": "Market positioning and European plans."
+            "desc": "Booth A4. Meeting with Mr. Sean Xu, Head of Xiaomi Automotive Business Unit Global Development."
       },
       {
             "d": "2026-04-26",
@@ -749,23 +761,23 @@
             "t": "12:00",
             "e": "12:45",
             "title": "Meeting 3: NIO",
-            "desc": "Strategy, technology, and battery swapping."
+            "desc": "Booth E2. Meeting with Head of NIO House Global Development."
       },
       {
             "d": "2026-04-26",
             "city": "Beijing → Guangzhou",
             "t": "12:45",
-            "e": "14:00",
-            "title": "Own time at Auto Show",
-            "desc": "Then meeting with CADA."
+            "e": "15:15",
+            "title": "Free time at Auto Show",
+            "desc": "After this block you have free time."
       },
       {
             "d": "2026-04-26",
             "city": "Beijing → Guangzhou",
-            "t": "14:00",
+            "t": "15:15",
             "e": "15:15",
-            "title": "Meeting with CADA",
-            "desc": "Cooperation between European and Chinese dealers."
+            "title": "Group meet-up at meeting place (sharp)",
+            "desc": "We meet again exactly at 15:15 at our meeting place."
       },
       {
             "d": "2026-04-26",
@@ -1726,6 +1738,7 @@
       document.getElementById('topCountdownValue').textContent = fmtCountdownClock(next ? next.start - now : 0);
       document.getElementById('toggleNowNext').textContent = nowNextOnly ? copy.nowNextOnlyOn : copy.nowNextOnlyOff;
       document.getElementById('exportIcs').textContent = copy.exportIcs;
+      document.getElementById('autoChinaMapLink').textContent = copy.mapAccess;
       const alertsBtn = document.getElementById('enableAlerts');
       const pushConsentBar = document.getElementById('pushConsentBar');
       if (!('Notification' in window)) {

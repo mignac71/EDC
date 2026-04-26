@@ -34,15 +34,51 @@ if (!is_array($data)) {
     out(502, ['ok' => false, 'error' => 'invalid_bootstrap_json']);
 }
 
-$origin = $data['origin'] ?? [];
-$destination = $data['destination'] ?? [];
-$takeoffTimes = $data['takeoffTimes'] ?? [];
+function normalizeGate($gate) {
+    $gate = trim((string)$gate);
+    if ($gate === '') {
+        return null;
+    }
+
+    if (preg_match('/^([A-Za-z])(\d)$/', $gate, $matches)) {
+        return strtoupper($matches[1]) . '0' . $matches[2];
+    }
+
+    return strtoupper($gate);
+}
+
+$flightData = null;
+if (isset($data['flights']) && is_array($data['flights']) && count($data['flights']) > 0) {
+    foreach ($data['flights'] as $candidate) {
+        if (!is_array($candidate)) {
+            continue;
+        }
+
+        $displayIdent = strtoupper(trim((string)($candidate['displayIdent'] ?? $candidate['ident'] ?? '')));
+        if ($displayIdent === 'CCA1379' || $displayIdent === 'CA1379') {
+            $flightData = $candidate;
+            break;
+        }
+
+        if ($flightData === null) {
+            $flightData = $candidate;
+        }
+    }
+}
+
+if ($flightData === null) {
+    $flightData = $data;
+}
+
+$origin = (isset($flightData['origin']) && is_array($flightData['origin'])) ? $flightData['origin'] : [];
+$destination = (isset($flightData['destination']) && is_array($flightData['destination'])) ? $flightData['destination'] : [];
+$takeoffTimes = (isset($flightData['takeoffTimes']) && is_array($flightData['takeoffTimes'])) ? $flightData['takeoffTimes'] : [];
 $depDelayMin = null;
 if (isset($takeoffTimes['estimated'], $takeoffTimes['scheduled']) && is_numeric($takeoffTimes['estimated']) && is_numeric($takeoffTimes['scheduled'])) {
     $depDelayMin = (int) floor(((int)$takeoffTimes['estimated'] - (int)$takeoffTimes['scheduled']) / 60);
 }
 
-$status = trim((string)($data['flightStatus'] ?? ''));
+$status = trim((string)($flightData['flightStatus'] ?? ''));
 if ($status === '') {
     $status = 'scheduled';
 }
@@ -54,9 +90,9 @@ out(200, [
     'flight' => [
         'number' => 'CA1379',
         'status' => $status,
-        'departure_gate' => $origin['gate'] ?? null,
+        'departure_gate' => normalizeGate($origin['gate'] ?? null),
         'departure_terminal' => $origin['terminal'] ?? null,
-        'arrival_gate' => $destination['gate'] ?? null,
+        'arrival_gate' => normalizeGate($destination['gate'] ?? null),
         'arrival_terminal' => $destination['terminal'] ?? null,
         'departure_delay_min' => $depDelayMin,
     ],

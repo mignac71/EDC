@@ -323,7 +323,7 @@
     </section>
 
     <section class="status-grid">
-      <article class="card" id="flightLiveCard">
+      <article class="card" id="flightLiveCard" hidden>
         <span class="badge b-current" id="badgeCurrent"></span>
         <h2 id="currentTitle">—</h2>
         <p class="tiny" id="currentTime">—</p>
@@ -1670,6 +1670,7 @@
     const scheduledAlertKeys = new Set();
     let pushPromptDismissed = localStorage.getItem('china_trip_push_prompt_dismissed') === '1';
     let flightLiveState = { status: '', depGate: '', depTerminal: '', delayMinutes: null, updatedAtIso: '' };
+    const flightLiveEnabled = false;
 
     const formatDate = (ms, locale, tz) => new Intl.DateTimeFormat(locale, {
       timeZone: tz, weekday: 'long', year: 'numeric', month: 'long', day: '2-digit', hour: '2-digit', minute:'2-digit', second:'2-digit'
@@ -1758,13 +1759,10 @@
             ? `${entityInfo}${entity?.type === 'company' && entity?.website ? `\n\n${copy.companyWebsite}: ${entity.website}` : ''}${entityInfo && descText && descText !== '—' ? '\n\n' : ''}${descText && descText !== '—' ? `${copy.programContext}: ${descText}` : ''}`.trim()
             : descText;
           const detailsTitle = ev.title;
-          const safeLogoTitle = entity?.title ? entity.title.replace(/"/g, '&quot;') : '';
           const companyMeta = entity?.type === 'company' && entity?.website
-            ? `<div class="entity-meta">${entity.logoUrl ? `<img class="entity-logo" src="${entity.logoUrl}" alt="${safeLogoTitle} logo" loading="lazy" decoding="async" referrerpolicy="no-referrer" />` : ''}<a href="${entity.website}" target="_blank" rel="noopener noreferrer">${copy.companyWebsite}: ${entity.website}</a></div>`
+            ? `<div class="entity-meta"><a href="${entity.website}" target="_blank" rel="noopener noreferrer">${copy.companyWebsite}: ${entity.website}</a></div>`
             : '';
-          const companyLogoInTitle = entity?.type === 'company' && entity?.logoUrl
-            ? `<img class="entity-logo" src="${entity.logoUrl}" alt="${safeLogoTitle} logo" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`
-            : '';
+          const companyLogoInTitle = '';
 
           item.innerHTML = `
             <div class="time">${ev.t}–${ev.e}</div>
@@ -1868,15 +1866,17 @@
       document.getElementById('refreshSlow').textContent = copy.refreshSlow;
       document.getElementById('refreshMedium').textContent = copy.refreshMedium;
       document.getElementById('refreshFast').textContent = copy.refreshFast;
-      document.getElementById('flightLiveBadge').textContent = copy.flightLiveBadge;
-      document.getElementById('flightStatusLabel').textContent = copy.flightStatusLabel;
-      document.getElementById('flightGateLabel').textContent = copy.flightGateLabel;
-      document.getElementById('flightDelayLabel').textContent = copy.flightDelayLabel;
-      document.getElementById('flightLiveRefreshLabel').textContent = copy.flightLiveRefreshLabel;
-      document.getElementById('flightLinkTrack').textContent = copy.flightLinkTrack;
-      document.getElementById('flightLinkCarrier').textContent = copy.flightLinkCarrier;
+      if (flightLiveEnabled) {
+        document.getElementById('flightLiveBadge').textContent = copy.flightLiveBadge;
+        document.getElementById('flightStatusLabel').textContent = copy.flightStatusLabel;
+        document.getElementById('flightGateLabel').textContent = copy.flightGateLabel;
+        document.getElementById('flightDelayLabel').textContent = copy.flightDelayLabel;
+        document.getElementById('flightLiveRefreshLabel').textContent = copy.flightLiveRefreshLabel;
+        document.getElementById('flightLinkTrack').textContent = copy.flightLinkTrack;
+        document.getElementById('flightLinkCarrier').textContent = copy.flightLinkCarrier;
+      }
       updateFlightCardVisibility(now);
-      renderFlightLiveCard();
+      if (flightLiveEnabled) renderFlightLiveCard();
       const pullRefreshStatus = document.getElementById('pullRefreshStatus');
       if (pullRefreshStatus && !pullRefreshStatus.classList.contains('visible')) pullRefreshStatus.textContent = copy.pullToRefreshHint;
 
@@ -1931,16 +1931,21 @@
     function updateFlightCardVisibility(nowMs) {
       const flightCard = document.getElementById('flightLiveCard');
       if (!flightCard) return;
+      if (!flightLiveEnabled) {
+        flightCard.hidden = true;
+        return;
+      }
       const flightEvent = getFlightEvent();
       if (!flightEvent) {
-        flightCard.style.display = '';
+        flightCard.hidden = false;
         return;
       }
       const flightEndMs = parseInChina(flightEvent.d, flightEvent.e);
-      flightCard.style.display = nowMs > flightEndMs ? 'none' : '';
+      flightCard.hidden = nowMs > flightEndMs;
     }
 
     async function refreshFlightLiveStatus() {
+      if (!flightLiveEnabled) return;
       const copy = getCopy();
       try {
         const response = await fetch(`./api/flight-ca1379-status.php?ts=${Date.now()}`, { cache: 'no-store' });
@@ -1965,6 +1970,7 @@
     }
 
     function scheduleFlightLiveLoop() {
+      if (!flightLiveEnabled) return;
       if (flightRefreshTimerId) {
         clearTimeout(flightRefreshTimerId);
         flightRefreshTimerId = null;
@@ -2201,14 +2207,14 @@
     initServiceWorker();
     setupPullToRefresh();
     refreshView(true);
-    refreshFlightLiveStatus();
+    if (flightLiveEnabled) refreshFlightLiveStatus();
     scheduleRefreshLoop();
-    scheduleFlightLiveLoop();
+    if (flightLiveEnabled) scheduleFlightLiveLoop();
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) refreshView(false);
-      if (!document.hidden) refreshFlightLiveStatus();
+      if (!document.hidden && flightLiveEnabled) refreshFlightLiveStatus();
       scheduleRefreshLoop();
-      scheduleFlightLiveLoop();
+      if (flightLiveEnabled) scheduleFlightLiveLoop();
     }, { passive: true });
   </script>
 </body>

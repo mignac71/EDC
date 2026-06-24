@@ -325,7 +325,7 @@ h2 {
   margin-bottom: 60px;
   font-size: 1.25rem;
   color: var(--text-light);
-  max-width: 700px;
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -350,7 +350,7 @@ h2 {
 .cards {
   display: grid;
   gap: 30px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
 }
 
 .card {
@@ -902,6 +902,10 @@ footer a:hover {
   .lead {
     font-size: 1.05rem;
     margin-bottom: 40px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
   }
 
   .hero {

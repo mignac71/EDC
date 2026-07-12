@@ -9,3 +9,6 @@ test('removes assignment',()=>{let p=C.createPlan();const g=C.normalizeGuest({fu
 test('calculates available seats',()=>{let p=C.createPlan();const g=C.normalizeGuest({fullName:'John Smith'}),t=C.createTable(1,8);p.guests=[g];p.tables=[t];p=C.assignGuest(p,g.id,t.id,1);assert.equal(C.availableSeats(p),7)});
 
 test('imports Excel-style headers case insensitively',()=>{const a=IE.analyzeRows([{'Full name':'Alice Example','Company':'EDC','VIP':'1'}]);assert.equal(a.guests.length,1);assert.equal(a.guests[0].firstName,'Alice');assert.equal(a.guests[0].company,'EDC');assert.equal(a.guests[0].vip,true)});
+
+
+test('import/export helpers work when loaded before seating core',()=>{const lateCtx={window:{},console,structuredClone:global.structuredClone,Date,Math,RegExp,String,Set,Map};lateCtx.global=lateCtx;vm.createContext(lateCtx);['edc_site/admin/seating-plan/js/types.js','edc_site/admin/seating-plan/js/import-export.js','edc_site/admin/seating-plan/js/seating-core.js'].forEach(f=>vm.runInContext(fs.readFileSync(f,'utf8'),lateCtx,{filename:f}));const lateIE=lateCtx.window.SeatingImportExport;const a=lateIE.analyzeRows([{'Full Name':'Late Loaded','VIP':'yes'}]);assert.equal(a.guests.length,1);assert.equal(a.guests[0].firstName,'Late');assert.equal(lateIE.normalizeHeader('Full Name'),'fullName')});

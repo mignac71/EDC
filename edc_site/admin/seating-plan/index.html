@@ -19,8 +19,16 @@
     document.getElementById('authPanel').style.display='none';
     document.getElementById('appPanel').style.display='';
     document.getElementById('appPanel').classList.remove('hidden');
-    if(window.SeatingStore&&window.SeatingStore.setAuth)window.SeatingStore.setAuth(user,pass);
-    if(window.SeatingAppInit)try{window.SeatingAppInit();}catch(ex){console.error(ex);}
+    window._seatingAuth={user:user,pass:pass};
+    function tryInit(){
+     if(window.SeatingStore&&window.SeatingAppInit){
+      window.SeatingStore.setAuth(user,pass);
+      window.SeatingAppInit();
+     }else{
+      setTimeout(tryInit,100);
+     }
+    }
+    tryInit();
    }else{
     r.text().then(function(t){msg.textContent='Error '+r.status+': '+(t||'Incorrect credentials.');}).catch(function(){msg.textContent='Error '+r.status;});
    }

@@ -43,7 +43,10 @@
  function commitEventForm(){if(!$('#eventForm'))return; plan=eventPlanFromForm()}
 
  /* ── App init: called after login, loads plans from DB ── */
+ var _initDone=false;
  window.SeatingAppInit=async function(){
+  if(_initDone)return;
+  _initDone=true;
   var ss=$('#saveStatus');
   if(ss)ss.textContent='Loading plans from database\u2026';
   try{
@@ -65,6 +68,12 @@
    render();
   }
  };
+
+ /* Auto-start if auth already happened before defer scripts loaded */
+ if(window._seatingAuth){
+  S.setAuth(window._seatingAuth.user,window._seatingAuth.pass);
+  window.SeatingAppInit();
+ }
 
  function bindApp(){
  ['guestSearch','countryFilter','companyFilter','groupFilter','vipFilter'].forEach(function(id){var el=$('#'+id);if(el)el.addEventListener('input',renderGuests)});

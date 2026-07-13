@@ -96,7 +96,69 @@
  document.body.addEventListener('dragstart',function(e){var g=e.target.closest('[data-guest]'); if(g)e.dataTransfer.setData('text/plain',g.dataset.guest)});
  document.body.addEventListener('dragover',function(e){if(e.target.closest('.chair,#guestList'))e.preventDefault()});
  document.body.addEventListener('drop',function(e){e.preventDefault();var id=e.dataTransfer.getData('text/plain'),ch=e.target.closest('.chair'); if(ch&&id){selectedGuestId='';push(C.swapOrAssign(plan,id,ch.dataset.table,+ch.dataset.seat))} else if(e.target.closest('#guestList')&&id){selectedGuestId='';push(C.unassignGuest(plan,id))}});
- document.body.addEventListener('click',function(e){var guestItem=e.target.closest('#guestList [data-guest]'); if(guestItem&&!e.target.closest('button')){selectedGuestId=selectedGuestId===guestItem.dataset.guest?'':guestItem.dataset.guest;renderGuests();updateAssignBar();if(selectedGuestId&&isMobile())switchTab('plan');return} var _eb=e.target.closest('[data-edit-guest]');if(_eb){var g=plan.guests.find(function(x){return x.id===_eb.dataset.editGuest});if(g){var n=prompt('Edit name',C.guestName(g));if(n!==null&&C.clean(n)){var p=structuredClone(plan),ng=p.guests.find(function(x){return x.id===g.id}),_n=C.normalizeGuest({fullName:n});ng.firstName=_n.firstName;ng.lastName=_n.lastName;ng.fullName=_n.fullName;push(C.touch(p))}}return} var _rb=e.target.closest('[data-remove-guest]');if(_rb){if(confirm('Remove this guest?')){var p2=structuredClone(plan);p2.guests=p2.guests.filter(function(x){return x.id!==_rb.dataset.removeGuest});p2.assignments=p2.assignments.filter(function(a){return a.guestId!==_rb.dataset.removeGuest});push(C.touch(p2))}return} var t=e.target.closest('[data-table-details]'); if(t){var table=plan.tables.find(function(x){return x.id===t.dataset.tableDetails}); details('<label>Table Number<input id="dNum" type="number" value="'+table.number+'"></label><label>Name<input id="dLabel" value="'+(table.label||'')+'"></label><label>Seats<input id="dSeats" type="number" value="'+table.seats+'"></label><label>Notes<textarea id="dNotes">'+(table.notes||'')+'</textarea></label><p>Occupied seats: '+plan.assignments.filter(function(a){return a.tableId===table.id}).length+'</p><button id="applyTable">Apply</button><button id="removeTable" class="danger">Remove Table</button>'); $('#applyTable').onclick=function(){var p3=structuredClone(plan),nt=p3.tables.find(function(x){return x.id===table.id}),newSeats=+$('#dSeats').value||0;if(plan.assignments.some(function(a){return a.tableId===table.id&&a.seatNumber>newSeats})){alert('Move assigned guests before reducing seats.');return} nt.number=+$('#dNum').value;nt.label=$('#dLabel').value;nt.seats=newSeats;nt.notes=$('#dNotes').value;push(C.touch(p3))}; $('#removeTable').onclick=function(){if(confirm('Remove table and assignments?')){var p4=structuredClone(plan);p4.tables=p4.tables.filter(function(x){return x.id!==table.id});p4.assignments=p4.assignments.filter(function(a){return a.tableId!==table.id});push(C.touch(p4))}} if(isMobile())switchTab('settings')} var ch=e.target.closest('.chair'); if(ch){if(selectedGuestId){var id=selectedGuestId;selectedGuestId='';push(C.swapOrAssign(plan,id,ch.dataset.table,+ch.dataset.seat));if(isMobile()&&unassignedGuests().length)setTimeout(function(){switchTab('guests')},350);return} if(isMobile())switchTab('settings');showSeatDetails(ch)} });
+ document.body.addEventListener('click',function(e){
+  var guestItem=e.target.closest('#guestList [data-guest]');
+  if(guestItem&&!e.target.closest('button')){
+   selectedGuestId=selectedGuestId===guestItem.dataset.guest?'':guestItem.dataset.guest;
+   renderGuests();updateAssignBar();
+   if(selectedGuestId&&isMobile())switchTab('plan');
+   return;
+  }
+  var _eb=e.target.closest('[data-edit-guest]');
+  if(_eb){
+   var g=plan.guests.find(function(x){return x.id===_eb.dataset.editGuest;});
+   if(g){
+    var n=prompt('Edit name',C.guestName(g));
+    if(n!==null&&C.clean(n)){
+     var p=structuredClone(plan),ng=p.guests.find(function(x){return x.id===g.id;}),_n=C.normalizeGuest({fullName:n});
+     ng.firstName=_n.firstName;ng.lastName=_n.lastName;ng.fullName=_n.fullName;
+     push(C.touch(p));
+    }
+   }
+   return;
+  }
+  var _rb=e.target.closest('[data-remove-guest]');
+  if(_rb){
+   if(confirm('Remove this guest?')){
+    var p2=structuredClone(plan);
+    p2.guests=p2.guests.filter(function(x){return x.id!==_rb.dataset.removeGuest;});
+    p2.assignments=p2.assignments.filter(function(a){return a.guestId!==_rb.dataset.removeGuest;});
+    push(C.touch(p2));
+   }
+   return;
+  }
+  var t=e.target.closest('[data-table-details]');
+  if(t){
+   var table=plan.tables.find(function(x){return x.id===t.dataset.tableDetails;});
+   details('<label>Table Number<input id="dNum" type="number" value="'+table.number+'"></label><label>Name<input id="dLabel" value="'+(table.label||'')+'"></label><label>Seats<input id="dSeats" type="number" value="'+table.seats+'"></label><label>Notes<textarea id="dNotes">'+(table.notes||'')+'</textarea></label><p>Occupied seats: '+plan.assignments.filter(function(a){return a.tableId===table.id;}).length+'</p><button id="applyTable">Apply</button><button id="removeTable" class="danger">Remove Table</button>');
+   $('#applyTable').onclick=function(){
+    var p3=structuredClone(plan),nt=p3.tables.find(function(x){return x.id===table.id;}),newSeats=+$('#dSeats').value||0;
+    if(plan.assignments.some(function(a){return a.tableId===table.id&&a.seatNumber>newSeats;})){alert('Move assigned guests before reducing seats.');return;}
+    nt.number=+$('#dNum').value;nt.label=$('#dLabel').value;nt.seats=newSeats;nt.notes=$('#dNotes').value;
+    push(C.touch(p3));
+   };
+   $('#removeTable').onclick=function(){
+    if(confirm('Remove table and assignments?')){
+     var p4=structuredClone(plan);
+     p4.tables=p4.tables.filter(function(x){return x.id!==table.id;});
+     p4.assignments=p4.assignments.filter(function(a){return a.tableId!==table.id;});
+     push(C.touch(p4));
+    }
+   };
+   if(isMobile())switchTab('settings');
+  }
+  var ch=e.target.closest('.chair');
+  if(ch){
+   if(selectedGuestId){
+    var id=selectedGuestId;selectedGuestId='';
+    push(C.swapOrAssign(plan,id,ch.dataset.table,+ch.dataset.seat));
+    if(isMobile()&&unassignedGuests().length)setTimeout(function(){switchTab('guests');},350);
+    return;
+   }
+   if(isMobile())switchTab('settings');
+   showSeatDetails(ch);
+  }
+ });
  document.body.addEventListener('pointerdown',function(e){var box=e.target.closest('[data-table-box]'); if(!box||e.target.closest('.chair'))return; var id=box.dataset.tableBox,startX=e.clientX,startY=e.clientY,t=plan.tables.find(function(x){return x.id===id}),ox=t.x,oy=t.y; box.setPointerCapture(e.pointerId); box.onpointermove=function(ev){box.style.left=ox+(ev.clientX-startX)/plan.viewport.scale+'px';box.style.top=oy+(ev.clientY-startY)/plan.viewport.scale+'px'}; box.onpointerup=function(ev){var p=structuredClone(plan),nt=p.tables.find(function(x){return x.id===id});nt.x=ox+(ev.clientX-startX)/plan.viewport.scale;nt.y=oy+(ev.clientY-startY)/plan.viewport.scale;box.onpointermove=null;push(C.touch(p))}});
  var imf=$('#importFile');if(imf)imf.onchange=async function(e){var file=e.target.files[0]; if(!file)return; $('#confirmImport').disabled=true; $('#importPreview').textContent='Reading '+file.name+'\u2026'; try{var parsed;if(/\.txt$/i.test(file.name))parsed=IE.parseTxt(await file.text());else if(/\.csv$/i.test(file.name))parsed=IE.parseDelimited(await file.text());else if(/\.xlsx?$/i.test(file.name)){if(!window.XLSX)throw new Error('Excel parser is still loading. Please try again in a moment.');var data=await file.arrayBuffer();var wb=XLSX.read(data,{type:'array'});var sheet=wb.Sheets[wb.SheetNames[0]];var rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});parsed={headers:Object.keys(rows[0]||{}).map(IE.normalizeHeader),rows}}else throw new Error('Unsupported file type. Use XLS, XLSX, CSV or TXT.'); var a=IE.analyzeRows(parsed.rows,plan.guests); importGuests=a.guests; $('#importPreview').innerHTML='<p>'+a.guests.length+' records \u00b7 Columns: '+(parsed.headers.join(', ')||'none')+'</p><p>'+a.invalid.length+' invalid \u00b7 '+a.duplicates.length+' duplicates</p>'; $('#confirmImport').disabled=!a.guests.length}catch(err){importGuests=[];$('#importPreview').textContent=err.message||'Could not import this file.'}};
  var ci=$('#confirmImport');if(ci)ci.onclick=function(){var p=structuredClone(plan);var existing=new Set(p.guests.map(function(g){return C.guestName(g).toLowerCase()}).filter(Boolean));var unique=[];importGuests.forEach(function(g){var name=C.guestName(g).toLowerCase();if(name&&!existing.has(name)){existing.add(name);unique.push(g)}});p.guests.push.apply(p.guests,unique);importGuests=[];$('#confirmImport').disabled=true;$('#importFile').value='';$('#importPreview').textContent=unique.length+' guests imported.';push(C.touch(p))};

@@ -255,6 +255,100 @@ if ($action === 'validate') {
     exit(t('Hasło poprawne.', 'Password accepted.', $lang));
 }
 
+// ── Seating Plan API ──────────────────────────────────────────────
+function initSeatingTable(PDO $pdo): void
+{
+    $pdo->exec("CREATE TABLE IF NOT EXISTS seating_plans (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL DEFAULT '',
+        json_data TEXT NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+    )");
+}
+
+if ($action === 'seatingList') {
+    $pdo = getPdo();
+    if (!$pdo) {
+        http_response_code(500);
+        exit(json_encode(['error' => 'Database not available.']));
+    }
+    initSeatingTable($pdo);
+    $stmt = $pdo->query("SELECT id, name, updated_at FROM seating_plans ORDER BY updated_at DESC");
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    header('Content-Type: application/json');
+    echo json_encode($rows);
+    exit;
+}
+
+if ($action === 'seatingSave') {
+    $pdo = getPdo();
+    if (!$pdo) {
+        http_response_code(500);
+        exit(json_encode(['error' => 'Database not available.']));
+    }
+    initSeatingTable($pdo);
+    $json = $_POST['plan_json'] ?? '';
+    $plan = json_decode($json, true);
+    if (!$plan || empty($plan['id'])) {
+        http_response_code(400);
+        exit(json_encode(['error' => 'Invalid plan data.']));
+    }
+    $stmt = $pdo->prepare("INSERT INTO seating_plans (id, name, json_data, updated_at)
+        VALUES (:id, :name, :json, NOW())
+        ON CONFLICT (id) DO UPDATE SET name = :name, json_data = :json, updated_at = NOW()");
+    $stmt->execute([
+        ':id' => $plan['id'],
+        ':name' => $plan['name'] ?? 'Untitled',
+        ':json' => $json,
+    ]);
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => true, 'id' => $plan['id']]);
+    exit;
+}
+
+if ($action === 'seatingDelete') {
+    $pdo = getPdo();
+    if (!$pdo) {
+        http_response_code(500);
+        exit(json_encode(['error' => 'Database not available.']));
+    }
+    initSeatingTable($pdo);
+    $planId = $_POST['plan_id'] ?? '';
+    if (!$planId) {
+        http_response_code(400);
+        exit(json_encode(['error' => 'Missing plan_id.']));
+    }
+    $stmt = $pdo->prepare("DELETE FROM seating_plans WHERE id = :id");
+    $stmt->execute([':id' => $planId]);
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+if ($action === 'seatingLoad') {
+    $pdo = getPdo();
+    if (!$pdo) {
+        http_response_code(500);
+        exit(json_encode(['error' => 'Database not available.']));
+    }
+    initSeatingTable($pdo);
+    $planId = $_POST['plan_id'] ?? '';
+    if (!$planId) {
+        http_response_code(400);
+        exit(json_encode(['error' => 'Missing plan_id.']));
+    }
+    $stmt = $pdo->prepare("SELECT json_data FROM seating_plans WHERE id = :id");
+    $stmt->execute([':id' => $planId]);
+    $data = $stmt->fetchColumn();
+    if ($data === false) {
+        http_response_code(404);
+        exit(json_encode(['error' => 'Plan not found.']));
+    }
+    header('Content-Type: application/json');
+    echo $data;
+    exit;
+}
+
 $content = loadContent();
 if (!isset($content['news']) || !is_array($content['news']))
     $content['news'] = [];
